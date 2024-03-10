@@ -9,7 +9,7 @@ namespace Engine
 	{
 		private GraphicsDeviceManager _graphics;
 
-		//private readonly Effect testEffect;aaaa
+		//private readonly Effect testEffect;
 
 		public Game1()
 		{
