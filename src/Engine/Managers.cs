@@ -4,6 +4,7 @@ using Engine.Debugging;
 using Engine.Drawing;
 using Engine.Entities;
 using Engine.Loading;
+using Engine.Loading.Configurations;
 using Engine.Physics;
 using Engine.Physics.Areas;
 using Engine.TileMapping;
@@ -128,7 +129,7 @@ namespace Engine
 			Managers.EntityManager.Load();
 			
 			// Setting the starting tile map.
-			TileMap map = new(true, "test_map_1");
+			TileMap map = new(true, TileMapsConfig.AnimatedTestMap);
 			map.Load();
 			
 			// Setting the playable character.

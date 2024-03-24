@@ -1,5 +1,4 @@
-﻿using Engine.Entities;
-using Engine.Loading.Base.interfaces;
+﻿using Engine.Loading.Base.interfaces;
 using Engine.Physics.Areas;
 using Engine.Physics.Collisions.interfaces;
 using Microsoft.Xna.Framework;

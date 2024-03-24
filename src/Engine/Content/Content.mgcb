@@ -25,6 +25,27 @@
 /processorParam:TextureFormat=Color
 /build:CharacterSets/character3_characterset.png
 
+#begin Fonts/MonoBold12.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/MonoBold12.spritefont
+
+#begin Fonts/MonoLight12.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/MonoLight12.spritefont
+
+#begin Fonts/MonoRegular12.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/MonoRegular12.spritefont
+
 #begin testEffect.fx
 /importer:EffectImporter
 /processor:EffectProcessor

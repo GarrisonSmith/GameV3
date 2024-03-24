@@ -1,5 +1,6 @@
 ﻿using Engine.Drawing.Base;
 using Engine.Entities.Base;
+using Engine.Loading.Configurations;
 using Engine.Physics.Areas;
 using Engine.Physics.Base;
 using Engine.Physics.Base.enums;
@@ -58,14 +59,19 @@ namespace Engine.Loading
 		/// </summary>
 		public void LoadDrawManager()
 		{
-			foreach (var spriteSheetName in LoadingConfiguration.TileSetNames.Select(x => x.ToLower()))
+			foreach (var spriteSheetName in TileSetsConfig.TileSetFileNames)
 			{
 				Managers.DrawManager.SpriteSheets.Add(spriteSheetName, Game.Content.Load<Texture2D>(@"TileSets\" + spriteSheetName));
 			}
 
-			foreach (var spriteSheetName in LoadingConfiguration.CharacterSetNames.Select(x => x.ToLower()))
+			foreach (var spriteSheetName in CharactersConfig.CharacterFileNames)
 			{
 				Managers.DrawManager.SpriteSheets.Add(spriteSheetName, Game.Content.Load<Texture2D>(@"CharacterSets\" + spriteSheetName));
+			}
+
+			foreach (var fontName in FontsConfig.FontFileNames)
+			{
+				Managers.DrawManager.SpriteFonts.Add(fontName, Game.Content.Load<SpriteFont>(@"Fonts\" + fontName));	
 			}
 		}
 
@@ -88,7 +94,7 @@ namespace Engine.Loading
 
 			_ = new TileData("debug_tileset|0,0");
 			debugSheet.GetData(0, new Rectangle(0, 0, 1, 1), debugColor, 0, 1);
-			foreach (var tileSet in LoadingConfiguration.TileSetNames.Select(x => x.ToLower()))
+			foreach (var tileSet in TileSetsConfig.TileSetFileNames.Select(x => x.ToLower()))
 			{
 				if (!drawManager.TryGetSpriteSheet(tileSet, out var spriteSheet))
 				{
@@ -398,8 +404,7 @@ namespace Engine.Loading
 			}
 
 			debugSheet.GetData(0, new Rectangle(0, 0, 1, 1), debugColor, 0, 1);
-
-			foreach (string characterSet in LoadingConfiguration.CharacterSetNames.Select(x => x.ToLower()))
+			foreach (string characterSet in CharactersConfig.CharacterFileNames)
 			{
 				if (!drawManager.TryGetSpriteSheet(characterSet, out var spriteSheet))
 				{

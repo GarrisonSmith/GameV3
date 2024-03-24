@@ -33,6 +33,11 @@ namespace Engine.Drawing
 		/// </summary>
 		public SpriteBatch SpriteBatch { get; set; }
 
+		/// <summary>
+		/// Gets or sets the sprite fonts.
+		/// </summary>
+		public Dictionary<string, SpriteFont> SpriteFonts { get; set; }
+
         /// <summary>
         /// Gets or sets the sprite sheets.
         /// </summary>
@@ -60,6 +65,7 @@ namespace Engine.Drawing
 		private DrawManager(GraphicsDevice graphicDevice)
         {
 			this.SpriteBatch = new SpriteBatch(graphicDevice);
+			this.SpriteFonts = new();
 			this.SpriteSheets = new();
 			this.DrawData = new();
             this.DrawDataByName = new();
@@ -165,6 +171,35 @@ namespace Engine.Drawing
 		public void Draw(Animation animation, Position position, Color color)
 		{
 			this.Draw(animation.CurrentFrame, position, color);
+		}
+
+		/// <summary>
+		/// Writes the text.
+		/// </summary>
+		/// <param name="fontName">The font name.</param>
+		/// <param name="text">The text.</param>
+		/// <param name="coordinates">The coordinates.</param>
+		public void Write(string fontName, string text, Vector2 coordinates)
+		{
+			if (this.SpriteFonts.TryGetValue(fontName, out var spriteFont))
+			{
+				this.SpriteBatch.DrawString(spriteFont, text, coordinates, Color.White);
+			}
+		}
+
+		/// <summary>
+		/// Writes the text.
+		/// </summary>
+		/// <param name="fontName">The font name.</param>
+		/// <param name="text">The text.</param>
+		/// <param name="coordinates">The coordinates.</param>
+		/// <param name="color">The color.</param>
+		public void Write(string fontName, string text, Vector2 coordinates, Color color)
+		{
+			if (this.SpriteFonts.TryGetValue(fontName, out var spriteFont))
+			{
+				this.SpriteBatch.DrawString(spriteFont, text, coordinates, color);
+			}
 		}
 
 		/// <summary>
