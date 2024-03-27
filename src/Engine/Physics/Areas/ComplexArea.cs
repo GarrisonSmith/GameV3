@@ -50,7 +50,7 @@ namespace Engine.Physics.Areas
 		/// <summary>
 		/// Gets or sets the position.
 		/// </summary>
-		public Position Position { get; private set; }
+		public Position Position { get; set; }
 
 		/// <summary>
 		/// Gets or sets the sub areas.
@@ -89,6 +89,24 @@ namespace Engine.Physics.Areas
 		public bool Contains(Vector2 point)
 		{
 			foreach (var complexSubArea in this.SubAreas) 
+			{
+				if (complexSubArea.Contains(point))
+				{
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		/// <summary>
+		/// Returns a value indicating whether the point is contained by this area.
+		/// </summary>
+		/// <param name="point">The point.</param>
+		/// <returns>A value indicating whether the point is contained by this area.</returns>
+		public bool Contains(Point point)
+		{
+			foreach (var complexSubArea in this.SubAreas)
 			{
 				if (complexSubArea.Contains(point))
 				{

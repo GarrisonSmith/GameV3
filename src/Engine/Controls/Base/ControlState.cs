@@ -1,5 +1,8 @@
 ﻿using Engine.Controls.Base.enums;
+using Engine.Controls.Base.interfaces;
 using Engine.View;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 
@@ -16,17 +19,22 @@ namespace Engine.Controls.Base
 		public float? DirectionRadians { get; set; }
 
 		/// <summary>
+		/// Gets or sets the mouse position.
+		/// </summary>
+		public Point MousePosition { get; set; }
+
+		/// <summary>
 		/// Gets or sets the active control actions.
 		/// </summary>
-		public Dictionary<ControlActionTypes, ControlAction> ActiveControlActions { get; set; }
+		public Dictionary<ControlActionTypes, IControlAction> ActiveControlActions { get; set; }
 
 		/// <summary>
 		/// Initializes a new instance of the ControlState class.
 		/// </summary>
 		public ControlState()
 		{
-			DirectionRadians = null;
-			this.ActiveControlActions = new Dictionary<ControlActionTypes, ControlAction>();
+			this.DirectionRadians = null;
+			this.ActiveControlActions = new Dictionary<ControlActionTypes, IControlAction>();
 		}
 
 		/// <summary>
@@ -34,9 +42,10 @@ namespace Engine.Controls.Base
 		/// </summary>
 		public void UpdateControlState()
 		{
+			this.MousePosition = Mouse.GetState().Position;
 			this.UpdateDirectionalMovement();
 
-			if (this.ActiveControlActions.ContainsKey(ControlActionTypes.ZoomIn))
+			if (this.ActiveControlActions.TryGetValue(ControlActionTypes.ZoomIn, out var controlAction) && controlAction.JustStarted)
 			{ 
 				Camera.GetCamera().SmoothZoomIn();
 			}

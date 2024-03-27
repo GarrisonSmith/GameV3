@@ -74,6 +74,7 @@ namespace Engine.Core.Base
 		/// </summary>
 		/// <param name="drawingActivated">A value indicating whether the content is drawing.</param>
 		/// <param name="drawOrder">The draw order.</param>
+        /// <param name="position">The position.</param>
 		/// <param name="area">The area.</param>
 		/// <param name="drawData">The draw data.</param>
 		public DrawableContent(bool drawingActivated, ushort drawOrder, Position position, IAmAArea area, DrawData drawData)

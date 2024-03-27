@@ -1,4 +1,5 @@
 ﻿using Engine.Physics.Base;
+using Engine.Physics.Base.interfaces;
 using Microsoft.Xna.Framework;
 
 namespace Engine.Physics.Areas.interfaces
@@ -6,7 +7,7 @@ namespace Engine.Physics.Areas.interfaces
 	/// <summary>
 	/// Represents an area.
 	/// </summary>
-	public interface IAmAArea
+	public interface IAmAArea : IHavePosition
 	{
 		/// <summary>
 		/// Get or sets the top left X value of the area.
@@ -42,11 +43,6 @@ namespace Engine.Physics.Areas.interfaces
 		/// Gets the bottom right position of the area.
 		/// </summary>
 		public Vector2 BottomRight { get; }
-
-		/// <summary>
-		/// Gets or sets the position.
-		/// </summary>
-		public Position Position { get; }
 
 		/// <summary>
 		/// Returns a value indicating whether the point is contained by this area.

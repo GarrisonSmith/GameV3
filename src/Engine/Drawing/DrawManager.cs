@@ -12,15 +12,15 @@ namespace Engine.Drawing
 	/// Represents a draw manager.
 	/// </summary>
 	public class DrawManager : ICanBeLoaded
-    {
-        /// <summary>
-        /// Start the draw manager.
-        /// </summary>
-        /// <param name="graphicDevice">The graphic device.</param>
-        /// <returns>The draw manager.</returns>
-        public static DrawManager StartDrawManager(GraphicsDevice graphicDevice)
-        {
-            return Managers.DrawManager ?? new DrawManager(graphicDevice);
+	{
+		/// <summary>
+		/// Start the draw manager.
+		/// </summary>
+		/// <param name="graphicDevice">The graphic device.</param>
+		/// <returns>The draw manager.</returns>
+		public static DrawManager StartDrawManager(GraphicsDevice graphicDevice)
+		{
+			return Managers.DrawManager ?? new DrawManager(graphicDevice);
 		}
 
 		/// <summary>
@@ -38,15 +38,15 @@ namespace Engine.Drawing
 		/// </summary>
 		public Dictionary<string, SpriteFont> SpriteFonts { get; set; }
 
-        /// <summary>
-        /// Gets or sets the sprite sheets.
-        /// </summary>
-        public Dictionary<string, Texture2D> SpriteSheets { get; set; }
+		/// <summary>
+		/// Gets or sets the sprite sheets.
+		/// </summary>
+		public Dictionary<string, Texture2D> SpriteSheets { get; set; }
 
-        /// <summary>
-        /// Gets or sets the draw data.
-        /// </summary>
-        public Dictionary<Guid, DrawData> DrawData { get; set; }
+		/// <summary>
+		/// Gets or sets the draw data.
+		/// </summary>
+		public Dictionary<Guid, DrawData> DrawData { get; set; }
 
 		/// <summary>
 		/// Gets or sets the draw data by name.
@@ -63,52 +63,52 @@ namespace Engine.Drawing
 		/// </summary>
 		/// <param name="graphicDevice">The graphics device.</param>
 		private DrawManager(GraphicsDevice graphicDevice)
-        {
+		{
 			this.SpriteBatch = new SpriteBatch(graphicDevice);
 			this.SpriteFonts = new();
 			this.SpriteSheets = new();
 			this.DrawData = new();
-            this.DrawDataByName = new();
-            this.Animations = new();
-            this.IsLoaded = false;
-        }
+			this.DrawDataByName = new();
+			this.Animations = new();
+			this.IsLoaded = false;
+		}
 
-        /// <summary>
-        /// Begins the draw.
-        /// </summary>
-        public void Begin()
-        {
+		/// <summary>
+		/// Begins the draw.
+		/// </summary>
+		public void Begin()
+		{
 			this.SpriteBatch.Begin(
-                SpriteSortMode.Deferred, //first things drawn on bottom, last things on top
-                BlendState.AlphaBlend);
-        }
+				SpriteSortMode.Deferred, //first things drawn on bottom, last things on top
+				BlendState.AlphaBlend);
+		}
 
-        /// <summary>
-        /// Begins the spritebatch drawing.
-        /// </summary>
-        /// <param name="transformMatrix">The matrix.</param>
-        public void Begin(Effect effect, Matrix transformMatrix)
-        {
+		/// <summary>
+		/// Begins the spritebatch drawing.
+		/// </summary>
+		/// <param name="transformMatrix">The matrix.</param>
+		public void Begin(Effect effect, Matrix transformMatrix)
+		{
 			//Matrix projectionMatrix = Matrix.CreateOrthographicOffCenter(0, 1500, 1000, 0, 0, 1);
 			//effect.Parameters["worldViewProjection"].SetValue(transformMatrix * projectionMatrix);
 
 			this.SpriteBatch.Begin(
-                SpriteSortMode.Deferred, //first things drawn on bottom, last things on top
-                BlendState.AlphaBlend,
-                SamplerState.PointWrap,
-                null,
-                null,
+				SpriteSortMode.Deferred, //first things drawn on bottom, last things on top
+				BlendState.AlphaBlend,
+				SamplerState.PointWrap,
+				null,
+				null,
 				null, //effect,
-                transformMatrix);
-        }
+				transformMatrix);
+		}
 
-        /// <summary>
-        /// Ends the draw.
-        /// </summary>
-        public void End()
-        {
+		/// <summary>
+		/// Ends the draw.
+		/// </summary>
+		public void End()
+		{
 			this.SpriteBatch.End();
-        }
+		}
 
 		/// <summary>
 		/// Draws the texture.
@@ -116,9 +116,9 @@ namespace Engine.Drawing
 		/// <param name="texture">The texture.</param>
 		/// <param name="coordinates">The coordinates.</param>
 		public void Draw(Texture2D texture, Vector2 coordinates)
-        {
-            this.SpriteBatch.Draw(texture, coordinates, Color.White);
-        }
+		{
+			this.SpriteBatch.Draw(texture, coordinates, Color.White);
+		}
 
 		/// <summary>
 		/// Draws the texture.
@@ -137,20 +137,20 @@ namespace Engine.Drawing
 		/// <param name="drawData">The draw data.</param>
 		/// <param name="position">The position.</param>
 		public void Draw(DrawData drawData, Position position)
-        {
+		{
 			this.SpriteBatch.Draw(drawData.SpriteSheet, position.Coordinates, drawData.SheetBox, Color.White);
-        }
+		}
 
-        /// <summary>
-        /// Draws the draw data.
-        /// </summary>
-        /// <param name="drawData">The draw data.</param>
-        /// <param name="position">The position.</param>
-        /// <param name="color">The color.</param>
-        public void Draw(DrawData drawData, Position position, Color color)
-        {
+		/// <summary>
+		/// Draws the draw data.
+		/// </summary>
+		/// <param name="drawData">The draw data.</param>
+		/// <param name="position">The position.</param>
+		/// <param name="color">The color.</param>
+		public void Draw(DrawData drawData, Position position, Color color)
+		{
 			this.SpriteBatch.Draw(drawData.SpriteSheet, position.Coordinates, drawData.SheetBox, color);
-        }
+		}
 
 		/// <summary>
 		/// Draws the animation.
@@ -203,14 +203,37 @@ namespace Engine.Drawing
 		}
 
 		/// <summary>
+		/// Writes the text.
+		/// </summary>
+		/// <param name="spriteFont">The sprite font.</param>
+		/// <param name="text">The text.</param>
+		/// <param name="coordinates">The coordinates.</param>
+		public void Write(SpriteFont spriteFont, string text, Vector2 coordinates)
+		{
+			this.SpriteBatch.DrawString(spriteFont, text, coordinates, Color.White);
+		}
+
+		/// <summary>
+		/// Writes the text.
+		/// </summary>
+		/// <param name="spriteFont">The sprite font.</param>
+		/// <param name="text">The text.</param>
+		/// <param name="coordinates">The coordinates.</param>
+		/// <param name="color">The color.</param>
+		public void Write(SpriteFont spriteFont, string text, Vector2 coordinates, Color color)
+		{
+			this.SpriteBatch.DrawString(spriteFont, text, coordinates, color);
+		}
+
+		/// <summary>
 		/// Tries to get the sprite sheet.
 		/// </summary>
 		/// <param name="spriteSheetName">sprite sheet name.</param>
-        /// <param name="texture">The texture.</param>
-        /// <returns>A value indicating whether the sprite sheet was found.</returns>
+		/// <param name="texture">The texture.</param>
+		/// <returns>A value indicating whether the sprite sheet was found.</returns>
 		public bool TryGetSpriteSheet(string spriteSheetName, out Texture2D texture)
 		{
-            return this.SpriteSheets.TryGetValue(spriteSheetName, out texture);
+			return this.SpriteSheets.TryGetValue(spriteSheetName, out texture);
 		}
 
 		/// <summary>

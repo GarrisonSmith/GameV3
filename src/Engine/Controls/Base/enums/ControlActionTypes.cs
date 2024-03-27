@@ -6,38 +6,53 @@
 	public enum ControlActionTypes
 	{
 		/// <summary>
-		/// Represents the none control action.
+		/// The none control action.
 		/// </summary>
 		None = 0,
 
 		/// <summary>
-		/// Represents the up control action.
+		/// The up control action.
 		/// </summary>
 		Up = 1,
 
 		/// <summary>
-		/// Represents the down control action.
+		/// The down control action.
 		/// </summary>
 		Down = 2,
 
 		/// <summary>
-		/// Represents the left control action.
+		/// The left control action.
 		/// </summary>
 		Left = 3,
 
 		/// <summary>
-		/// Represents the right control action.
+		/// The right control action.
 		/// </summary>
 		Right = 4,
 
 		/// <summary>
-		/// Represents the zoom in control action.
+		/// The zoom in control action.
 		/// </summary>
 		ZoomIn = 5,
 
 		/// <summary>
-		/// Represents the zoom out control action.
+		/// The zoom out control action.
 		/// </summary>
 		ZoomOut = 6,
+
+		/// <summary>
+		/// The left click control action.
+		/// </summary>
+		LeftClick = 7,
+
+		/// <summary>
+		/// The middle click control action.
+		/// </summary>
+		MiddleClick = 8,
+
+		/// <summary>
+		/// The right click control action.
+		/// </summary>
+		RightClick = 9,
 	}
 }

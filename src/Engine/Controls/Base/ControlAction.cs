@@ -1,12 +1,13 @@
 ﻿using Engine.Controls.Base.enums;
-using Microsoft.Xna.Framework.Input;
+using Engine.Controls.Base.interfaces;
+using System;
 
 namespace Engine.Controls.Base
 {
 	/// <summary>
 	/// Represents a ControlAction.
 	/// </summary>
-	public class ControlAction
+	public class ControlAction<T>: IControlAction where T : struct, Enum
 	{
 		/// <summary>
 		/// Gets or sets a value indicating whether this control action just started.
@@ -19,9 +20,9 @@ namespace Engine.Controls.Base
 		public double StartTime { get; set; }
 
 		/// <summary>
-		/// Gets or sets the key.
+		/// Gets or sets the button.
 		/// </summary>
-		public Keys Key { get; set; }
+		public T Button { get; set; }
 
 		/// <summary>
 		/// Gets or sets the control action type.
@@ -32,12 +33,14 @@ namespace Engine.Controls.Base
 		/// Initializes a new instance of the ControlAction class.
 		/// </summary>
 		/// <param name="startTime">The start time.</param>
-		/// <param name="key">The key.</param>
+		/// <param name="button">The button.</param>
+		/// <param name="justStarted">A value describing if the control action just started.</param>
 		/// <param name="controlActionType">The control action type.</param>
-		public ControlAction(double startTime, Keys key, ControlActionTypes controlActionType)
-		{ 
+		public ControlAction(double startTime, T button, bool justStarted, ControlActionTypes controlActionType)
+		{
 			this.StartTime = startTime;
-			this.Key = key;
+			this.Button = button;
+			this.JustStarted = justStarted;
 			this.ControlActionType = controlActionType;
 		}
 	}

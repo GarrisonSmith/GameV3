@@ -33,10 +33,16 @@ namespace Engine.Core
 		protected SortedDictionary<ushort, Dictionary<Guid, IUpdateableContent>> ActivatedUpdateables { get; set; }
 
         /// <summary>
-        /// Gets or sets the activated Drawables. Where the key is the update order and 
+        /// Gets or sets the activated Drawables. Where the key is the draw order and 
         /// the value is another dictionary with the key being the content guid.
         /// </summary>
         protected SortedDictionary<ushort, Dictionary<Guid, IDrawableContent>> ActivatedDrawables { get; set; }
+
+        /// <summary>
+        /// Gets or sets the activated overlay Drawables. Where the key is the draw order and
+        /// the value is another dictionary with the key being the content guid.
+        /// </summary>
+        protected SortedDictionary<ushort, Dictionary<Guid, IDrawableContent>> ActivatedOverlayDrawables { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the ContentManager class.
@@ -44,8 +50,7 @@ namespace Engine.Core
         /// <param name="game">The game.</param>
         private ContentManager(Game game) : base(game)
         {
-			this.ActivatedUpdateables = new();
-			this.ActivatedDrawables = new();
+
         }
 
         /// <summary>
@@ -53,8 +58,10 @@ namespace Engine.Core
         /// </summary>
         public override void Initialize()
         {
-
-        }
+			this.ActivatedUpdateables = new();
+			this.ActivatedDrawables = new();
+            this.ActivatedOverlayDrawables = new();
+		}
 
         /// <summary>
         /// Updates the content.
@@ -86,11 +93,26 @@ namespace Engine.Core
             }
         }
 
-        /// <summary>
-        /// Adds the updateable.
-        /// </summary>
-        /// <param name="content">The updateable content.</param>
-        public void AddUpdateable(IUpdateableContent content)
+		/// <summary>
+		/// Draws the content.
+		/// </summary>
+		/// <param name="gameTime">The game time.</param>
+		public void DrawOverlay(GameTime gameTime)
+		{
+			foreach (var keyValuePair in this.ActivatedOverlayDrawables)
+			{
+				foreach (var drawableContent in keyValuePair.Value.Values)
+				{
+					drawableContent.Draw();
+				}
+			}
+		}
+
+		/// <summary>
+		/// Adds the updateable.
+		/// </summary>
+		/// <param name="content">The updateable content.</param>
+		public void AddUpdateable(IUpdateableContent content)
         {
             if (!content.UpdatingActivated)
             {
@@ -138,11 +160,37 @@ namespace Engine.Core
             }
         }
 
-        /// <summary>
-        /// Changes the update activation of the updateable.
-        /// </summary>
-        /// <param name="content">The content.</param>
-        public void ChangeUpdateActivation(IUpdateableContent content)
+		/// <summary>
+		/// Adds the overlay drawable.
+		/// </summary>
+		/// <param name="content">The overlay drawable content.</param>
+		public void AddOverlayDrawable(IDrawableContent content)
+		{
+			if (!content.DrawingActivated)
+			{
+				return;
+			}
+
+			if (this.ActivatedOverlayDrawables.TryGetValue(content.DrawOrder, out var nestedDictionary))
+			{
+				nestedDictionary.Add(content.Guid, content);
+			}
+			else
+			{
+				nestedDictionary = new Dictionary<Guid, IDrawableContent>
+				{
+					{ content.Guid, content }
+				};
+
+				this.ActivatedOverlayDrawables.Add(content.DrawOrder, nestedDictionary);
+			}
+		}
+
+		/// <summary>
+		/// Changes the update activation of the updateable.
+		/// </summary>
+		/// <param name="content">The content.</param>
+		public void ChangeUpdateActivation(IUpdateableContent content)
         {
             if (content.UpdatingActivated)
             {
@@ -220,12 +268,53 @@ namespace Engine.Core
             }
         }
 
-        /// <summary>
-        /// Changes the content update order.
-        /// </summary>
-        /// <param name="oldUpdateOrder">The old update order.</param>
-        /// <param name="content">The content.</param>
-        public void ChangeUpdateOrder(ushort oldUpdateOrder, IUpdateableContent content)
+		/// <summary>
+		/// Changes the draw activation of the overlay drawable.
+		/// </summary>
+		/// <param name="content">The content.</param>
+		public void ChangeOverlayDrawActivation(IDrawableContent content)
+		{
+			if (content.DrawingActivated)
+			{
+				if (this.ActivatedOverlayDrawables.TryGetValue(content.DrawOrder, out var nestedDictionary))
+				{
+					nestedDictionary.Add(content.Guid, content);
+				}
+				else
+				{
+					nestedDictionary = new Dictionary<Guid, IDrawableContent>
+					{
+						{ content.Guid, content }
+					};
+
+					this.ActivatedOverlayDrawables.Add(content.DrawOrder, nestedDictionary);
+				}
+			}
+			else
+			{
+				if (!this.ActivatedOverlayDrawables.TryGetValue(content.DrawOrder, out var nestedDictionary))
+				{
+					Console.WriteLine("Update order dictionary not found");
+				}
+
+				if (nestedDictionary == null || !nestedDictionary.Remove(content.Guid))
+				{
+					Console.WriteLine("Content not found in nested update dictionary");
+				}
+
+				if (nestedDictionary != null && nestedDictionary.Count == 0)
+				{
+					this.ActivatedOverlayDrawables.Remove(content.DrawOrder);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Changes the content update order.
+		/// </summary>
+		/// <param name="oldUpdateOrder">The old update order.</param>
+		/// <param name="content">The content.</param>
+		public void ChangeUpdateOrder(ushort oldUpdateOrder, IUpdateableContent content)
         {
             if (!content.UpdatingActivated)
             {
@@ -303,6 +392,48 @@ namespace Engine.Core
 				this.ActivatedDrawables.Add(content.DrawOrder, nestedDestinationDictionary);
             }
         }
+
+		/// <summary>
+		/// Changes the content overlay draw order.
+		/// </summary>
+		/// <param name="oldDrawOrder">The old draw order.</param>
+		/// <param name="content">The content.</param>
+		public void ChangeOverlayDrawOrder(ushort oldDrawOrder, IDrawableContent content)
+		{
+			if (!content.DrawingActivated)
+			{
+				return;
+			}
+
+			if (!this.ActivatedOverlayDrawables.TryGetValue(oldDrawOrder, out var nestedOriginalDictionary))
+			{
+				Console.WriteLine("Draw order dictionary not found");
+			}
+
+			if (nestedOriginalDictionary == null || !nestedOriginalDictionary.Remove(content.Guid))
+			{
+				Console.WriteLine("Content not found in nested draw dictionary");
+			}
+
+			if (nestedOriginalDictionary == null || nestedOriginalDictionary.Count == 0)
+			{
+				this.ActivatedOverlayDrawables.Remove(oldDrawOrder);
+			}
+
+			if (this.ActivatedOverlayDrawables.TryGetValue(content.DrawOrder, out var nestedDestinationDictionary))
+			{
+				nestedDestinationDictionary.Add(content.Guid, content);
+			}
+			else
+			{
+				nestedDestinationDictionary = new Dictionary<Guid, IDrawableContent>
+				{
+					{ content.Guid, content }
+				};
+
+				this.ActivatedOverlayDrawables.Add(content.DrawOrder, nestedDestinationDictionary);
+			}
+		}
 
 		/// <summary>
 		/// Loads data.

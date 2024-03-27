@@ -65,7 +65,7 @@ namespace Engine.Physics.Areas
 		/// <summary>
 		/// Gets or sets the position.
 		/// </summary>
-		public Position Position { get; private set; }
+		public Position Position { get; set; }
 
 		/// <summary>
 		/// Initializes a new instance of the Area class.
@@ -97,6 +97,17 @@ namespace Engine.Physics.Areas
 		/// <param name="point">The point.</param>
 		/// <returns>A value indicating whether the point is contained by this area.</returns>
 		public bool Contains(Vector2 point)
+		{
+			return this.X <= point.X && point.X <= this.X + this.Width
+				&& this.Y <= point.Y && point.Y <= this.Y + this.Height;
+		}
+
+		/// <summary>
+		/// Returns a value indicating whether the point is contained by this area.
+		/// </summary>
+		/// <param name="point">The point.</param>
+		/// <returns>A value indicating whether the point is contained by this area.</returns>
+		public bool Contains(Point point)
 		{
 			return this.X <= point.X && point.X <= this.X + this.Width
 				&& this.Y <= point.Y && point.Y <= this.Y + this.Height;

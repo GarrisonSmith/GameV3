@@ -1,4 +1,7 @@
-﻿using Engine.Physics.Base;
+﻿using Engine.Loading.Configurations;
+using Engine.Physics.Areas;
+using Engine.Physics.Base;
+using Engine.UI.Base;
 using Engine.View.CameraTasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
@@ -35,6 +38,9 @@ namespace Engine
 		{
 			// TODO: use this.Content to load your game content here
 			Managers.Load();
+
+			var pos = new Position(64, 64);
+			var button = new Button(true, 1, new SimpleArea(pos, 125, 32), Color.Aqua, Color.Crimson, 6, "Change Color", Color.Black, Managers.DrawManager.SpriteFonts[FontsConfig.MonoBold12]);
 		}
 
 		protected override void Update(GameTime gameTime)
@@ -63,11 +69,17 @@ namespace Engine
 		{
 			this.GraphicsDevice.Clear(Color.CornflowerBlue);
 
-			// TODO: Add your drawing code here
+			//Draws the scene.
 			Managers.DrawManager.Begin(null, Managers.CameraManager.Camera.CameraMatrix);
 
-			Managers.ContentManager.Draw(gameTime);
 			base.Draw(gameTime);
+
+			Managers.DrawManager.End();
+
+			//Draws the UI.
+			Managers.DrawManager.Begin();
+
+			Managers.ContentManager.DrawOverlay(gameTime);
 
 			Managers.DrawManager.End();
 		}

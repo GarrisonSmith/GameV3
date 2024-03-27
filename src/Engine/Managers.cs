@@ -9,6 +9,7 @@ using Engine.Physics;
 using Engine.Physics.Areas;
 using Engine.TileMapping;
 using Engine.TileMapping.Base;
+using Engine.UI;
 using Engine.View;
 using Engine.View.CameraTasks;
 using Microsoft.Xna.Framework;
@@ -81,6 +82,11 @@ namespace Engine
 		public static DebuggingManager DebuggingManager { get; private set; }
 
 		/// <summary>
+		/// Gets or sets the UI manager.
+		/// </summary>
+		public static UiManager UiManager { get; private set; }
+
+		/// <summary>
 		/// Initializes the managers.
 		/// </summary>
 		/// <param name="game">The game.</param>
@@ -101,6 +107,7 @@ namespace Engine
 			Managers.RandomManager = RandomManager.StartRandomManager();
 			Managers.TileManager = TileManager.StartTileManager();
 			Managers.EntityManager = EntityManager.StartEntityManager();
+			Managers.UiManager = UiManager.StartUiManager(game);
 
 			// Add game components.
 			Managers.PhysicsManager.UpdateOrder = 1;
@@ -111,7 +118,9 @@ namespace Engine
 			game.Components.Add(Managers.CameraManager);
 			Managers.ContentManager.UpdateOrder = 4;
 			game.Components.Add(Managers.ContentManager);
-			Managers.DebuggingManager.UpdateOrder = 5;
+			Managers.UiManager.UpdateOrder = 5;
+			game.Components.Add(Managers.UiManager);
+			Managers.DebuggingManager.UpdateOrder = 6;
 			game.Components.Add(Managers.DebuggingManager);
 		}
 
@@ -121,7 +130,7 @@ namespace Engine
 		public static void Load()
 		{
 			// Determines if debugging info will be shown.
-			Managers.DebuggingManager.DebuggerEnabled = true;
+			Managers.DebuggingManager.DebuggerEnabled = false;
 
 			// Managers that need to load content from disk.
 			Managers.DrawManager.Load();
