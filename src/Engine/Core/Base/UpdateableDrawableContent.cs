@@ -1,5 +1,4 @@
 ﻿using Engine.Core.Base.interfaces;
-using Engine.Drawing;
 using Engine.Drawing.Base;
 using Engine.Drawing.Base.interfaces;
 using Engine.Physics.Areas.interfaces;
@@ -95,7 +94,7 @@ namespace Engine.Core.Base
 		/// <summary>
 		/// Gets or sets the position.
 		/// </summary>
-		public Position Position { get; set; }
+		public Position Position { get => this.Area.Position; set => this.Area.Position = value; }
 
 		/// <summary>
 		/// Gets or sets the area.
@@ -114,17 +113,15 @@ namespace Engine.Core.Base
 		/// <param name="drawingActivated">A value indicating whether the content is drawing.</param>
 		/// <param name="updateOrder">The update order.</param> 
 		/// <param name="drawOrder">The draw order.</param>
-        /// <param name="position">The position.</param>
 		/// <param name="area">The area.</param>
 		/// <param name="drawData">The draw data.</param>
-		public UpdateableDrawableContent(bool updatingActivated, bool drawingActivated, ushort updateOrder, ushort drawOrder, Position position, IAmAArea area, DrawData drawData)
+		protected UpdateableDrawableContent(bool updatingActivated, bool drawingActivated, ushort updateOrder, ushort drawOrder, IAmAArea area, DrawData drawData)
         {
 			this.Guid = Guid.NewGuid();
             this.updatingActivated = updatingActivated;
             this.drawingActivated = drawingActivated;
             this.updateOrder = updateOrder;
             this.drawOrder = drawOrder;
-            this.Position = position;
 			this.Area = area;
 			this.DrawData = drawData;
 			Managers.ContentManager.AddUpdateable(this);

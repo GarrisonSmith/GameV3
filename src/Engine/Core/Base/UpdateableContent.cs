@@ -51,12 +51,12 @@ namespace Engine.Core.Base
             }
         }
 
-        /// <summary>
-        /// Initializes a new instance of the UpdateableContent class.
-        /// </summary>
-        /// <param name="updatingActivated">A value indicating whether the content is updating.</param>
-        /// <param name="updateOrder">The update order.</param>
-        public UpdateableContent(bool updatingActivated, ushort updateOrder)
+		/// <summary>
+		/// Initializes a new instance of the UpdateableContent class.
+		/// </summary>
+		/// <param name="updatingActivated">A value indicating whether the content is updating.</param>
+		/// <param name="updateOrder">The update order.</param>
+		protected UpdateableContent(bool updatingActivated, ushort updateOrder)
         {
 			this.Guid = Guid.NewGuid();
             this.updatingActivated = updatingActivated;

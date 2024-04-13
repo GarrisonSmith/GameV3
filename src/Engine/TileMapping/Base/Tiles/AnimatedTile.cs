@@ -1,7 +1,6 @@
 ﻿using Engine.Core.Base;
 using Engine.Drawing.Base;
 using Engine.Physics.Areas.interfaces;
-using Engine.Physics.Base;
 using Engine.Physics.Collisions.interfaces;
 using Engine.TileMapping.Base.interfaces;
 
@@ -21,11 +20,6 @@ namespace Engine.TileMapping.Base.Tiles
 		/// Gets or sets the collision area.
 		/// </summary>
 		public IAmACollisionArea CollisionArea { get; set; }
-
-		/// <summary>
-		/// Gets or sets the tile data.
-		/// </summary>
-		public TileData TileData { get; set; }
 
         /// <summary>
         /// Gets or sets the tile map layer.
@@ -47,17 +41,14 @@ namespace Engine.TileMapping.Base.Tiles
 		/// <param name="area">The area.</param>
 		/// <param name="collisionArea">The collision area.</param>
 		/// <param name="animation">The animation.</param>
-		/// <param name="tileData">The tile data.</param>
 		/// <param name="tileMapLayer">The tile map layer.</param>
-		public AnimatedTile(bool updatingActivated, bool drawingActivated, ushort updateOrder, ushort drawOrder, Position position, IAmAArea area, IAmACollisionArea collisionArea, Animation animation, TileData tileData, TileMapLayer tileMapLayer)
-            : base(updatingActivated, drawingActivated, updateOrder, drawOrder, position, area, animation)
+		public AnimatedTile(bool updatingActivated, bool drawingActivated, ushort updateOrder, ushort drawOrder, IAmAArea area, IAmACollisionArea collisionArea, Animation animation, TileMapLayer tileMapLayer)
+            : base(updatingActivated, drawingActivated, updateOrder, drawOrder, area, animation)
         {
-            this.TileData = tileData;
             this.TileMapLayer = tileMapLayer;
 			this.CollisionArea = collisionArea;
-			this.TileData.Tiles.Add(this);
-			Managers.TileManager.Tiles.Add(Guid, this);
-            this.TileMapLayer.AddTile((int)Position.Y / Tile.TILE_DIMENSIONS, (int)Position.X / Tile.TILE_DIMENSIONS, this);
+			Managers.TileManager.Tiles.Add(this.Guid, this);
+            this.TileMapLayer.AddTile((int)this.Position.Y / Tile.TILE_DIMENSIONS, (int)this.Position.X / Tile.TILE_DIMENSIONS, this);
 		}
 
         /// <summary>

@@ -240,7 +240,7 @@ namespace Engine.Physics.Base
 		{
 			if (area is ComplexArea complexArea)
 			{
-				foreach (var subArea in complexArea.SubAreas)
+				foreach (var subArea in complexArea.OffsetAreas)
 				{
 					this.UpdateCollisionBounds(subArea, candidatePositionTopLeft);
 				}
@@ -248,7 +248,7 @@ namespace Engine.Physics.Base
 				return;
 			}
 
-			//get movement amounts.
+			//get movement amounts
 			var horizontalMovement = candidatePositionTopLeft.X - this.MovingEntity.CollisionArea.Area.X;
 			var verticalMovement = candidatePositionTopLeft.Y - this.MovingEntity.CollisionArea.Area.Y;
 			bool horizontalMovementOkay = true;
@@ -288,12 +288,12 @@ namespace Engine.Physics.Base
 			{
 				if (this.MovingEntity.CollisionArea.Area.BottomRight.X <= area.TopLeft.X)
 				{
-					//moving area is right area
+					//moving area is right of area
 					this.SmallestXCollision = area.TopLeft.X;
 				}
 				else if (this.MovingEntity.CollisionArea.Area.TopLeft.X >= area.BottomRight.X)
 				{
-					//moving area is left area
+					//moving area is left of area
 					this.LargestXCollision = area.BottomRight.X;
 				}
 
@@ -302,7 +302,7 @@ namespace Engine.Physics.Base
 			else if (horizontalMovementOkay && verticalMovementOkay)
 			{
 				//Since we know a intersection occurs on the final position for this method to execute we can just apply both a horizontal and vertical collision.
-				//This is for when a rectangle is moving perfectly diagonally toward the area. 
+				//This is for when a rectangle is moving perfectly diagonal toward the area. 
 				float? existingX = null, existingY = null;
 				if (this.SmallestXCollision.HasValue)
 				{
@@ -325,13 +325,13 @@ namespace Engine.Physics.Base
 				var cornerCollision = new Vector2();
 				if (this.MovingEntity.CollisionArea.Area.BottomRight.X <= area.TopLeft.X)
 				{
-					//moving area is right area
+					//moving area is right of area
 					this.SmallestXCollision = area.TopLeft.X;
 					cornerCollision.X = area.TopLeft.X;
 				}
 				else if (this.MovingEntity.CollisionArea.Area.TopLeft.X >= area.BottomRight.X)
 				{
-					//moving area is left area
+					//moving area is left of area
 					this.LargestXCollision = area.BottomRight.X;
 					cornerCollision.X = area.BottomRight.X;
 				}
@@ -509,12 +509,12 @@ namespace Engine.Physics.Base
 			if (this.SmallestXCollision.HasValue)
 			{
 				//Colliding with something to the right
-				candidatePositionTopLeftX = this.SmallestXCollision.Value - this.MovingEntity.CollisionArea.Area.Width - SimpleArea.COLLISION_EPSILON_DOUBLE;
+				candidatePositionTopLeftX = this.SmallestXCollision.Value - this.MovingEntity.CollisionArea.Area.Width - SimpleArea.DOUBLE_COLLISION_EPSILON;
 			}
 			else if (this.LargestXCollision.HasValue)
 			{
 				//Colliding with something to the left
-				candidatePositionTopLeftX = this.LargestXCollision.Value + SimpleArea.COLLISION_EPSILON_DOUBLE;
+				candidatePositionTopLeftX = this.LargestXCollision.Value + SimpleArea.DOUBLE_COLLISION_EPSILON;
 			}
 
 			return candidatePositionTopLeftX;
@@ -530,12 +530,12 @@ namespace Engine.Physics.Base
 			if (this.SmallestYCollision.HasValue)
 			{
 				//Colliding with something below
-				candidatePositionTopLeftY = this.SmallestYCollision.Value - this.MovingEntity.CollisionArea.Area.Height - SimpleArea.COLLISION_EPSILON_DOUBLE;
+				candidatePositionTopLeftY = this.SmallestYCollision.Value - this.MovingEntity.CollisionArea.Area.Height - SimpleArea.DOUBLE_COLLISION_EPSILON;
 			}
 			else if (this.LargestYCollision.HasValue)
 			{
 				//Colliding with something above
-				candidatePositionTopLeftY = this.LargestYCollision.Value + SimpleArea.COLLISION_EPSILON_DOUBLE;
+				candidatePositionTopLeftY = this.LargestYCollision.Value + SimpleArea.DOUBLE_COLLISION_EPSILON;
 			}
 
 			return candidatePositionTopLeftY;

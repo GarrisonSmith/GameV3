@@ -2,6 +2,7 @@
 using Engine.Physics.Base;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Engine.Physics.Areas
 {
@@ -10,7 +11,8 @@ namespace Engine.Physics.Areas
 	/// </summary>
 	public class ComplexArea : IAmAArea
 	{
-		private List<OffsetArea> subAreas;
+		private float StoredHeight;
+		private float StoredWidth;
 
 		/// <summary>
 		/// Get or sets the top left X value of the area.
@@ -25,12 +27,34 @@ namespace Engine.Physics.Areas
 		/// <summary>
 		/// Gets or sets the width.
 		/// </summary>
-		public float Width { get; set; }
+		public float Width 
+		{
+			get
+			{
+				if (this.SubAreasChanged)
+				{
+					this.UpdateDimensions();
+				}
+
+				return this.StoredWidth;
+			}
+		}
 
 		/// <summary>
 		/// Gets or sets the height.
 		/// </summary>
-		public float Height { get; set; }
+		public float Height 
+		{ 
+			get 
+			{
+				if (this.SubAreasChanged)
+				{
+					this.UpdateDimensions();
+				}
+
+				return this.StoredHeight;
+			}
+		}
 
 		/// <summary>
 		/// Gets or sets the top right position of the area.
@@ -55,29 +79,53 @@ namespace Engine.Physics.Areas
 		/// <summary>
 		/// Gets or sets the sub areas.
 		/// </summary>
-		public List<OffsetArea> SubAreas { get => subAreas; private set => this.subAreas = value; }
+		public IReadOnlyList<OffsetArea> OffsetAreas { get => SubAreas; }
+
+		/// <summary>
+		/// Gets or sets a value indicated if the sub areas has changed.
+		/// </summary>
+		private bool SubAreasChanged { get; set; }
+
+		/// <summary>
+		/// Gets or sets the sub areas.
+		/// </summary>
+		private List<OffsetArea> SubAreas { get; set; }
 
 		/// <summary>
 		/// Initializes a new instance of the ComplexArea class.
 		/// </summary>
 		/// <param name="position">The position.</param>
-		public ComplexArea(Position position, List<OffsetArea> subAreas)
+		/// <param name="offsetAreas">The offset areas.</param>
+		public ComplexArea(Position position, List<OffsetArea> offsetAreas)
 		{ 
 			this.Position = position;
-			this.SubAreas = subAreas;
-			this.Width = 0;
-			this.Height = 0;
-			foreach (var complexSubArea in this.SubAreas)
-			{ 
-				if (complexSubArea.HorizontalOffset > this.Width)
-				{
-					this.Width = complexSubArea.HorizontalOffset;
-				}
+			this.SubAreas = offsetAreas;
+			this.SubAreasChanged = true;
+		}
 
-				if (complexSubArea.VerticalOffset > this.Height)
-				{
-					this.Height = complexSubArea.VerticalOffset;
-				}
+		/// <summary>
+		/// Adds the offset area if its not already in this complex area.
+		/// </summary>
+		/// <param name="offsetArea">The offset area.</param>
+		public void AddOffsetArea(OffsetArea offsetArea)
+		{
+			if (!this.SubAreas.Contains(offsetArea))
+			{
+				this.SubAreas.Add(offsetArea);
+				this.SubAreasChanged = true;
+			}
+		}
+
+		/// <summary>
+		/// Adds the removes area in this complex area.
+		/// </summary>
+		/// <param name="offsetArea">The offset area.</param>
+		public void RemoveOffsetArea(OffsetArea offsetArea)
+		{
+			if (!this.SubAreas.Contains(offsetArea))
+			{
+				this.SubAreas.Remove(offsetArea);
+				this.SubAreasChanged = true;
 			}
 		}
 
@@ -88,15 +136,7 @@ namespace Engine.Physics.Areas
 		/// <returns>A value indicating whether the point is contained by this area.</returns>
 		public bool Contains(Vector2 point)
 		{
-			foreach (var complexSubArea in this.SubAreas) 
-			{
-				if (complexSubArea.Contains(point))
-				{
-					return true;
-				}
-			}
-
-			return false;
+			return this.OffsetAreas.Any(x => x.Contains(point));
 		}
 
 		/// <summary>
@@ -106,15 +146,7 @@ namespace Engine.Physics.Areas
 		/// <returns>A value indicating whether the point is contained by this area.</returns>
 		public bool Contains(Point point)
 		{
-			foreach (var complexSubArea in this.SubAreas)
-			{
-				if (complexSubArea.Contains(point))
-				{
-					return true;
-				}
-			}
-
-			return false;
+			return this.OffsetAreas.Any(x => x.Contains(point));
 		}
 
 		/// <summary>
@@ -123,17 +155,32 @@ namespace Engine.Physics.Areas
 		/// <param name="external">The external area.</param>
 		/// <param name="candidatePosition">The candidate position.</param>
 		/// <returns>A value indicating whether the point is intersected by this area.</returns>
-		public bool Intersects(IAmAArea external, Vector2? candidatePosition)
+		public bool Intersects(IAmAArea external, Vector2? candidatePosition = null)
 		{
-			foreach (var complexSubArea in this.SubAreas)
+			return this.OffsetAreas.Any(x => x.Intersects(external, candidatePosition));
+		}
+
+		/// <summary>
+		/// Updates the complex areas dimensions.
+		/// </summary>
+		private void UpdateDimensions()
+		{
+			this.StoredWidth = 0f;
+			this.StoredHeight = 0f;
+			foreach (var complexSubArea in this.OffsetAreas)
 			{
-				if (complexSubArea.Intersects(external, candidatePosition))
+				if (complexSubArea.HorizontalOffset > this.StoredWidth)
 				{
-					return true;
+					this.StoredWidth = complexSubArea.VerticalOffset + complexSubArea.Width;
+				}
+
+				if (complexSubArea.VerticalOffset > this.StoredHeight)
+				{
+					this.StoredHeight = complexSubArea.VerticalOffset + complexSubArea.Height;
 				}
 			}
 
-			return false;
+			this.SubAreasChanged = false;
 		}
 	}
 }

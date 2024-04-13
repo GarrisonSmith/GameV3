@@ -122,7 +122,7 @@ namespace Engine.Debugging
 			}
 			else if (collision.CollisionArea.Area is ComplexArea complexArea)
 			{
-				foreach (var area in complexArea.SubAreas)
+				foreach (var area in complexArea.OffsetAreas)
 				{
 					this.TryAddRectangleTexture(
 						collision,

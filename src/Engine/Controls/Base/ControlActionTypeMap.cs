@@ -63,11 +63,9 @@ namespace Engine.Controls.Base
 		{
 			switch (button)
 			{
-				case MouseButtons.Left: return ControlActionTypes.LeftClick;
+				case MouseButtons.Left: return ControlActionTypes.PrimaryClick;
 
-				case MouseButtons.Middle: return ControlActionTypes.MiddleClick;
-
-				case MouseButtons.Right: return ControlActionTypes.RightClick;
+				case MouseButtons.Right: return ControlActionTypes.SecondaryClick;
 
 				default: return ControlActionTypes.None;
 			}

@@ -1,5 +1,4 @@
-﻿using Engine.Physics.Base;
-using Engine.Physics.Base.interfaces;
+﻿using Engine.Physics.Base.interfaces;
 using Microsoft.Xna.Framework;
 
 namespace Engine.Physics.Areas.interfaces
@@ -22,12 +21,12 @@ namespace Engine.Physics.Areas.interfaces
 		/// <summary>
 		/// Gets or sets the width.
 		/// </summary>
-		public float Width { get; set; }
+		public float Width { get; }
 
 		/// <summary>
 		/// Gets or sets the height.
 		/// </summary>
-		public float Height { get; set; }
+		public float Height { get; }
 
 		/// <summary>
 		/// Gets or sets the top right position of the area.
@@ -50,6 +49,13 @@ namespace Engine.Physics.Areas.interfaces
 		/// <param name="point">The point.</param>
 		/// <returns>A value indicating whether the point is contained by this area.</returns>
 		public bool Contains(Vector2 point);
+
+		/// <summary>
+		/// Returns a value indicating whether the point is contained by this area.
+		/// </summary>
+		/// <param name="point">The point.</param>
+		/// <returns>A value indicating whether the point is contained by this area.</returns>
+		public bool Contains(Point point);
 
 		/// <summary>
 		/// Returns a value indicating whether the external area is intersecting by this area.

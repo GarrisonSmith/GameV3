@@ -57,7 +57,7 @@ namespace Engine.Core.Base
 		/// <summary>
 		/// Gets or sets the position.
 		/// </summary>
-		public Position Position { get; set; }
+		public Position Position { get => this.Area.Position; set => this.Area.Position = value; }
 
 		/// <summary>
 		/// Gets or sets the area.
@@ -74,15 +74,13 @@ namespace Engine.Core.Base
 		/// </summary>
 		/// <param name="drawingActivated">A value indicating whether the content is drawing.</param>
 		/// <param name="drawOrder">The draw order.</param>
-        /// <param name="position">The position.</param>
 		/// <param name="area">The area.</param>
 		/// <param name="drawData">The draw data.</param>
-		public DrawableContent(bool drawingActivated, ushort drawOrder, Position position, IAmAArea area, DrawData drawData)
+		protected DrawableContent(bool drawingActivated, ushort drawOrder, IAmAArea area, DrawData drawData)
         {
 			this.Guid = Guid.NewGuid();
             this.drawingActivated = drawingActivated;
             this.drawOrder = drawOrder;
-            this.Position = position;
 			this.Area = area;
 			this.DrawData = drawData;
 			Managers.ContentManager.AddDrawable(this);

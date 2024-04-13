@@ -49,11 +49,6 @@ namespace Engine.Drawing
 		public Dictionary<Guid, DrawData> DrawData { get; set; }
 
 		/// <summary>
-		/// Gets or sets the draw data by name.
-		/// </summary>
-		public Dictionary<string, DrawData> DrawDataByName { get; set; }
-
-		/// <summary>
 		/// Gets or sets the animations.
 		/// </summary>
 		public Dictionary<Guid, Animation> Animations { get; set; }
@@ -68,7 +63,6 @@ namespace Engine.Drawing
 			this.SpriteFonts = new();
 			this.SpriteSheets = new();
 			this.DrawData = new();
-			this.DrawDataByName = new();
 			this.Animations = new();
 			this.IsLoaded = false;
 		}
@@ -111,6 +105,36 @@ namespace Engine.Drawing
 		}
 
 		/// <summary>
+		/// Draws the area of the texture at origin.
+		/// </summary>
+		/// <param name="texture">The texture.</param>
+		public void Draw(Texture2D texture)
+		{
+			this.SpriteBatch.Draw(texture, new Vector2(), Color.White);
+		}
+
+		/// <summary>
+		/// Draws the area of the texture at origin.
+		/// </summary>
+		/// <param name="texture">The texture.</param>
+		/// <param name="area">The area.</param>
+		public void Draw(Texture2D texture, Rectangle area)
+		{
+			this.SpriteBatch.Draw(texture, new Vector2(0, 0), area, Color.White);
+		}
+
+		/// <summary>
+		/// Draws the texture.
+		/// </summary>
+		/// <param name="texture">The texture.</param>
+		/// <param name="x">The x coordinate.</param>
+		/// <param name="y">The y coordinate.</param>
+		public void Draw(Texture2D texture, int x, int y)
+		{
+			this.SpriteBatch.Draw(texture, new Vector2(x, y), Color.White);
+		}
+
+		/// <summary>
 		/// Draws the texture.
 		/// </summary>
 		/// <param name="texture">The texture.</param>
@@ -138,7 +162,7 @@ namespace Engine.Drawing
 		/// <param name="position">The position.</param>
 		public void Draw(DrawData drawData, Position position)
 		{
-			this.SpriteBatch.Draw(drawData.SpriteSheet, position.Coordinates, drawData.SheetBox, Color.White);
+			this.SpriteBatch.Draw(drawData.Texture, position.Coordinates, drawData.TextureBox, Color.White);
 		}
 
 		/// <summary>
@@ -149,7 +173,7 @@ namespace Engine.Drawing
 		/// <param name="color">The color.</param>
 		public void Draw(DrawData drawData, Position position, Color color)
 		{
-			this.SpriteBatch.Draw(drawData.SpriteSheet, position.Coordinates, drawData.SheetBox, color);
+			this.SpriteBatch.Draw(drawData.Texture, position.Coordinates, drawData.TextureBox, color);
 		}
 
 		/// <summary>

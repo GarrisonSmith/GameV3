@@ -1,8 +1,5 @@
 ﻿using Engine.Core.Base.interfaces;
-using Engine.Physics.Areas;
-using Engine.Physics.Areas.interfaces;
-using Engine.Physics.Base;
-using Microsoft.Xna.Framework.Graphics;
+using Engine.UI.Base.enums;
 using System;
 
 namespace Engine.UI.Base
@@ -10,7 +7,7 @@ namespace Engine.UI.Base
 	/// <summary>
 	/// Represents a UI element.
 	/// </summary>
-	public class UiElement : IDrawableContent
+	public abstract class BaseUiElement : IDrawableContent
 	{
 		private bool drawingActivated;
 		private bool beingHovered;
@@ -86,44 +83,19 @@ namespace Engine.UI.Base
 		}
 
 		/// <summary>
-		/// Gets or sets the UI position.
-		/// </summary>
-		public Position Position { get; set; }
-
-		/// <summary>
-		/// Gets or sets the area.
-		/// </summary>
-		public SimpleArea Area { get; set; }
-
-		/// <summary>
-		/// Gets or sets the button hover area.
-		/// </summary>
-		public OffsetArea ButtonHoverArea { get; set; }
-
-		/// <summary>
-		/// Gets or sets the UI texture. 
-		/// </summary>
-		public Texture2D UiTexture { get; set; }
-
-		/// <summary>
 		/// Initializes a new instance of the UiElement class.
 		/// </summary>
 		/// <param name="uiElementType">The UI element type.</param>
 		/// <param name="drawingActivated">A value indicating whether the content is drawing.</param>
 		/// <param name="drawOrder">The draw order.</param>
-		/// <param name="area">The area.</param>
-		protected UiElement(UiElementTypes uiElementType, bool drawingActivated, ushort drawOrder, SimpleArea area, OffsetArea hoverArea)
+		protected BaseUiElement(UiElementTypes uiElementType, bool drawingActivated, ushort drawOrder)
 		{
 			this.Guid = Guid.NewGuid();
 			this.UiElementType = uiElementType;
 			this.drawingActivated = drawingActivated;
 			this.drawOrder = drawOrder;
-			this.Position = area.Position;
-			this.Area = area;
-			this.ButtonHoverArea = hoverArea;
 			Managers.ContentManager.AddOverlayDrawable(this);
 			Managers.UiManager.UiElements.Add(this.Guid, this);
-			Managers.UiManager.UiElementsByHoverArea.Add(hoverArea, this);
 		}
 
 		/// <summary>
@@ -147,7 +119,7 @@ namespace Engine.UI.Base
 		/// </summary>
 		public virtual void Draw()
 		{
-			Managers.DrawManager.Draw(this.UiTexture, this.Position.Coordinates);
+
 		}
 	}
 }

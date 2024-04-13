@@ -1,7 +1,4 @@
-﻿using Engine.Loading.Configurations;
-using Engine.Physics.Areas;
-using Engine.Physics.Base;
-using Engine.UI.Base;
+﻿using Engine.Physics.Base;
 using Engine.View.CameraTasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
@@ -40,7 +37,7 @@ namespace Engine
 			Managers.Load();
 
 			var pos = new Position(64, 64);
-			var button = new Button(true, 1, new SimpleArea(pos, 125, 32), Color.Aqua, Color.Crimson, 6, "Change Color", Color.Black, Managers.DrawManager.SpriteFonts[FontsConfig.MonoBold12]);
+			//var button = new Button(true, 1, new SimpleArea(pos, 125, 32), Color.Aqua, Color.Crimson, 6, "Change Color", Color.Black, Managers.DrawManager.SpriteFonts[FontsConfig.MonoBold12]);
 		}
 
 		protected override void Update(GameTime gameTime)

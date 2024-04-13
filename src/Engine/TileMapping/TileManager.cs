@@ -45,16 +45,6 @@ namespace Engine.TileMapping
         /// </summary>
         public Dictionary<Guid, IAmATile> Tiles { get; set; }
 
-        /// <summary>
-        /// Gets or sets the tile data.
-        /// </summary>
-        public Dictionary<Guid, TileData> TileData { get; set; }
-
-		/// <summary>
-		/// Gets or sets the tile data by tile name.
-		/// </summary>
-		public Dictionary<string, TileData> TileDataByTileName { get; set; }
-
 		/// <summary>
 		/// Initializes a new instance of the TileManager class.
 		/// </summary>
@@ -63,8 +53,6 @@ namespace Engine.TileMapping
 			this.TileMaps = new();
 			this.TileMapLayers = new();
 			this.Tiles = new();
-			this.TileData = new();
-			this.TileDataByTileName = new();
             this.IsLoaded = false;
         }
 

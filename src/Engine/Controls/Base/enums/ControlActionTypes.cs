@@ -41,18 +41,13 @@
 		ZoomOut = 6,
 
 		/// <summary>
-		/// The left click control action.
+		/// The primary click control action.
 		/// </summary>
-		LeftClick = 7,
+		PrimaryClick = 7,
 
 		/// <summary>
-		/// The middle click control action.
+		/// The Secondary click control action.
 		/// </summary>
-		MiddleClick = 8,
-
-		/// <summary>
-		/// The right click control action.
-		/// </summary>
-		RightClick = 9,
+		SecondaryClick = 8,
 	}
 }

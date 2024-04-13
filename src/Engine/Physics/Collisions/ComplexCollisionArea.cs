@@ -81,7 +81,7 @@ namespace Engine.Physics.Collisions
 		private CollisionInformation GetCollisionInformation(SimpleCollisionArea external, Vector2 candidatePosition, CollisionInformation collisionInformation)
 		{
 			int i = 0;
-			foreach (var externalSubArea in this.Area.SubAreas)
+			foreach (var externalSubArea in this.Area.OffsetAreas)
 			{
 				if (externalSubArea.Intersects(external.Area, candidatePosition))
 				{
@@ -110,7 +110,7 @@ namespace Engine.Physics.Collisions
 		private CollisionInformation GetCollisionInformation(OffsetCollisionArea external, Vector2 candidatePosition, CollisionInformation collisionInformation)
 		{
 			int i = 0;
-			foreach (var externalSubArea in this.Area.SubAreas)
+			foreach (var externalSubArea in this.Area.OffsetAreas)
 			{
 				if (externalSubArea.Intersects(external.Area, candidatePosition))
 				{
@@ -139,12 +139,12 @@ namespace Engine.Physics.Collisions
 		private CollisionInformation GetCollisionInformation(ComplexCollisionArea external, Vector2 candidatePosition, CollisionInformation collisionInformation)
 		{
 			int i = 0;
-			foreach (var externalSubArea in this.Area.SubAreas)
+			foreach (var externalSubArea in this.Area.OffsetAreas)
 			{
 				int j = 0;
-				foreach (var internalSubArea in this.Area.SubAreas)
+				foreach (var internalSubArea in this.Area.OffsetAreas)
 				{
-					if (externalSubArea.Intersects(external.Area.SubAreas[j], candidatePosition))
+					if (externalSubArea.Intersects(external.Area.OffsetAreas[j], candidatePosition))
 					{
 						collisionInformation.AddMovementTerrainTypesIfDistinct(this.MovementTerrainTypes[i]);
 						var sharedTerrainTypes = external.MovementTerrainTypes[j].Intersect(this.MovementTerrainTypes[i]);

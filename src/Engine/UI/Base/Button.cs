@@ -1,10 +1,13 @@
-﻿using Engine.Physics.Areas;
+﻿using Engine.Drawing.Base;
+using Engine.Physics.Areas;
+using Engine.Physics.Areas.interfaces;
+using Engine.UI.Base.enums;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Engine.UI.Base
 {
-	public class Button : UiElement
+	public class Button : DrawableUiElement
 	{
 		/// <summary>
 		/// Gets or sets the button text.
@@ -27,25 +30,30 @@ namespace Engine.UI.Base
 		public SpriteFont ButtonFont { get; set; }
 
 		/// <summary>
+		/// Gets or sets the area.
+		/// </summary>
+		public OffsetArea ClickableArea { get; set; }
+
+		/// <summary>
 		/// Initializes a new instance of the Button class.
 		/// </summary>
 		/// <param name="drawingActivated">A value indicating whether the content is drawing.</param>
 		/// <param name="drawOrder">The draw order.</param>
+		/// <param name="drawData">The draw data.</param>
 		/// <param name="area">The area.</param>
-		/// <param name="buttonBackgroundColor">The button background color.</param>
-		/// <param name="buttonBorderColor">The button border color.</param>
 		/// <param name="buttonBorderSize">The button border size.</param>
 		/// <param name="buttonText">The button text.</param>
+		/// <param name="buttonTextColor">The button text color.</param>
 		/// <param name="buttonFont">The button font.</param>
-		public Button(bool drawingActivated, ushort drawOrder, SimpleArea area, Color buttonBackgroundColor, Color buttonBorderColor, int buttonBorderSize, string buttonText, Color buttonTextColor, SpriteFont buttonFont)
-			: base(UiElementTypes.Button, drawingActivated, drawOrder, area, 
-				  new OffsetArea(area.Position, buttonBorderSize, buttonBorderSize, area.Width - buttonBorderSize * 2, area.Height - buttonBorderSize * 2))
+		public Button(bool drawingActivated, ushort drawOrder, DrawData drawData, IAmAArea area, int buttonBorderSize, string buttonText, Color buttonTextColor, SpriteFont buttonFont)
+			: base(UiElementTypes.Button, drawingActivated, drawOrder, drawData, area)
 		{
 			this.ButtonText = buttonText;
 			this.ButtonTextColor = buttonTextColor;
 			this.ButtonFont = buttonFont;
-			this.UiTexture = this.GetButtonTexture((int)area.Width, (int)area.Height, buttonBackgroundColor, buttonBorderColor, buttonBorderSize);
+			this.ClickableArea = new OffsetArea(area.Position, buttonBorderSize, buttonBorderSize, area.Width - buttonBorderSize * 2, area.Height - buttonBorderSize * 2);
 			this.ButtonTextCoordinates = this.GetButtonTextCoordinates(buttonText, area);
+			Managers.UiManager.UiElementsByHoverArea.Add(this.ClickableArea, this);
 		}
 
 		/// <summary>
@@ -60,8 +68,8 @@ namespace Engine.UI.Base
 		/// When the UI element is being hovered.
 		/// </summary>
 		public override void OnHovering()
-		{ 
-			
+		{
+
 		}
 
 		/// <summary>
@@ -69,7 +77,7 @@ namespace Engine.UI.Base
 		/// </summary>
 		public void OnClick()
 		{
-			this.UiTexture = this.GetButtonTexture((int)this.Area.Width, (int)this.Area.Height, Color.Orange, Color.DarkOrchid, 6);
+
 		}
 
 		/// <summary>
@@ -82,46 +90,12 @@ namespace Engine.UI.Base
 		}
 
 		/// <summary>
-		/// Gets the button texture.
-		/// </summary>
-		/// <param name="buttonTextureWidth">The button texture width.</param>
-		/// <param name="buttonTextureHeight">The button texture height.</param>
-		/// <param name="buttonBackgroundColor">The button background color.</param>
-		/// <param name="buttonBorderColor">The button border color.</param>
-		/// <param name="buttonBorderSize">The button border size.</param>
-		/// <returns>The button texture.</returns>
-		private Texture2D GetButtonTexture(int buttonTextureWidth, int buttonTextureHeight, Color buttonBackgroundColor, Color? buttonBorderColor = null, int? buttonBorderSize = null)
-		{
-			Color[] colorData = new Color[buttonTextureWidth * buttonTextureHeight];
-			for (var i = 0; i < buttonTextureHeight; i++)
-			{
-				for (var j = 0; j < buttonTextureWidth; j++)
-				{
-					var arrayIndex = i * buttonTextureWidth + j;
-					if (buttonBorderColor.HasValue && buttonBorderSize.HasValue
-						&& (i <= buttonBorderSize || i >= buttonTextureHeight - buttonBorderSize || j <= buttonBorderSize || j >= buttonTextureWidth - buttonBorderSize))
-					{
-						colorData[arrayIndex] = buttonBorderColor.Value;
-					}
-					else
-					{
-						colorData[arrayIndex] = buttonBackgroundColor;
-					}
-				}
-			}
-
-			Texture2D buttonTexture = new Texture2D(Managers.Graphics.GraphicsDevice, buttonTextureWidth, buttonTextureHeight);
-			buttonTexture.SetData(colorData);
-			return buttonTexture;
-		}
-
-		/// <summary>
 		/// Gets the button text coordinates.
 		/// </summary>
 		/// <param name="buttonText">The button text.</param>
 		/// <param name="area">The button area.</param>
 		/// <returns>The coordinates of the button text.</returns>
-		private Vector2 GetButtonTextCoordinates(string buttonText, SimpleArea area)
+		private Vector2 GetButtonTextCoordinates(string buttonText, IAmAArea area)
 		{
 			var textSize = this.ButtonFont.MeasureString(buttonText);
 			float verticalOffset = (area.Height - textSize.Y) / 2;

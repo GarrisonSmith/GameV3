@@ -127,7 +127,7 @@ namespace Engine.Physics.Collisions
 		private CollisionInformation GetCollisionInformation(ComplexCollisionArea external, Vector2 candidatePosition, CollisionInformation collisionInformation)
 		{
 			int i = 0;
-			foreach (var externalSubArea in external.Area.SubAreas)
+			foreach (var externalSubArea in external.Area.OffsetAreas)
 			{
 				if (this.Area.Intersects(externalSubArea, candidatePosition))
 				{

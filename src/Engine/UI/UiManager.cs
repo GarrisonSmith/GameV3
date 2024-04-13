@@ -1,6 +1,6 @@
 ﻿using Engine.Controls.Base.enums;
 using Engine.Loading.Base.interfaces;
-using Engine.Physics.Areas;
+using Engine.Physics.Areas.interfaces;
 using Engine.UI.Base;
 using Microsoft.Xna.Framework;
 using System;
@@ -31,17 +31,22 @@ namespace Engine.UI
 		/// <summary>
 		/// Gets or sets the UI elements.
 		/// </summary>
-		public Dictionary<Guid, UiElement> UiElements { get; set; }
+		public Dictionary<Guid, BaseUiElement> UiElements { get; set; }
 
 		/// <summary>
 		/// Gets or sets the UI elements by the hover area.
 		/// </summary>
-		public Dictionary<OffsetArea, UiElement> UiElementsByHoverArea { get; set; }
+		public Dictionary<IAmAArea, BaseUiElement> UiElementsByHoverArea { get; set; }
+
+		/// <summary>
+		/// Gets or sets the top UI rows.
+		/// </summary>
+		public Dictionary<byte, UiStack> UiStacks { get; set; }
 
 		/// <summary>
 		/// Gets the hovered UI element.
 		/// </summary>
-		public UiElement HoveredUiElement
+		public BaseUiElement HoveredUiElement
 		{
 			get
 			{
@@ -60,7 +65,7 @@ namespace Engine.UI
 		/// <summary>
 		/// Gets or sets the existing hovered UI element.
 		/// </summary>
-		private UiElement ExistingHoveredUiElement { get; set; }
+		private BaseUiElement ExistingHoveredUiElement { get; set; }
 
 		/// <summary>
 		/// Initializes a new instance of the UiManager class.
@@ -68,8 +73,8 @@ namespace Engine.UI
 		/// <param name="game">The game</param>
 		private UiManager(Game game) : base(game)
 		{
-			this.UiElements = new Dictionary<Guid, UiElement>();
-			this.UiElementsByHoverArea = new Dictionary<OffsetArea, UiElement>();
+			this.UiElements = new Dictionary<Guid, BaseUiElement>();
+			this.UiElementsByHoverArea = new Dictionary<IAmAArea, BaseUiElement>();
 		}
 
 		/// <summary>
@@ -89,11 +94,10 @@ namespace Engine.UI
 				this.ExistingHoveredUiElement = hoveredUiElement;
             }
 
-			if (hoveredUiElement is Button button && Managers.ControlManager.ControlState.ActiveControlActions.ContainsKey(ControlActionTypes.LeftClick))
+			if (hoveredUiElement is Button button && Managers.ControlManager.ControlState.ActiveControlActions.ContainsKey(ControlActionTypes.PrimaryClick))
 			{
 				button.OnClick();
 			}
-
         }
 
 		/// <summary>

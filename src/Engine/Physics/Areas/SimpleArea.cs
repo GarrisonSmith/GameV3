@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework;
 namespace Engine.Physics.Areas
 {
 	/// <summary>
-	/// Represents a area.
+	/// Represents a simple area.
 	/// </summary>
 	public class SimpleArea : IAmAArea
 	{
@@ -17,7 +17,7 @@ namespace Engine.Physics.Areas
 		/// <summary>
 		/// Gets double the collision epsilon.
 		/// </summary>
-		public static float COLLISION_EPSILON_DOUBLE { get => .02f; }
+		public static float DOUBLE_COLLISION_EPSILON { get => .02f; }
 
 		/// <summary>
 		/// Get or sets the top left X value of the area.
@@ -68,7 +68,20 @@ namespace Engine.Physics.Areas
 		public Position Position { get; set; }
 
 		/// <summary>
-		/// Initializes a new instance of the Area class.
+		/// Initializes a new instance of the Simple Area class.
+		/// </summary>
+		/// <param name="position">The position.</param>
+		/// <param name="width">The width value.</param>
+		/// <param name="height">The height value.</param>
+		public SimpleArea(Vector2 position, float width, float height)
+		{
+			this.Position = new Position(position);
+			this.Width = width;
+			this.Height = height;
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the Simple Area class.
 		/// </summary>
 		/// <param name="position">The position.</param>
 		/// <param name="width">The width value.</param>
@@ -81,7 +94,7 @@ namespace Engine.Physics.Areas
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the Area class.
+		/// Initializes a new instance of the Simple Area class.
 		/// </summary>
 		/// <param name="rectangle">The rectangle.</param>
 		public SimpleArea(Rectangle rectangle)

@@ -15,34 +15,33 @@ namespace Engine.Drawing.Base
         public Guid Guid { get; set; }
 
         /// <summary>
-        /// Gets or sets the name.
+        /// Gets or sets the spritesheet name.
         /// </summary>
-        public string Name { get; set; }
+        public string SpritesheetName { get; set; }
 
         /// <summary>
-        /// Gets or sets the sheet box.
+        /// Gets or sets the texture box.
         /// </summary>
-        public Rectangle SheetBox { get; set; }
+        public Rectangle TextureBox { get; set; }
 
         /// <summary>
-        /// Gets or sets the spritesheet.
+        /// Gets or sets the texture.
         /// </summary>
-        public Texture2D SpriteSheet { get; set; }
+        public Texture2D Texture { get; set; }
 
-        /// <summary>
-        /// Initializes a new instance of the DrawData class.
-        /// </summary>
-        /// <param name="name">The name.</param>
-        /// <param name="sheetBox">The sheet box.</param>
-        /// <param name="spriteSheet">The sprite sheet.</param>
-        public DrawData(string name, Rectangle sheetBox, Texture2D spriteSheet)
+		/// <summary>
+		/// Initializes a new instance of the DrawData class.
+		/// </summary>
+		/// <param name="spritesheetName">The spritesheet name.</param>
+		/// <param name="sheetBox">The sheet box.</param>
+		/// <param name="texture">The texture.</param>
+		public DrawData(string spritesheetName, Rectangle sheetBox, Texture2D texture)
         {
             this.Guid = Guid.NewGuid();
-            this.Name = name;
-			this.SheetBox = sheetBox;
-			this.SpriteSheet = spriteSheet;
+            this.SpritesheetName = spritesheetName;
+			this.TextureBox = sheetBox;
+			this.Texture = texture;
 			Managers.DrawManager.DrawData.Add(this.Guid, this);
-			Managers.DrawManager.DrawDataByName.Add(this.Name, this);
         }
     }
 }

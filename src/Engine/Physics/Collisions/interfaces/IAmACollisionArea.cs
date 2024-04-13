@@ -13,12 +13,12 @@ namespace Engine.Physics.Collisions.interfaces
 		/// <summary>
 		/// Gets the collision area.
 		/// </summary>
-		public IAmAArea Area { get; }
+		IAmAArea Area { get; }
 
 		/// <summary>
 		/// Gets the movement terrain types.
 		/// </summary>
-		public IEnumerable MovementTerrainTypes { get; }
+		IEnumerable MovementTerrainTypes { get; }
 
 		/// <summary>
 		/// Gets the collision information.
@@ -27,6 +27,6 @@ namespace Engine.Physics.Collisions.interfaces
 		/// <param name="candidatePosition">The candidate position.</param>
 		/// <param name="collisionInformation">The collision information.</param>
 		/// <returns>The collision information.</returns>
-		public CollisionInformation GetCollisionInformation(IHaveCollision external, Vector2 candidatePosition, CollisionInformation collisionInformation);
+		CollisionInformation GetCollisionInformation(IHaveCollision external, Vector2 candidatePosition, CollisionInformation collisionInformation);
 	}
 }
