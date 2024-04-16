@@ -45,7 +45,7 @@ namespace Engine.Controls.Base
 			this.MousePosition = Mouse.GetState().Position;
 			this.UpdateDirectionalMovement();
 
-			if (this.ActiveControlActions.TryGetValue(ControlActionTypes.ZoomIn, out var controlAction) && controlAction.JustStarted)
+			if (this.ActiveControlActions.ContainsKey(ControlActionTypes.ZoomIn))
 			{ 
 				Camera.GetCamera().SmoothZoomIn();
 			}

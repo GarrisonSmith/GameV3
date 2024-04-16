@@ -15,6 +15,11 @@ namespace Engine.Physics.Base
 		public Vector2 Coordinates { get => coordinates; set => coordinates = value; }
 
 		/// <summary>
+		/// Get the position as a point.
+		/// </summary>
+		public Point ToPoint { get => coordinates.ToPoint(); }
+
+		/// <summary>
 		/// Gets or sets the X coordinate.
 		/// </summary>
 		public float X { get => coordinates.X; set => coordinates.X = value; }

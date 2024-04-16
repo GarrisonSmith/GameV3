@@ -1,6 +1,7 @@
 ﻿using Engine.Core.Base;
 using Engine.Drawing.Base;
 using Engine.Entities.Base.interfaces;
+using Engine.Physics.Areas;
 using Engine.Physics.Areas.interfaces;
 using Engine.Physics.Base;
 using Engine.Physics.Base.enums;
@@ -85,17 +86,23 @@ namespace Engine.Entities.Base
 			{
 				this.Animation = this.Animations[(int)this.Orientation];
 				this.Animation.IsPlaying = false;
+
 				return;
 			}
 
-			var horizontalMovementAmount = this.MoveSpeed.GetHorizontalMovementAmount(directionRadians.Value);
+			var horizontalMovementAmount  = this.MoveSpeed.GetHorizontalMovementAmount(directionRadians.Value);
 			var verticalMovementAmount = this.MoveSpeed.GetVerticalMovementAmount(directionRadians.Value);
+
 			if (horizontalMovementAmount == 0 && verticalMovementAmount == 0)
 			{
 				this.Animation = this.Animations[(int)this.Orientation];
 				this.Animation.IsPlaying = false;
+
 				return;
 			}
+
+			var realHorizontalMovementAmount = horizontalMovementAmount;
+			var realVerticalMovementAmount = verticalMovementAmount;
 
 			if (forced)
 			{
@@ -104,14 +111,24 @@ namespace Engine.Entities.Base
 			}
 			else
 			{
-				var collisionInfo = new CollisionInformation(this, this.CollisionArea.Area.TopLeft, horizontalMovementAmount, verticalMovementAmount);
+				var collisionInfo = new CollisionInformation(this, this.Position.Coordinates, horizontalMovementAmount, verticalMovementAmount);
 				//this.ProcessMovementTerrainTypesCollidedWith(collisionInfo);
-				this.CollisionArea.Area.TopLeft = collisionInfo.FinalPosition;
+				realHorizontalMovementAmount = collisionInfo.FinalPosition.X - this.Position.Coordinates.X;
+				realVerticalMovementAmount = collisionInfo.FinalPosition.Y - this.Position.Coordinates.Y;
+				this.Position.Coordinates = collisionInfo.FinalPosition;
 			}
 
-			if (Math.Abs(horizontalMovementAmount) >= Math.Abs(verticalMovementAmount) - .00001f)
+			if (realHorizontalMovementAmount == 0 && realVerticalMovementAmount == 0)
 			{
-				if (horizontalMovementAmount >= 0)
+				this.Animation = this.Animations[(int)this.Orientation];
+				this.Animation.IsPlaying = false;
+
+				return;
+			}
+
+			if (Math.Abs(realHorizontalMovementAmount) >= Math.Abs(realVerticalMovementAmount) - SimpleArea.COLLISION_EPSILON)
+			{
+				if (realHorizontalMovementAmount >= 0)
 				{
 					this.Orientation = OrientationTypes.Right;
 				}
@@ -122,7 +139,7 @@ namespace Engine.Entities.Base
 			}
 			else
 			{
-				if (verticalMovementAmount >= 0)
+				if (realVerticalMovementAmount >= 0)
 				{
 					this.Orientation = OrientationTypes.Downward;
 				}

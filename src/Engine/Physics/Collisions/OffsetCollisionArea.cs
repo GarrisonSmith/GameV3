@@ -15,6 +15,8 @@ namespace Engine.Physics.Collisions
 	/// </summary>
 	public class OffsetCollisionArea : IAmACollisionArea
 	{
+		public Position Position { get => this.Area.Position; private set => this.Area.Position = value; }
+
 		/// <summary>
 		/// Gets or sets the collision area.
 		/// </summary>

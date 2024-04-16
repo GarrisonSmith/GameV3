@@ -119,6 +119,13 @@ namespace Engine.Loading
 		{
 			if (Managers.DrawManager.TryGetSpriteSheet(spriteSheetName, out var spritesheet))
 			{
+				var spritesheetCoordinate = new Point(row * Tile.TILE_DIMENSIONS, col * Tile.TILE_DIMENSIONS);
+				var sheetBox = new Rectangle(2, 2, Tile.TILE_DIMENSIONS, Tile.TILE_DIMENSIONS);
+				if (Managers.DrawManager.TryGetTextureInstance(spriteSheetName, spritesheetCoordinate, out var textureInstance))
+				{
+					return new DrawData(spriteSheetName, spritesheetCoordinate, sheetBox, textureInstance);
+				}
+
 				var tileTextureData = this.GetTextureDataFromSpritesheetArea(spritesheet, new Rectangle(col * Tile.TILE_DIMENSIONS, row * Tile.TILE_DIMENSIONS, Tile.TILE_DIMENSIONS, Tile.TILE_DIMENSIONS));
 				var leftTextureData = new Color[Tile.TILE_DIMENSIONS * 2];
 				var rightTextureData = new Color[Tile.TILE_DIMENSIONS * 2];
@@ -183,11 +190,12 @@ namespace Engine.Loading
 				};
 
 				var tileTexture = this.CombineTexture(textures, Tile.TILE_DIMENSIONS + 4, Tile.TILE_DIMENSIONS + 4);
-				var sheetBox = new Rectangle(2, 2, Tile.TILE_DIMENSIONS, Tile.TILE_DIMENSIONS);
-				return new DrawData(spriteSheetName, sheetBox, tileTexture);
+				tileTexture = Managers.DrawManager.AddTextureInstance(spriteSheetName, spritesheetCoordinate, tileTexture);
+
+				return new DrawData(spriteSheetName, spritesheetCoordinate, sheetBox, tileTexture);
 			}
 
-			return null; //missing texture.
+			return null; //missing spritesheet.
 		}
 
 		/// <summary>
@@ -560,7 +568,7 @@ namespace Engine.Loading
 			var position = new Position(64, 64); //TODO entity starting location
 			var area = new SimpleArea(position, 64, 128);
 			var collision = new OffsetCollisionArea(new OffsetArea(position, 11, 117, 42, 11), new List<MovementTerrainTypes> { MovementTerrainTypes.Entity });
-			_ = new Entity(true, true, 1, 1, OrientationTypes.Downward, new MoveSpeed(20), area, collision, animations[0], animations, tileManager.ActiveTileMap.Layers[1]);
+			_ = new Entity(true, true, 1, 1, OrientationTypes.Downward, new MoveSpeed(15), area, collision, animations[0], animations, tileManager.ActiveTileMap.Layers[1]);
 		}
 
 		/// <summary>
@@ -587,24 +595,38 @@ namespace Engine.Loading
 				Console.WriteLine("Sprite sheet not found for: " + spriteSheetName);
 			}
 
-			var animations = new Animation[4];
-			var animationIndex = 0;
-			for (var y = 0; y < spriteSheet.Bounds.Height - 1; y += 128) //TODO config entity height
+			if (drawManager.TryGetSpriteSheet(spriteSheetName, out var spritesheetTexture))
 			{
-				var rowFrames = new DrawData[4];
-				var framesIndex = 0;
-				for (var x = 0; x < (64 * 4) - 1; x += 64) //TODO config entity width
+				var animations = new Animation[4];
+				var animationIndex = 0;
+				for (var y = 0; y < spriteSheet.Bounds.Height - 1; y += 128) //TODO config entity height
 				{
-					drawManager.TryGetSpriteSheet(spriteSheetName, out var texture);
-					var sheetBox = new Rectangle(x, y, 64, 128);
-					var drawData = new DrawData(spriteSheetName, sheetBox, texture);
-					rowFrames[framesIndex++] = drawData;
+					var rowFrames = new DrawData[4];
+					var framesIndex = 0;
+					for (var x = 0; x < (64 * 4) - 1; x += 64) //TODO config entity width
+					{
+						var sheetBox = new Rectangle(0, 0, 64, 128);
+						var spritesheetCoordinate = new Point(x, y);
+						Texture2D texture;
+						if (!Managers.DrawManager.TryGetTextureInstance(spriteSheetName, spritesheetCoordinate, out texture))
+						{
+							var textureData = this.GetTextureDataFromSpritesheetArea(spritesheetTexture, new Rectangle(x, y, 64, 128));
+							texture = new Texture2D(Managers.Graphics.GraphicsDevice, 64, 128);
+							texture.SetData(textureData);
+							texture = Managers.DrawManager.AddTextureInstance(spriteSheetName, spritesheetCoordinate, texture);
+						}
+
+						var drawData = new DrawData(spriteSheetName, spritesheetCoordinate, sheetBox, texture);
+						rowFrames[framesIndex++] = drawData;
+					}
+
+					animations[animationIndex++] = new Animation(false, 0, 200, rowFrames); //TODO config entity animations
 				}
 
-				animations[animationIndex++] = new Animation(false, 0, 200, rowFrames); //TODO config entity animations
+				return animations;
 			}
 
-			return animations;
+			return null; //missing spritesheet 
 		}
 	}
 }

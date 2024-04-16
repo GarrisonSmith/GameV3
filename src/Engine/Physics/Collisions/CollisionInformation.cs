@@ -281,8 +281,6 @@ namespace Engine.Physics.Base
 					//moving area is below area
 					this.LargestYCollision = area.BottomRight.Y;
 				}
-
-				return;
 			}
 			else if (!horizontalMovementOkay && verticalMovementOkay)
 			{
@@ -296,14 +294,14 @@ namespace Engine.Physics.Base
 					//moving area is left of area
 					this.LargestXCollision = area.BottomRight.X;
 				}
-
-				return;
 			}
 			else if (horizontalMovementOkay && verticalMovementOkay)
 			{
 				//Since we know a intersection occurs on the final position for this method to execute we can just apply both a horizontal and vertical collision.
 				//This is for when a rectangle is moving perfectly diagonal toward the area. 
-				float? existingX = null, existingY = null;
+				float? existingX = null;
+				float? existingY = null;
+
 				if (this.SmallestXCollision.HasValue)
 				{
 					existingX = this.SmallestXCollision.Value;
@@ -354,6 +352,7 @@ namespace Engine.Physics.Base
 				{
 					this.SmallestYCollision = null;
 					this.LargestYCollision = null;
+
 					return;
 				}
 
@@ -362,16 +361,15 @@ namespace Engine.Physics.Base
 				{
 					this.SmallestXCollision = null;
 					this.LargestXCollision = null;
+
 					return;
 				}
 
 				this.CornerCollision = cornerCollision;
-				return;
 			}
 			else if (!horizontalMovementOkay && !verticalMovementOkay)
 			{
 				//this condition should not be possible as a rectangle can only collide with another rectangle on one side.
-				return;
 			}
 		}
 
@@ -386,7 +384,7 @@ namespace Engine.Physics.Base
 		{
 			var horizontalStep = totalHorizontalMovement / (float)Math.Sqrt(Math.Pow(totalHorizontalMovement, 2) + Math.Pow(totalVerticalMovement, 2));
 			var verticalStep = totalVerticalMovement / (float)Math.Sqrt(Math.Pow(totalHorizontalMovement, 2) + Math.Pow(totalVerticalMovement, 2));
-			var finalPosition = startingPosition;
+			var currentPosition = startingPosition;
 			Vector2 candidatePositionTopLeft;
 			Vector2 candidatePositionBottomRight;
 
@@ -395,7 +393,7 @@ namespace Engine.Physics.Base
 			while ((totalHorizontalMovement != 0 && Math.Abs(horizontalStep * numberOfSteps) < Math.Abs(totalHorizontalMovement)) ||
 				   (totalVerticalMovement != 0 && Math.Abs(verticalStep * numberOfSteps) < Math.Abs(totalVerticalMovement)))
 			{
-				candidatePositionTopLeft = new Vector2(finalPosition.X, finalPosition.Y);
+				candidatePositionTopLeft = new Vector2(currentPosition.X, currentPosition.Y);
 				if (horizontalStep != 0 && !this.HorizontalCollision)
 				{
 					candidatePositionTopLeft.X += horizontalStep;
@@ -407,25 +405,29 @@ namespace Engine.Physics.Base
 				}
 
 				candidatePositionBottomRight = new Vector2(candidatePositionTopLeft.X + this.MovingEntity.CollisionArea.Area.Width, candidatePositionTopLeft.Y + this.MovingEntity.CollisionArea.Area.Height);
-				finalPosition = this.CheckCandidatePosition(finalPosition, candidatePositionTopLeft, candidatePositionBottomRight);
+				currentPosition = this.CheckCandidatePosition(currentPosition, candidatePositionTopLeft, candidatePositionBottomRight);
 
 				//Check further vertical movement if only horizontal collision.
-				if (this.HorizontalCollision && totalHorizontalMovement != 0 && !this.VerticalCollision && Math.Abs(totalVerticalMovement - verticalStep * numberOfSteps) > SimpleArea.COLLISION_EPSILON)
+				if (this.HorizontalCollision && !this.VerticalCollision && totalHorizontalMovement != 0 && Math.Abs(totalVerticalMovement - verticalStep * numberOfSteps) > SimpleArea.COLLISION_EPSILON)
 				{
-					var newVerticalPosition = this.GetMovementCollisionResult(finalPosition, 0, totalVerticalMovement - verticalStep * numberOfSteps);
-					finalPosition.Y = newVerticalPosition.Y;
+					var subVerticalCollisionArea = new CollisionInformation(this.MovingEntity, currentPosition, 0, totalVerticalMovement - verticalStep * numberOfSteps);
+					this.SmallestYCollision = subVerticalCollisionArea.SmallestYCollision;
+					this.LargestYCollision = subVerticalCollisionArea.LargestYCollision;
+					currentPosition = subVerticalCollisionArea.FinalPosition;
 				}
 
 				//Check further horizontal movement if only vertical collision.
 				if (!this.HorizontalCollision && this.VerticalCollision && totalVerticalMovement != 0 && Math.Abs(totalHorizontalMovement - horizontalStep * numberOfSteps) > SimpleArea.COLLISION_EPSILON)
 				{
-					var newHorizontalPosition = this.GetMovementCollisionResult(finalPosition, totalHorizontalMovement - horizontalStep * numberOfSteps, 0);
-					finalPosition.X = newHorizontalPosition.X;
+					var subHorizontalCollisionArea = new CollisionInformation(this.MovingEntity, currentPosition, totalHorizontalMovement - horizontalStep * numberOfSteps, 0);
+					this.SmallestXCollision = subHorizontalCollisionArea.SmallestXCollision;
+					this.LargestXCollision = subHorizontalCollisionArea.LargestXCollision;
+					currentPosition = subHorizontalCollisionArea.FinalPosition;
 				}
 
 				if (this.MovementCollision)
 				{
-					return finalPosition;
+					return currentPosition;
 				}
 
 				numberOfSteps++;
@@ -434,25 +436,33 @@ namespace Engine.Physics.Base
 			//Checks the final position. We need to do this separately from the loop above the step increments don't always result in the final position cleanly.
 			candidatePositionTopLeft = new Vector2(this.MovingEntity.CollisionArea.Area.X + totalHorizontalMovement, this.MovingEntity.CollisionArea.Area.Y + totalVerticalMovement);
 			candidatePositionBottomRight = new Vector2(candidatePositionTopLeft.X + this.MovingEntity.CollisionArea.Area.Width, candidatePositionTopLeft.Y + this.MovingEntity.CollisionArea.Area.Height);
-			finalPosition = this.CheckCandidatePosition(finalPosition, candidatePositionTopLeft, candidatePositionBottomRight);
+			currentPosition = this.CheckCandidatePosition(currentPosition, candidatePositionTopLeft, candidatePositionBottomRight);
 
 			//Check further vertical movement if only horizontal collision.
 			if (this.HorizontalCollision && totalHorizontalMovement != 0 && !this.VerticalCollision && totalVerticalMovement != 0)
 			{
-				var newVerticalPosition = this.GetMovementCollisionResult(finalPosition, 0, totalVerticalMovement - verticalStep * numberOfSteps);
-				finalPosition.Y = newVerticalPosition.Y;
+				var subVerticalCollisionArea = new CollisionInformation(this.MovingEntity, currentPosition, 0, totalVerticalMovement - verticalStep * numberOfSteps);
+				this.SmallestYCollision = subVerticalCollisionArea.SmallestYCollision;
+				this.LargestYCollision = subVerticalCollisionArea.LargestYCollision;
+				currentPosition = subVerticalCollisionArea.FinalPosition;
+
+				return currentPosition;
 			}
 
 			//Check further horizontal movement if only vertical collision.
 			if (!this.HorizontalCollision && this.VerticalCollision && totalVerticalMovement != 0 && totalHorizontalMovement != 0)
 			{
-				var newHorizontalPosition = this.GetMovementCollisionResult(finalPosition, totalHorizontalMovement - horizontalStep * numberOfSteps, 0);
-				finalPosition.X = newHorizontalPosition.X;
+				var subHorizontalCollisionArea = new CollisionInformation(this.MovingEntity, currentPosition, totalHorizontalMovement - horizontalStep * numberOfSteps, 0);
+				this.SmallestXCollision = subHorizontalCollisionArea.SmallestXCollision;
+				this.LargestXCollision = subHorizontalCollisionArea.LargestXCollision;
+				currentPosition = subHorizontalCollisionArea.FinalPosition;
+
+				return currentPosition;
 			}
 
 			if (this.MovementCollision)
 			{
-				return finalPosition;
+				return currentPosition;
 			}
 
 			return candidatePositionTopLeft;
@@ -461,15 +471,15 @@ namespace Engine.Physics.Base
 		/// <summary>
 		/// Checks the candidate position.
 		/// </summary>
-		/// <param name="finalPosition">The current final position.</param>
+		/// <param name="currentPosition">The current position.</param>
 		/// <param name="candidatePositionTopLeft">The candidate top left position.</param>
 		/// <param name="candidatePositionBottomRight">the candidate bottom right position.</param>
 		/// <returns>The new final position.</returns>
-		private Vector2 CheckCandidatePosition(Vector2 finalPosition, Vector2 candidatePositionTopLeft, Vector2 candidatePositionBottomRight)
+		private Vector2 CheckCandidatePosition(Vector2 currentPosition, Vector2 candidatePositionTopLeft, Vector2 candidatePositionBottomRight)
 		{
-			for (var row = (int)candidatePositionTopLeft.Y / Tile.TILE_DIMENSIONS; row <= (int)candidatePositionBottomRight.Y / Tile.TILE_DIMENSIONS; row++)
+			for (var row = (int)candidatePositionTopLeft.Y / Tile.TILE_DIMENSIONS; row <= Math.Ceiling(candidatePositionBottomRight.Y / Tile.TILE_DIMENSIONS); row++)
 			{
-				for (var col = (int)candidatePositionTopLeft.X / Tile.TILE_DIMENSIONS; col <= (int)candidatePositionBottomRight.X / Tile.TILE_DIMENSIONS; col++)
+				for (var col = (int)candidatePositionTopLeft.X / Tile.TILE_DIMENSIONS; col <= Math.Ceiling(candidatePositionBottomRight.X / Tile.TILE_DIMENSIONS); col++)
 				{
 					if (this.MovingEntity.TileMapLayer.TryGetTileCollision(row, col, out var tileCollisionArea))
 					{
@@ -480,23 +490,23 @@ namespace Engine.Physics.Base
 
 			if (this.HorizontalCollision)
 			{
-				finalPosition.X = this.GetHorizontalFlushCollision(candidatePositionTopLeft.X);
+				currentPosition.X = this.GetHorizontalFlushCollision(candidatePositionTopLeft.X);
 			}
 			else
 			{
-				finalPosition.X = candidatePositionTopLeft.X;
+				currentPosition.X = candidatePositionTopLeft.X;
 			}
 
 			if (this.VerticalCollision)
 			{
-				finalPosition.Y = this.GetVerticalFlushCollision(candidatePositionTopLeft.Y);
+				currentPosition.Y = this.GetVerticalFlushCollision(candidatePositionTopLeft.Y);
 			}
 			else
 			{
-				finalPosition.Y = candidatePositionTopLeft.Y;
+				currentPosition.Y = candidatePositionTopLeft.Y;
 			}
 
-			return finalPosition;
+			return currentPosition;
 		}
 
 		/// <summary>
