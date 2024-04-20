@@ -130,7 +130,7 @@ namespace Engine
 		public static void Load()
 		{
 			// Determines if debugging info will be shown.
-			Managers.DebuggingManager.DebuggerEnabled = false;
+			Managers.DebuggingManager.DebuggerEnabled = true;
 
 			// Managers that need to load content from disk.
 			Managers.DrawManager.Load();

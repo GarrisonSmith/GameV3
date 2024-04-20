@@ -10,7 +10,7 @@ namespace Engine.View
 	/// <summary>
 	/// Represents a Camera.
 	/// </summary>
-	public class Camera : IHaveSimpleArea
+	public class Camera : IHaveArea
 	{
 		private static Camera camera;
 

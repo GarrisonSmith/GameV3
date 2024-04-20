@@ -47,111 +47,111 @@ namespace Engine.Physics.Collisions
 		}
 
 		/// <summary>
-		/// Gets the collision information.
+		/// Get a value indicating if the external collision area intersects this collision area. 
 		/// </summary>
-		/// <param name="external">The external collision source.</param>
+		/// <param name="external">The external collision area.</param>
+		/// <param name="intersectedMovementTerrainTypes">The intersected movement terrain types.</param>
 		/// <param name="candidatePosition">The candidate position.</param>
-		/// <param name="collisionInformation">The collision information.</param>
-		/// <returns>The collision information.</returns>
-		public CollisionInformation GetCollisionInformation(IHaveCollision external, Vector2 candidatePosition, CollisionInformation collisionInformation)
+		/// <returns>A value indicating if the external collision area intersects this collision area.</returns>
+		public bool Intersects(IAmACollisionArea external, out IList<MovementTerrainTypes> intersectedMovementTerrainTypes, Vector2? candidatePosition = null)
 		{
-			if (external.CollisionArea is SimpleCollisionArea simpleArea)
+			if (external is SimpleCollisionArea simpleArea)
 			{
-				return this.GetCollisionInformation(simpleArea, candidatePosition, collisionInformation);
+				return this.GetCollisionInformation(simpleArea, out intersectedMovementTerrainTypes, candidatePosition);
 			}
-			else if (external.CollisionArea is OffsetCollisionArea offsetArea)
+			else if (external is OffsetCollisionArea offsetArea)
 			{
-				return this.GetCollisionInformation(offsetArea, candidatePosition, collisionInformation);
+				return this.GetCollisionInformation(offsetArea, out intersectedMovementTerrainTypes, candidatePosition);
 			}
-			else if (external.CollisionArea is ComplexCollisionArea complexArea)
+			else if (external is ComplexCollisionArea complexArea)
 			{
-				return this.GetCollisionInformation(complexArea, candidatePosition, collisionInformation);
+				return this.GetCollisionInformation(complexArea, out intersectedMovementTerrainTypes, candidatePosition);
 			}
 
-			return null;
+			intersectedMovementTerrainTypes = null;
+
+			return false;
 		}
 
 		/// <summary>
 		/// Gets the collision information.
 		/// </summary>
 		/// <param name="external">The external collision source.</param>
+		/// <param name="intersectedMovementTerrainTypes">The intersected movement terrain types.</param>
 		/// <param name="candidatePosition">The candidate position.</param>
-		/// <param name="collisionInformation">The collision information.</param>
 		/// <returns>The collision information.</returns>
-		private CollisionInformation GetCollisionInformation(SimpleCollisionArea external, Vector2 candidatePosition, CollisionInformation collisionInformation)
+		private bool GetCollisionInformation(SimpleCollisionArea external, out IList<MovementTerrainTypes> intersectedMovementTerrainTypes, Vector2? candidatePosition = null)
 		{
 			int i = 0;
-			foreach (var externalSubArea in this.Area.OffsetAreas)
+			foreach (var subArea in this.Area.OffsetAreas)
 			{
-				if (externalSubArea.Intersects(external.Area, candidatePosition))
+				if (subArea.Intersects(external.Area, candidatePosition))
 				{
-					collisionInformation.AddMovementTerrainTypesIfDistinct(this.MovementTerrainTypes[i]);
-					var sharedTerrainTypes = external.MovementTerrainTypes.Intersect(this.MovementTerrainTypes[i]);
-					if (!sharedTerrainTypes.Any())
+					intersectedMovementTerrainTypes = this.MovementTerrainTypes[i].Where(x => !external.MovementTerrainTypes.Contains(x)).ToList();
+					if (intersectedMovementTerrainTypes.Any())
 					{
-						collisionInformation.UpdateCollisionBounds(this.Area, candidatePosition);
-						collisionInformation.TerrainCollision = true;
+						return true;
 					}
 				}
 
 				i++;
 			}
 
-			return collisionInformation;
+			intersectedMovementTerrainTypes = null;
+
+			return false;
 		}
 
 		/// <summary>
 		/// Gets the collision information.
 		/// </summary>
 		/// <param name="external">The external collision source.</param>
+		/// <param name="intersectedMovementTerrainTypes">The intersected movement terrain types.</param>
 		/// <param name="candidatePosition">The candidate position.</param>
-		/// <param name="collisionInformation">The collision information.</param>
 		/// <returns>The collision information.</returns>
-		private CollisionInformation GetCollisionInformation(OffsetCollisionArea external, Vector2 candidatePosition, CollisionInformation collisionInformation)
+		private bool GetCollisionInformation(OffsetCollisionArea external, out IList<MovementTerrainTypes> intersectedMovementTerrainTypes, Vector2? candidatePosition = null)
 		{
 			int i = 0;
-			foreach (var externalSubArea in this.Area.OffsetAreas)
+			foreach (var subArea in this.Area.OffsetAreas)
 			{
-				if (externalSubArea.Intersects(external.Area, candidatePosition))
+				if (subArea.Intersects(external.Area, candidatePosition))
 				{
-					collisionInformation.AddMovementTerrainTypesIfDistinct(this.MovementTerrainTypes[i]);
-					var sharedTerrainTypes = external.MovementTerrainTypes.Intersect(this.MovementTerrainTypes[i]);
-					if (!sharedTerrainTypes.Any())
+					intersectedMovementTerrainTypes = this.MovementTerrainTypes[i].Where(x => !external.MovementTerrainTypes.Contains(x)).ToList();
+					if (intersectedMovementTerrainTypes.Any())
 					{
-						collisionInformation.UpdateCollisionBounds(this.Area, candidatePosition);
-						collisionInformation.TerrainCollision = true;
+						return true;
 					}
 				}
 
 				i++;
 			}
 
-			return collisionInformation;
+			intersectedMovementTerrainTypes = null;
+
+			return false;
 		}
 
 		/// <summary>
 		/// Gets the collision information.
 		/// </summary>
 		/// <param name="external">The external complex collision source.</param>
+		/// <param name="intersectedMovementTerrainTypes">The intersected movement terrain types.</param>
 		/// <param name="candidatePosition">The candidate position.</param>
-		/// <param name="collisionInformation">The collision information.</param>
 		/// <returns>The collision information.</returns>
-		private CollisionInformation GetCollisionInformation(ComplexCollisionArea external, Vector2 candidatePosition, CollisionInformation collisionInformation)
+		private bool GetCollisionInformation(ComplexCollisionArea external, out IList<MovementTerrainTypes> intersectedMovementTerrainTypes, Vector2? candidatePosition = null)
 		{
 			int i = 0;
-			foreach (var externalSubArea in this.Area.OffsetAreas)
+			foreach (var externalSubArea in external.Area.OffsetAreas)
 			{
 				int j = 0;
-				foreach (var internalSubArea in this.Area.OffsetAreas)
+				foreach (var subArea in this.Area.OffsetAreas)
 				{
-					if (externalSubArea.Intersects(external.Area.OffsetAreas[j], candidatePosition))
+					if (subArea.Intersects(external.Area, candidatePosition))
 					{
-						collisionInformation.AddMovementTerrainTypesIfDistinct(this.MovementTerrainTypes[i]);
-						var sharedTerrainTypes = external.MovementTerrainTypes[j].Intersect(this.MovementTerrainTypes[i]);
-						if (!sharedTerrainTypes.Any())
+						intersectedMovementTerrainTypes = this.MovementTerrainTypes[j].Where(x => !external.MovementTerrainTypes[i].Contains(x)).ToList();
+						if (intersectedMovementTerrainTypes.Any())
 						{
-							collisionInformation.UpdateCollisionBounds(this.Area, candidatePosition);
-							collisionInformation.TerrainCollision = true;
+							return true;
 						}
 					}
 
@@ -161,7 +161,9 @@ namespace Engine.Physics.Collisions
 				i++;
 			}
 
-			return collisionInformation;
+			intersectedMovementTerrainTypes = null;
+
+			return false;
 		}
 	}
 }

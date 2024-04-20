@@ -1,7 +1,9 @@
 ﻿using Engine.Physics.Areas.interfaces;
 using Engine.Physics.Base;
+using Engine.Physics.Collisions.enums;
 using Microsoft.Xna.Framework;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace Engine.Physics.Collisions.interfaces
 {
@@ -21,12 +23,12 @@ namespace Engine.Physics.Collisions.interfaces
 		IEnumerable MovementTerrainTypes { get; }
 
 		/// <summary>
-		/// Gets the collision information.
+		/// Get a value indicating if the external collision area intersects this collision area. 
 		/// </summary>
-		/// <param name="external">The external collision source.</param>
+		/// <param name="external">The external collision area.</param>
+		/// <param name="intersectedMovementTerrainTypes">The intersected movement terrain types.</param>
 		/// <param name="candidatePosition">The candidate position.</param>
-		/// <param name="collisionInformation">The collision information.</param>
-		/// <returns>The collision information.</returns>
-		CollisionInformation GetCollisionInformation(IHaveCollision external, Vector2 candidatePosition, CollisionInformation collisionInformation);
+		/// <returns>A value indicating if the external collision area intersects this collision area.</returns>
+		bool Intersects(IAmACollisionArea external, out IList<MovementTerrainTypes> intersectedMovementTerrainTypes, Vector2? candidatePosition = null);
 	}
 }

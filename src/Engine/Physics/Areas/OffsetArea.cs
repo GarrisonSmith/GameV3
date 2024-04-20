@@ -44,7 +44,7 @@ namespace Engine.Physics.Areas
 		/// </summary>
 		public Vector2 TopLeft
 		{ 
-			get => new Vector2(this.X, this.Y);
+			get => new Vector2(this.X , this.Y);
 			set
 			{ 
 				this.X = value.X;

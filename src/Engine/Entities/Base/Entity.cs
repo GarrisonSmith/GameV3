@@ -111,8 +111,7 @@ namespace Engine.Entities.Base
 			}
 			else
 			{
-				var collisionInfo = new CollisionInformation(this, this.Position.Coordinates, horizontalMovementAmount, verticalMovementAmount);
-				//this.ProcessMovementTerrainTypesCollidedWith(collisionInfo);
+				var collisionInfo = new CollisionInformation(this.CollisionArea, this.TileMapLayer, this.Position.Coordinates, directionRadians.Value, horizontalMovementAmount, verticalMovementAmount);
 				realHorizontalMovementAmount = collisionInfo.FinalPosition.X - this.Position.Coordinates.X;
 				realVerticalMovementAmount = collisionInfo.FinalPosition.Y - this.Position.Coordinates.Y;
 				this.Position.Coordinates = collisionInfo.FinalPosition;
@@ -151,18 +150,6 @@ namespace Engine.Entities.Base
 
 			this.Animation = this.Animations[(int)this.Orientation];
 			this.Animation.IsPlaying = true;
-		}
-
-		/// <summary>
-		/// Process the movement terrain types collided with.
-		/// </summary>
-		/// <param name="collisionInformation">The collision information.</param>
-		public void ProcessMovementTerrainTypesCollidedWith(CollisionInformation collisionInformation)
-		{
-			foreach (var movementCollisionType in collisionInformation.MovementTerrainTypesCollidedWith)
-			{ 
-				//TODO
-			}
 		}
 	}
 }
