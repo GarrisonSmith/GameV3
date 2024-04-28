@@ -7,7 +7,7 @@ namespace Engine.Physics.Areas
 	/// <summary>
 	/// Represents a offset area.
 	/// </summary>
-	public class OffsetArea : IAmAArea
+	public class OffsetArea : IAmADefinedArea
 	{
 		/// <summary>
 		/// Get or sets the top left X value of the area.
@@ -43,19 +43,14 @@ namespace Engine.Physics.Areas
 		/// Gets or sets the top right position of the area.
 		/// </summary>
 		public Vector2 TopLeft
-		{ 
-			get => new Vector2(this.X , this.Y);
+		{
+			get => new(this.X, this.Y);
 			set
-			{ 
+			{
 				this.X = value.X;
 				this.Y = value.Y;
 			}
 		}
-
-		/// <summary>
-		/// Gets or sets the bottom right position of the area.
-		/// </summary>
-		public Vector2 BottomRight { get => new(this.X + this.Width, this.Y + this.Height); }
 
 		/// <summary>
 		/// Gets or sets the center position of the area.
@@ -69,6 +64,11 @@ namespace Engine.Physics.Areas
 				this.Y = value.Y - this.Height / 2;
 			}
 		}
+
+		/// <summary>
+		/// Gets or sets the bottom right position of the area.
+		/// </summary>
+		public Vector2 BottomRight { get => new(this.X + this.Width, this.Y + this.Height); }
 
 		/// <summary>
 		/// Gets or sets the position.
@@ -122,14 +122,72 @@ namespace Engine.Physics.Areas
 		/// <returns>A value indicating whether the point is intersected by this area.</returns>
 		public bool Intersects(IAmAArea external, Vector2? candidatePosition = null)
 		{
+			if (external is SimpleArea simpleArea)
+			{
+				return this.GetIntersects(simpleArea, candidatePosition);
+			}
+			else if (external is OffsetArea offsetArea)
+			{
+				return this.GetIntersects(offsetArea, candidatePosition);
+			}
+			else if (external is AreaCollection areaCollection)
+			{
+				return this.GetIntersects(areaCollection, candidatePosition);
+			}
+
+			return false;
+		}
+
+		/// <summary>
+		/// Returns a value indicating whether the external area is intersecting by this area.
+		/// </summary>
+		/// <param name="external">The external area.</param>
+		/// <param name="candidatePosition">The candidate position.</param>
+		/// <returns>A value indicating whether the point is intersected by this area.</returns>
+		private bool GetIntersects(SimpleArea external, Vector2? candidatePosition = null)
+		{
 			candidatePosition ??= external.TopLeft;
 			var externalBottomRight = new Vector2(candidatePosition.Value.X + external.Width, candidatePosition.Value.Y + external.Height);
 			var thisBottomRight = this.BottomRight;
 
-			return !(this.X > externalBottomRight.X + SimpleArea.COLLISION_EPSILON ||
-					 thisBottomRight.X < candidatePosition.Value.X - SimpleArea.COLLISION_EPSILON ||
-					 this.Y > externalBottomRight.Y + SimpleArea.COLLISION_EPSILON ||
-					 thisBottomRight.Y < candidatePosition.Value.Y - SimpleArea.COLLISION_EPSILON);
+			return !(this.X >= externalBottomRight.X + SimpleArea.COLLISION_EPSILON ||
+					 thisBottomRight.X <= candidatePosition.Value.X - SimpleArea.COLLISION_EPSILON ||
+					 this.Y >= externalBottomRight.Y + SimpleArea.COLLISION_EPSILON ||
+					 thisBottomRight.Y <= candidatePosition.Value.Y - SimpleArea.COLLISION_EPSILON);
+		}
+
+		/// <summary>
+		/// Returns a value indicating whether the external area is intersecting by this area.
+		/// </summary>
+		/// <param name="external">The external area.</param>
+		/// <param name="candidatePosition">The candidate position.</param>
+		/// <returns>A value indicating whether the point is intersected by this area.</returns>
+		private bool GetIntersects(OffsetArea external, Vector2? candidatePosition = null)
+		{
+			if (candidatePosition.HasValue)
+			{
+				candidatePosition = new Vector2(candidatePosition.Value.X + external.HorizontalOffset, candidatePosition.Value.Y + external.VerticalOffset);
+			}
+
+			candidatePosition ??= external.TopLeft;
+			var externalBottomRight = new Vector2(candidatePosition.Value.X + external.Width, candidatePosition.Value.Y + external.Height);
+			var thisBottomRight = this.BottomRight;
+
+			return !(this.X >= externalBottomRight.X + SimpleArea.COLLISION_EPSILON ||
+					 thisBottomRight.X <= candidatePosition.Value.X - SimpleArea.COLLISION_EPSILON ||
+					 this.Y >= externalBottomRight.Y + SimpleArea.COLLISION_EPSILON ||
+					 thisBottomRight.Y <= candidatePosition.Value.Y - SimpleArea.COLLISION_EPSILON);
+		}
+
+		/// <summary>
+		/// Returns a value indicating whether the external area is intersecting by this area.
+		/// </summary>
+		/// <param name="external">The external area.</param>
+		/// <param name="candidatePosition">The candidate position.</param>
+		/// <returns>A value indicating whether the point is intersected by this area.</returns>
+		private bool GetIntersects(AreaCollection external, Vector2? candidatePosition = null)
+		{
+			return external.Intersects(this, candidatePosition);
 		}
 	}
 }

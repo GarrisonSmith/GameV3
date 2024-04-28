@@ -1,5 +1,6 @@
 ﻿using Engine.Loading.Base.interfaces;
 using Engine.Physics.Areas;
+using Engine.Physics.Collisions;
 using Engine.Physics.Collisions.interfaces;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -90,7 +91,7 @@ namespace Engine.Debugging
 			{
 				foreach (var keyValuePair in this.CollisionTextures)
 				{
-					Managers.DrawManager.Draw(keyValuePair.Value, keyValuePair.Key.CollisionArea.Area.TopLeft);
+					Managers.DrawManager.Draw(keyValuePair.Value, keyValuePair.Key.CollisionArea.TopLeft);
 				}
 			}
 		}
@@ -106,23 +107,23 @@ namespace Engine.Debugging
 				return;
 			}
 
-			if (collision.CollisionArea.Area is SimpleArea simpleArea)
+			if (collision.CollisionArea is SimpleCollisionArea simpleCollisionArea)
 			{
 				this.TryAddRectangleTexture(
 					collision,
-					new Rectangle(0, 0, (int)simpleArea.Width, (int)simpleArea.Height)
+					new Rectangle(0, 0, (int)simpleCollisionArea.Width, (int)simpleCollisionArea.Height)
 				);
 			}
-			else if (collision.CollisionArea.Area is OffsetArea offsetArea)
+			else if (collision.CollisionArea is OffsetCollisionArea offsetCollisionArea)
 			{
 				this.TryAddRectangleTexture(
 					collision,
-					new Rectangle(0, 0, (int)offsetArea.Width, (int)offsetArea.Height)
+					new Rectangle(0, 0, (int)offsetCollisionArea.Width, (int)offsetCollisionArea.Height)
 				);
 			}
-			else if (collision.CollisionArea.Area is ComplexArea complexArea)
+			else if (collision.CollisionArea is CollisionAreaCollection collisionAreaCollection)
 			{
-				foreach (var area in complexArea.OffsetAreas)
+				foreach (var area in collisionAreaCollection.CollisionAreas)
 				{
 					this.TryAddRectangleTexture(
 						collision,

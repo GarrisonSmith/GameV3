@@ -10,6 +10,6 @@ namespace Engine.Core.Base.interfaces
         /// <summary>
         /// Gets or sets the guid.
         /// </summary>
-        Guid Guid { get; set; }
+        Guid Guid { get; }
     }
 }

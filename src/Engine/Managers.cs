@@ -7,6 +7,7 @@ using Engine.Loading;
 using Engine.Loading.Configurations;
 using Engine.Physics;
 using Engine.Physics.Areas;
+using Engine.Saving;
 using Engine.TileMapping;
 using Engine.TileMapping.Base;
 using Engine.UI;
@@ -35,6 +36,11 @@ namespace Engine
 		/// Gets or sets the load manager.
 		/// </summary>
 		public static LoadManager LoadManager { get; private set; }
+
+		/// <summary>
+		/// Gets or sets the saving manager.
+		/// </summary>
+		public static SavingManager SavingManager { get; private set; }
 
 		/// <summary>
 		/// Gets or sets the random manager.
@@ -97,7 +103,8 @@ namespace Engine
 			Managers.Graphics = graphics;
 
 			// Order of these starting matters.
-			Managers.LoadManager = LoadManager.StartLoadManager(game);
+			Managers.LoadManager = LoadManager.StartLoadManager();
+			Managers.SavingManager = SavingManager.StartSavingManager();
 			Managers.PhysicsManager = PhysicsManager.StartPhysicsManager(game);
 			Managers.ControlManager = ControlManager.StartControlManager(game);
 			Managers.DrawManager = DrawManager.StartDrawManager(game.GraphicsDevice);

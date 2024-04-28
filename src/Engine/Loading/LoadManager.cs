@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml;
+using static System.Net.WebRequestMethods;
 
 namespace Engine.Loading
 {
@@ -29,15 +30,10 @@ namespace Engine.Loading
 		/// </summary>
 		/// <param name="game">The game.</param>
 		/// <returns>The load manager.</returns>
-		public static LoadManager StartLoadManager(Game game)
+		public static LoadManager StartLoadManager()
 		{
-			return Managers.LoadManager ?? new LoadManager(game);
+			return Managers.LoadManager ?? new LoadManager();
 		}
-
-		/// <summary>
-		/// Gets or sets the game.
-		/// </summary>
-		protected Game Game { get; set; }
 
 		/// <summary>
 		/// Gets or sets the XMLDocuments.
@@ -47,10 +43,8 @@ namespace Engine.Loading
 		/// <summary>
 		/// Initializes a new instance of the LoadManager class.
 		/// </summary>
-		/// <param name="game">The game.</param>
-		private LoadManager(Game game)
+		private LoadManager()
 		{
-			this.Game = game;
 			this.XMLDocuments = new();
 		}
 
@@ -61,17 +55,17 @@ namespace Engine.Loading
 		{
 			foreach (var spriteSheetName in TileSetsConfig.TileSetFileNames)
 			{
-				Managers.DrawManager.SpriteSheets.Add(spriteSheetName, Game.Content.Load<Texture2D>(@"TileSets\" + spriteSheetName));
+				Managers.DrawManager.SpriteSheets.Add(spriteSheetName, Managers.Game.Content.Load<Texture2D>(@"TileSets\" + spriteSheetName));
 			}
 
 			foreach (var spriteSheetName in CharactersConfig.CharacterFileNames)
 			{
-				Managers.DrawManager.SpriteSheets.Add(spriteSheetName, Game.Content.Load<Texture2D>(@"CharacterSets\" + spriteSheetName));
+				Managers.DrawManager.SpriteSheets.Add(spriteSheetName, Managers.Game.Content.Load<Texture2D>(@"CharacterSets\" + spriteSheetName));
 			}
 
 			foreach (var fontName in FontsConfig.FontFileNames)
 			{
-				Managers.DrawManager.SpriteFonts.Add(fontName, Game.Content.Load<SpriteFont>(@"Fonts\" + fontName));
+				Managers.DrawManager.SpriteFonts.Add(fontName, Managers.Game.Content.Load<SpriteFont>(@"Fonts\" + fontName));
 			}
 		}
 
@@ -120,10 +114,11 @@ namespace Engine.Loading
 			if (Managers.DrawManager.TryGetSpriteSheet(spriteSheetName, out var spritesheet))
 			{
 				var spritesheetCoordinate = new Point(row * Tile.TILE_DIMENSIONS, col * Tile.TILE_DIMENSIONS);
-				var sheetBox = new Rectangle(2, 2, Tile.TILE_DIMENSIONS, Tile.TILE_DIMENSIONS);
-				if (Managers.DrawManager.TryGetTextureInstance(spriteSheetName, spritesheetCoordinate, out var textureInstance))
+				var textureBox = new Rectangle(2, 2, Tile.TILE_DIMENSIONS, Tile.TILE_DIMENSIONS);
+				var spritesheetBox = new Rectangle(spritesheetCoordinate.X, spritesheetCoordinate.Y, Tile.TILE_DIMENSIONS, Tile.TILE_DIMENSIONS);
+				if (Managers.DrawManager.DrawDataInstanceByName.TryGetValue(spriteSheetName + spritesheetBox.ToString(), out var drawData))
 				{
-					return new DrawData(spriteSheetName, spritesheetCoordinate, sheetBox, textureInstance);
+					return drawData.CloneDrawData();
 				}
 
 				var tileTextureData = this.GetTextureDataFromSpritesheetArea(spritesheet, new Rectangle(col * Tile.TILE_DIMENSIONS, row * Tile.TILE_DIMENSIONS, Tile.TILE_DIMENSIONS, Tile.TILE_DIMENSIONS));
@@ -190,9 +185,11 @@ namespace Engine.Loading
 				};
 
 				var tileTexture = this.CombineTexture(textures, Tile.TILE_DIMENSIONS + 4, Tile.TILE_DIMENSIONS + 4);
-				tileTexture = Managers.DrawManager.AddTextureInstance(spriteSheetName, spritesheetCoordinate, tileTexture);
 
-				return new DrawData(spriteSheetName, spritesheetCoordinate, sheetBox, tileTexture);
+				drawData = new DrawData(spriteSheetName, spritesheetCoordinate, textureBox, tileTexture);
+				Managers.DrawManager.DrawDataInstanceByName.Add(spriteSheetName + spritesheetBox.ToString(), drawData.CloneDrawData());
+				
+				return drawData;
 			}
 
 			return null; //missing spritesheet.
@@ -290,7 +287,7 @@ namespace Engine.Loading
 			if (!this.XMLDocuments.TryGetValue(tileMap.Name, out var xmlDocument))
 			{
 				xmlDocument = new XmlDocument();
-				xmlDocument.Load(Path.Combine(Game.Content.RootDirectory, "TileMaps", tileMap.Name + ".xml"));
+				xmlDocument.Load(Path.Combine(Managers.Game.Content.RootDirectory, "TileMaps", tileMap.Name + ".xml"));
 				this.XMLDocuments.Add(tileMap.Name, xmlDocument);
 			}
 
@@ -459,7 +456,8 @@ namespace Engine.Loading
 				{
 					if (!tileMap.Layers.TryGetValue(layer, out var tileMapLayer))
 					{
-						tileMapLayer = new TileMapLayer(layer, tileMap);
+						tileMapLayer = new TileMapLayer(layer);
+						tileMap.Layers.Add(tileMapLayer.Layer, tileMapLayer);
 					}
 
 					foreach (var location in locations[layer])
@@ -480,11 +478,13 @@ namespace Engine.Loading
 
 						if (animation == null)
 						{
-							_ = new Tile(true, layer, area, collision, drawData, tileMapLayer);
+							var tile = new Tile(true, layer, area, collision, drawData);
+							tileMapLayer.AddTile((int)tile.Position.Y / Tile.TILE_DIMENSIONS, (int)tile.Position.X / Tile.TILE_DIMENSIONS, tile);
 						}
 						else
 						{
-							_ = new AnimatedTile(true, true, layer, layer, area, collision, animation.CloneAnimation(), tileMapLayer);
+							var animatedTile = new AnimatedTile(true, true, layer, layer, area, collision, animation.CloneAnimation());
+							tileMapLayer.AddTile((int)animatedTile.Position.Y / Tile.TILE_DIMENSIONS, (int)animatedTile.Position.X / Tile.TILE_DIMENSIONS, animatedTile);
 						}
 					}
 				}
@@ -568,7 +568,7 @@ namespace Engine.Loading
 			var position = new Position(64, 64); //TODO entity starting location
 			var area = new SimpleArea(position, 64, 128);
 			var collision = new OffsetCollisionArea(new OffsetArea(position, 11, 117, 42, 11), new List<MovementTerrainTypes> { MovementTerrainTypes.Entity });
-			_ = new Entity(true, true, 1, 1, OrientationTypes.Downward, new MoveSpeed(15), area, collision, animations[0], animations, tileManager.ActiveTileMap.Layers[1]);
+			_ = new Entity(true, true, 1, 1, OrientationTypes.Downward, new MoveSpeed(25), area, collision, animations[0], animations, tileManager.ActiveTileMap.Layers[1]);
 		}
 
 		/// <summary>
@@ -605,18 +605,19 @@ namespace Engine.Loading
 					var framesIndex = 0;
 					for (var x = 0; x < (64 * 4) - 1; x += 64) //TODO config entity width
 					{
-						var sheetBox = new Rectangle(0, 0, 64, 128);
+						var textureBox = new Rectangle(0, 0, 64, 128);
 						var spritesheetCoordinate = new Point(x, y);
-						Texture2D texture;
-						if (!Managers.DrawManager.TryGetTextureInstance(spriteSheetName, spritesheetCoordinate, out texture))
+						var spritesheetBox = new Rectangle(spritesheetCoordinate.X, spritesheetCoordinate.Y, 64, 128);
+						DrawData drawData;
+						if (!Managers.DrawManager.DrawDataInstanceByName.TryGetValue(spriteSheetName + spritesheetBox.ToString(), out drawData))
 						{
 							var textureData = this.GetTextureDataFromSpritesheetArea(spritesheetTexture, new Rectangle(x, y, 64, 128));
-							texture = new Texture2D(Managers.Graphics.GraphicsDevice, 64, 128);
+							var texture = new Texture2D(Managers.Graphics.GraphicsDevice, 64, 128);
 							texture.SetData(textureData);
-							texture = Managers.DrawManager.AddTextureInstance(spriteSheetName, spritesheetCoordinate, texture);
+							drawData = new DrawData(spriteSheetName, spritesheetCoordinate, textureBox, texture);
+							Managers.DrawManager.DrawDataInstanceByName.Add(spriteSheetName + spritesheetBox.ToString(), drawData.CloneDrawData());
 						}
 
-						var drawData = new DrawData(spriteSheetName, spritesheetCoordinate, sheetBox, texture);
 						rowFrames[framesIndex++] = drawData;
 					}
 

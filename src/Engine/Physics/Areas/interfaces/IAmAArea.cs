@@ -4,20 +4,10 @@ using Microsoft.Xna.Framework;
 namespace Engine.Physics.Areas.interfaces
 {
 	/// <summary>
-	/// Represents an area.
+	/// Represents a area.
 	/// </summary>
 	public interface IAmAArea : IHavePosition
 	{
-		/// <summary>
-		/// Get or sets the top left X value of the area.
-		/// </summary>
-		float X { get; }
-
-		/// <summary>
-		/// Gets or sets the top left Y value of the area.
-		/// </summary>
-		float Y { get; }
-
 		/// <summary>
 		/// Gets or sets the width.
 		/// </summary>
@@ -27,11 +17,6 @@ namespace Engine.Physics.Areas.interfaces
 		/// Gets or sets the height.
 		/// </summary>
 		float Height { get; }
-
-		/// <summary>
-		/// Gets or sets the top right position of the area.
-		/// </summary>
-		Vector2 TopLeft { get; set; }
 
 		/// <summary>
 		/// Gets the center position of the area.

@@ -7,7 +7,8 @@ namespace Engine.Controls.Base
 	/// <summary>
 	/// Represents a ControlAction.
 	/// </summary>
-	public class ControlAction<T>: IControlAction where T : struct, Enum
+	public class ControlAction<T>: IControlAction
+		where T : struct, Enum
 	{
 		/// <summary>
 		/// Gets or sets a value indicating whether this control action just started.

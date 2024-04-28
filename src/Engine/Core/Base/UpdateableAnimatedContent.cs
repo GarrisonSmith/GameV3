@@ -21,7 +21,7 @@ namespace Engine.Core.Base
         /// <summary>
         /// Gets or sets the guid.
         /// </summary>
-        public Guid Guid { get; set; }
+        public Guid Guid { get; private set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether updating is activated.
@@ -90,6 +90,21 @@ namespace Engine.Core.Base
                 }
             }
         }
+
+		/// <summary>
+		/// Get or sets the top left X value of the position.
+		/// </summary>
+		public float X { get => this.Position.X; set => this.Position.X = value; }
+
+		/// <summary>
+		/// Gets or sets the top left Y value of the position.
+		/// </summary>
+		public float Y { get => this.Position.Y; set => this.Position.Y = value; }
+
+		/// <summary>
+		/// Gets or sets the top right position of the position.
+		/// </summary>
+		public Vector2 TopLeft { get => this.Position.Coordinates; set => this.Position.Coordinates = value; }
 
 		/// <summary>
 		/// Gets or sets the position.

@@ -15,7 +15,7 @@ namespace Engine.Core.Base
         /// <summary>
         /// Gets or sets the guid.
         /// </summary>
-        public Guid Guid { get; set; }
+        public Guid Guid { get; private set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether updating is activated.

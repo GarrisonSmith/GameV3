@@ -16,17 +16,12 @@ namespace Engine.TileMapping.Base
         /// <summary>
         /// Gets or sets the guid.
         /// </summary>
-        public Guid Guid { get; set; }
+        public Guid Guid { get; private set; }
 
         /// <summary>
         /// Gets or sets the layer.
         /// </summary>
         public ushort Layer { get; set; }
-
-        /// <summary>
-        /// Gets or sets the tile map.
-        /// </summary>
-        public TileMap TileMap { get; set; }
 
         /// <summary>
         /// Gets or sets the entities.
@@ -47,13 +42,10 @@ namespace Engine.TileMapping.Base
         /// Initializes a new instance of the TileMapLayer class.
         /// </summary>
         /// <param name="layer">The layer.</param>
-        /// <param name="tileMap">The tile map.</param>
-        public TileMapLayer(ushort layer, TileMap tileMap)
+        public TileMapLayer(ushort layer)
         {
             this.Guid = Guid.NewGuid();
 			this.Layer = layer;
-			this.TileMap = tileMap;
-			this.TileMap.Layers.Add(layer, this);
             this.Entities = new List<IAmAEntity>();
             this.Tiles = new Dictionary<int, Dictionary<int, IAmATile>>();
 			this.TilesWithCollision = new Dictionary<int, Dictionary<int, IAmATile>>();

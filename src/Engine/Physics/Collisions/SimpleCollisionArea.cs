@@ -13,17 +13,52 @@ namespace Engine.Physics.Collisions
 	/// <summary>
 	/// Represents a simple collision area.
 	/// </summary>
-	public class SimpleCollisionArea : IAmACollisionArea
+	public class SimpleCollisionArea : IAmADefinedCollisionArea
 	{
+		/// <summary>
+		/// Gets the width.
+		/// </summary>
+		public float Width { get => this.Area.Width; }
+
+		/// <summary>
+		/// Gets the height.
+		/// </summary>
+		public float Height { get => this.Area.Height; }
+
+		/// <summary>
+		/// Get or sets the top left X value of the position.
+		/// </summary>
+		public float X { get => this.Position.X; set => this.Position.X = value; }
+
+		/// <summary>
+		/// Gets or sets the top left Y value of the position.
+		/// </summary>
+		public float Y { get => this.Position.Y; set => this.Position.Y = value; }
+
+		/// <summary>
+		/// Gets or sets the top right position of the position.
+		/// </summary>
+		public Vector2 TopLeft { get => this.Position.Coordinates; set => this.Position.Coordinates = value; }
+
+		/// <summary>
+		/// Gets or sets the position.
+		/// </summary>
+		public Position Position { get => this.Area.Position; set => this.Area.Position = value; }
+
 		/// <summary>
 		/// Gets or sets the collision area.
 		/// </summary>
 		public SimpleArea Area { get; private set; }
 
 		/// <summary>
+		/// Gets or sets the area.
+		/// </summary>
+		IAmAArea IHaveArea.Area { get => this.Area; }
+
+		/// <summary>
 		/// Gets the collision area.
 		/// </summary>
-		IAmAArea IAmACollisionArea.Area { get => this.Area; }
+		IAmADefinedArea IAmADefinedCollisionArea.Area { get => this.Area; }
 
 		/// <summary>
 		/// Gets or sets the movement terrain types.
@@ -33,7 +68,7 @@ namespace Engine.Physics.Collisions
 		/// <summary>
 		/// Gets the movement terrain types.
 		/// </summary>
-		IEnumerable IAmACollisionArea.MovementTerrainTypes { get => this.MovementTerrainTypes; }
+		IEnumerable IAmADefinedCollisionArea.MovementTerrainTypes { get => this.MovementTerrainTypes; }
 
 		/// <summary>
 		/// Initializes a new instance of the SimpleCollisionArea class.
@@ -63,7 +98,7 @@ namespace Engine.Physics.Collisions
 			{
 				return this.GetCollisionInformation(offsetArea, out intersectedMovementTerrainTypes, candidatePosition);
 			}
-			else if (external is ComplexCollisionArea complexArea)
+			else if (external is CollisionAreaCollection complexArea)
 			{
 				return this.GetCollisionInformation(complexArea, out intersectedMovementTerrainTypes, candidatePosition);
 			}
@@ -122,30 +157,13 @@ namespace Engine.Physics.Collisions
 		/// <summary>
 		/// Gets the collision information.
 		/// </summary>
-		/// <param name="external">The external complex collision source.</param>
+		/// <param name="external">The external collision collection source.</param>
 		/// <param name="intersectedMovementTerrainTypes">The intersected movement terrain types.</param>
 		/// <param name="candidatePosition">The candidate position.</param>
 		/// <returns>The collision information.</returns>
-		private bool GetCollisionInformation(ComplexCollisionArea external, out IList<MovementTerrainTypes> intersectedMovementTerrainTypes, Vector2? candidatePosition = null)
+		private bool GetCollisionInformation(CollisionAreaCollection external, out IList<MovementTerrainTypes> intersectedMovementTerrainTypes, Vector2? candidatePosition = null)
 		{
-			int i = 0;
-			foreach (var externalSubArea in external.Area.OffsetAreas)
-			{
-				if (this.Area.Intersects(externalSubArea, candidatePosition))
-				{
-					intersectedMovementTerrainTypes = this.MovementTerrainTypes.Where(x => !external.MovementTerrainTypes[i].Contains(x)).ToList();
-					if (intersectedMovementTerrainTypes.Any())
-					{
-						return true;
-					}
-				}
-
-				i++;
-			}
-
-			intersectedMovementTerrainTypes = null;
-
-			return false;
+			return external.Intersects(this, out intersectedMovementTerrainTypes, candidatePosition);
 		}
 	}
 }

@@ -7,7 +7,7 @@ namespace Engine.Physics.Areas
 	/// <summary>
 	/// Represents a simple area.
 	/// </summary>
-	public class SimpleArea : IAmAArea
+	public class SimpleArea : IAmADefinedArea
 	{
 		/// <summary>
 		/// Gets the collision epsilon.
@@ -45,11 +45,6 @@ namespace Engine.Physics.Areas
 		public Vector2 TopLeft { get => this.Position.Coordinates; set => this.Position.Coordinates = value; }
 
 		/// <summary>
-		/// Gets or sets the bottom right position of the area.
-		/// </summary>
-		public Vector2 BottomRight { get => new Vector2(this.TopLeft.X + this.Width, this.TopLeft.Y + this.Height); }
-
-		/// <summary>
 		/// Gets or sets the center position of the area.
 		/// </summary>
 		public Vector2 Center
@@ -61,6 +56,11 @@ namespace Engine.Physics.Areas
 				this.Y = value.Y - this.Height / 2;
 			}
 		}
+
+		/// <summary>
+		/// Gets or sets the bottom right position of the area.
+		/// </summary>
+		public Vector2 BottomRight { get => new(this.TopLeft.X + this.Width, this.TopLeft.Y + this.Height); }
 
 		/// <summary>
 		/// Gets or sets the position.
@@ -142,9 +142,9 @@ namespace Engine.Physics.Areas
 			{
 				return this.GetIntersects(offsetArea, candidatePosition);
 			}
-			else if (external is ComplexArea complexArea)
+			else if (external is AreaCollection areaCollection)
 			{
-				return this.GetIntersects(complexArea, candidatePosition);
+				return this.GetIntersects(areaCollection, candidatePosition);
 			}
 
 			return false;
@@ -197,16 +197,9 @@ namespace Engine.Physics.Areas
 		/// <param name="external">The external area.</param>
 		/// <param name="candidatePosition">The candidate position.</param>
 		/// <returns>A value indicating whether the point is intersected by this area.</returns>
-		private bool GetIntersects(ComplexArea external, Vector2? candidatePosition = null)
+		private bool GetIntersects(AreaCollection external, Vector2? candidatePosition = null)
 		{
-			candidatePosition ??= external.TopLeft;
-			var externalBottomRight = new Vector2(candidatePosition.Value.X + external.Width, candidatePosition.Value.Y + external.Height);
-			var thisBottomRight = this.BottomRight;
-
-			return !(this.X >= externalBottomRight.X + SimpleArea.COLLISION_EPSILON ||
-					 thisBottomRight.X <= candidatePosition.Value.X - SimpleArea.COLLISION_EPSILON ||
-					 this.Y >= externalBottomRight.Y + SimpleArea.COLLISION_EPSILON ||
-					 thisBottomRight.Y <= candidatePosition.Value.Y - SimpleArea.COLLISION_EPSILON);
+			return external.Intersects(this, candidatePosition);
 		}
 	}
 }

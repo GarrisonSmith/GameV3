@@ -49,9 +49,9 @@ namespace Engine.Drawing
 		public Dictionary<Guid, DrawData> DrawData { get; set; }
 
 		/// <summary>
-		/// Gets or sets the draw data by name.
+		/// Gets or sets a reference to the draw data by name.
 		/// </summary>
-		protected Dictionary<string, Texture2D> DrawDataByName { get; set; }
+		public Dictionary<string, DrawData> DrawDataInstanceByName { get; set; }
 
 		/// <summary>
 		/// Gets or sets the animations.
@@ -68,7 +68,7 @@ namespace Engine.Drawing
 			this.SpriteFonts = new();
 			this.SpriteSheets = new();
 			this.DrawData = new();
-			this.DrawDataByName = new();
+			this.DrawDataInstanceByName = new();
 			this.Animations = new();
 			this.IsLoaded = false;
 		}
@@ -264,46 +264,6 @@ namespace Engine.Drawing
 		public bool TryGetSpriteSheet(string spriteSheetName, out Texture2D texture)
 		{
 			return this.SpriteSheets.TryGetValue(spriteSheetName, out texture);
-		}
-
-		/// <summary>
-		/// Adds a instance of the texture.
-		/// </summary>
-		/// <param name="spritesheetCoordinate">The spritesheet coordinate.</param>
-		/// <param name="texture">The texture.</param>
-		/// <returns>A instance of the texture.</returns>
-		public Texture2D AddTextureInstance(string spritesheetName, Point spritesheetCoordinate, Texture2D texture)
-		{
-			this.DrawDataByName.Add(spritesheetName + spritesheetCoordinate.ToString(), texture);
-			var data = new Color[texture.Width * texture.Height];
-			var newTextureInstance = new Texture2D(Managers.Graphics.GraphicsDevice, texture.Width, texture.Height);
-			texture.GetData(data);
-			newTextureInstance.SetData(data);
-			
-			return newTextureInstance;
-		}
-
-		/// <summary>
-		/// Gets the texture instance.
-		/// </summary>
-		/// <param name="spritesheetName">The spritesheet name</param>
-		/// <param name="spritesheetCoordinate">The spritesheet coordinate.</param>
-		/// <param name="textureInstance">The texture instance.</param>
-		/// <returns>A instance of the texture.</returns>
-		public bool TryGetTextureInstance(string spritesheetName, Point spritesheetCoordinate, out Texture2D textureInstance)
-		{
-			textureInstance = null;
-			if (this.DrawDataByName.TryGetValue(spritesheetName + spritesheetCoordinate.ToString(), out var texture))
-			{
-				var data = new Color[texture.Width * texture.Height];
-				textureInstance = new Texture2D(Managers.Graphics.GraphicsDevice, texture.Width, texture.Height);
-				texture.GetData(data);
-				textureInstance.SetData(data);
-
-				return true;
-			}
-
-			return false;
 		}
 
 		/// <summary>

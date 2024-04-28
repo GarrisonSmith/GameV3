@@ -3,6 +3,7 @@ using Engine.Drawing.Base.interfaces;
 using Engine.Physics.Areas.interfaces;
 using Engine.Physics.Base;
 using Engine.UI.Base.enums;
+using Microsoft.Xna.Framework;
 
 namespace Engine.UI.Base
 {
@@ -11,6 +12,21 @@ namespace Engine.UI.Base
 	/// </summary>
 	public abstract class DrawableUiElement : BaseUiElement, ICanBeDrawn
 	{
+		/// <summary>
+		/// Get or sets the top left X value of the position.
+		/// </summary>
+		public float X { get => this.Position.X; set => this.Position.X = value; }
+
+		/// <summary>
+		/// Gets or sets the top left Y value of the position.
+		/// </summary>
+		public float Y { get => this.Position.Y; set => this.Position.Y = value; }
+
+		/// <summary>
+		/// Gets or sets the top right position of the position.
+		/// </summary>
+		public Vector2 TopLeft { get => this.Position.Coordinates; set => this.Position.Coordinates = value; }
+
 		/// <summary>
 		/// Gets or sets the position.
 		/// </summary>

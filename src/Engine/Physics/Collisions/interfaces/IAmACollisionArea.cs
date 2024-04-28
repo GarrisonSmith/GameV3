@@ -1,8 +1,6 @@
-﻿using Engine.Physics.Areas.interfaces;
-using Engine.Physics.Base;
+﻿using Engine.Physics.Base.interfaces;
 using Engine.Physics.Collisions.enums;
 using Microsoft.Xna.Framework;
-using System.Collections;
 using System.Collections.Generic;
 
 namespace Engine.Physics.Collisions.interfaces
@@ -10,17 +8,17 @@ namespace Engine.Physics.Collisions.interfaces
 	/// <summary>
 	/// Represents a collision area.
 	/// </summary>
-	public interface IAmACollisionArea
+	public interface IAmACollisionArea : IHavePosition
 	{
 		/// <summary>
-		/// Gets the collision area.
+		/// Gets the width.
 		/// </summary>
-		IAmAArea Area { get; }
+		float Width { get; }
 
 		/// <summary>
-		/// Gets the movement terrain types.
+		/// Gets the height.
 		/// </summary>
-		IEnumerable MovementTerrainTypes { get; }
+		float Height { get; }
 
 		/// <summary>
 		/// Get a value indicating if the external collision area intersects this collision area. 

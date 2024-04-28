@@ -92,11 +92,11 @@ namespace Engine.Physics.Base
 			float stepFactor;
 			if (Math.Abs(totalHorizontalMovement) >= Math.Abs(totalVerticalMovement))
 			{
-				stepFactor = Math.Abs(this.MovingCollisionArea.Area.Width / totalHorizontalMovement);
+				stepFactor = Math.Abs(this.MovingCollisionArea.Width / totalHorizontalMovement);
 			}
 			else
 			{
-				stepFactor = Math.Abs(this.MovingCollisionArea.Area.Height / totalVerticalMovement);
+				stepFactor = Math.Abs(this.MovingCollisionArea.Height / totalVerticalMovement);
 			}
 
 
@@ -129,11 +129,12 @@ namespace Engine.Physics.Base
 		}
 
 		/// <summary>
-		/// 
+		/// Process the candidate position check and starts up any sub omni-directional checks if needed.
 		/// </summary>
-		/// <param name="candidatePosition"></param>
-		/// <param name="totalHorizontalMovement"></param>
-		/// <returns></returns>
+		/// <param name="candidatePosition">The candidate position.</param>
+		/// <param name="totalHorizontalMovement">The total horizontal movement.</param>
+		/// <param name="totalVerticalMovement">THe total vertical movement.</param>
+		/// <returns>A value indicating if a collision was recorded.</returns>
 		private bool ProcessCheckCandidatePosition(Vector2 candidatePosition, float totalHorizontalMovement, float totalVerticalMovement)
 		{
 			if (this.CollisionAtCandidatePosition(candidatePosition))
@@ -257,7 +258,7 @@ namespace Engine.Physics.Base
 				topRight += new Vector2(offsetArea.Area.HorizontalOffset, offsetArea.Area.VerticalOffset);
 			}
 
-			var bottomRight = topRight + new Vector2(this.MovingCollisionArea.Area.Width, this.MovingCollisionArea.Area.Height);
+			var bottomRight = topRight + new Vector2(this.MovingCollisionArea.Width, this.MovingCollisionArea.Height);
 			for (var row = (int)candidatePosition.Y / Tile.TILE_DIMENSIONS; row <= Math.Ceiling(bottomRight.Y / Tile.TILE_DIMENSIONS); row++)
 			{
 				for (var col = (int)candidatePosition.X / Tile.TILE_DIMENSIONS; col <= Math.Ceiling(bottomRight.X / Tile.TILE_DIMENSIONS); col++)
