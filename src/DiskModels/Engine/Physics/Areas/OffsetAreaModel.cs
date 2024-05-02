@@ -1,7 +1,7 @@
-﻿using DiskModels.Engine.Physics.Areas.interfaces;
+﻿using DiscModels.Engine.Physics.Areas.interfaces;
 using System.Runtime.Serialization;
 
-namespace DiskModels.Engine.Physics.Areas
+namespace DiscModels.Engine.Physics.Areas
 {
     [DataContract(Name = "offsetArea")]
     public class OffsetAreaModel : IAmAAreaModel

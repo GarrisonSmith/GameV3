@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Engine", "Engine\Engine.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LevelEditor", "LevelEditor\LevelEditor.csproj", "{4FF7C4A1-FFEA-4933-B684-918F91257774}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiskModels", "DiskModels\DiskModels.csproj", "{84452032-8BCA-4615-AD5D-34ED7A7A1355}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiscModels", "DiskModels\DiscModels.csproj", "{84452032-8BCA-4615-AD5D-34ED7A7A1355}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

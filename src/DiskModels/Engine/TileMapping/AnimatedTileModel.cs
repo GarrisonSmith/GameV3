@@ -1,11 +1,11 @@
-﻿using DiskModels.Engine.Drawing;
-using DiskModels.Engine.Physics;
-using DiskModels.Engine.Physics.Areas.interfaces;
-using DiskModels.Engine.Physics.Collisions.interfaces;
-using DiskModels.Engine.TileMapping.interfaces;
+﻿using DiscModels.Engine.Drawing;
+using DiscModels.Engine.Physics;
+using DiscModels.Engine.Physics.Areas.interfaces;
+using DiscModels.Engine.Physics.Collisions.interfaces;
+using DiscModels.Engine.TileMapping.interfaces;
 using System.Runtime.Serialization;
 
-namespace DiskModels.Engine.TileMapping
+namespace DiscModels.Engine.TileMapping
 {
 	[DataContract(Name = "animatedTile")]
     public class AnimatedTileModel<AreaType, CollisionType> : IAmATileModel

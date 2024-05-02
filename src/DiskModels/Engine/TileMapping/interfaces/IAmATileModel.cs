@@ -1,4 +1,4 @@
-﻿namespace DiskModels.Engine.TileMapping.interfaces
+﻿namespace DiscModels.Engine.TileMapping.interfaces
 {
 	public interface IAmATileModel
 	{

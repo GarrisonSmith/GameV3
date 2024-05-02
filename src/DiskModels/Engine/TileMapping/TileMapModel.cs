@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
 
-namespace DiskModels.Engine.TileMapping
+namespace DiscModels.Engine.TileMapping
 {
 	[DataContract(Name = "tileMap")]
 	public class TileMapModel

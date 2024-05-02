@@ -1,4 +1,6 @@
-﻿using Microsoft.Xna.Framework;
+﻿using DiscModels.Engine.Physics;
+using Engine.Physics.Areas.interfaces;
+using Microsoft.Xna.Framework;
 
 namespace Engine.Physics.Base
 {
@@ -32,6 +34,15 @@ namespace Engine.Physics.Base
 		/// <summary>
 		/// Initializes a new instance of the Position class.
 		/// </summary>
+		/// <param name="positionModel">The position model.</param>
+		public Position(PositionModel positionModel)
+		{
+			this.coordinates = new Vector2(positionModel.X, positionModel.Y);
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the Position class.
+		/// </summary>
 		/// <param name="coordinate">The coordinate.</param>
 		public Position(Vector2 coordinate)
 		{ 
@@ -46,6 +57,19 @@ namespace Engine.Physics.Base
 		public Position(float x, float y)
 		{
 			this.coordinates = new Vector2(x, y);
+		}
+
+		/// <summary>
+		/// Gets a position model that corresponds to this position.
+		/// </summary>
+		/// <returns>The position model.</returns>
+		public PositionModel ToModel()
+		{ 
+			return new PositionModel 
+			{ 
+				X = this.coordinates.X,
+				Y = this.coordinates.Y 
+			};
 		}
 	}
 }

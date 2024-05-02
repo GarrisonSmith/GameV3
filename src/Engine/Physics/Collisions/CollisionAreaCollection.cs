@@ -22,24 +22,18 @@ namespace Engine.Physics.Collisions
 		public float Height { get; private set; }
 
 		/// <summary>
-		/// Get or sets the top left X value of the position.
+		/// Gets the top left of the collision area.
 		/// </summary>
-		public float X { get => this.Position.X; set => this.Position.X = value; }
+		public Vector2 TopLeft { get => this.Position.Coordinates; }
 
-		/// <summary>
-		/// Gets or sets the top left Y value of the position.
-		/// </summary>
-		public float Y { get => this.Position.Y; set => this.Position.Y = value; }
+		public Vector2 Center => throw new System.NotImplementedException();
 
-		/// <summary>
-		/// Gets or sets the top right position of the position.
-		/// </summary>
-		public Vector2 TopLeft { get => this.Position.Coordinates; set => this.Position.Coordinates = value; }
+		public Vector2 BottomRight => throw new System.NotImplementedException();
 
 		/// <summary>
 		/// Gets or sets the position.
 		/// </summary>
-		public Position Position { get; set; }
+		public Position Position { get; private set; }
 
 		/// <summary>
 		/// Gets or sets the collision area.

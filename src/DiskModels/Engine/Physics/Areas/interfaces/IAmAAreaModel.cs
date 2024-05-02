@@ -1,4 +1,4 @@
-﻿namespace DiskModels.Engine.Physics.Areas.interfaces
+﻿namespace DiscModels.Engine.Physics.Areas.interfaces
 {
 	public interface IAmAAreaModel
 	{ 

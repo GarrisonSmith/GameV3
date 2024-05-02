@@ -1,4 +1,7 @@
-﻿using Microsoft.Xna.Framework;
+﻿using DiscModels.Engine.Drawing;
+using DiscModels.Engine.Physics.Areas;
+using Engine.TileMapping.Base.Tiles;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 
@@ -47,6 +50,19 @@ namespace Engine.Drawing.Base
 		/// <summary>
 		/// Initializes a new instance of the DrawData class.
 		/// </summary>
+		/// <param name="drawDataModel">The draw data model.</param>
+		public DrawData(DrawDataModel drawDataModel)
+		{
+			this.SpritesheetName = drawDataModel.SpritesheetName;
+			this.SpritesheetCoordinate = drawDataModel.SpritesheetBox.Location;
+			this.TextureBox = new Rectangle(2, 2, Tile.TILE_DIMENSIONS, Tile.TILE_DIMENSIONS);
+			this.Texture = Managers.LoadManager.GetTileTexture(this.SpritesheetName, this.SpritesheetBox, this.SpritesheetBox.Location);
+			Managers.DrawManager.DrawData.Add(this.Guid, this);
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the DrawData class.
+		/// </summary>
 		/// <param name="spritesheetName">The spritesheet name.</param>
 		/// <param name="spritesheetCoordinate">The spritesheet coordinate.</param>
 		/// <param name="textureBox">The texture box.</param>
@@ -73,6 +89,19 @@ namespace Engine.Drawing.Base
 			texture.SetData(data);
 
 			return new DrawData(this.SpritesheetName, this.SpritesheetCoordinate, this.TextureBox, texture);
+		}
+
+		/// <summary>
+		/// Gets a draw data model that corresponds to this draw data.
+		/// </summary>
+		/// <returns>The draw data model.</returns>
+		public DrawDataModel ToDrawDataModel()
+		{
+			return new DrawDataModel
+			{
+				SpritesheetName = this.SpritesheetName,
+				SpritesheetBox = this.SpritesheetBox,
+			};
 		}
 	}
 }

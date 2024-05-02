@@ -1,4 +1,5 @@
-﻿using Engine.Physics.Areas.interfaces;
+﻿using DiscModels.Engine.Physics.Areas;
+using Engine.Physics.Areas.interfaces;
 using Engine.Physics.Base;
 using Microsoft.Xna.Framework;
 
@@ -12,12 +13,12 @@ namespace Engine.Physics.Areas
 		/// <summary>
 		/// Get or sets the top left X value of the area.
 		/// </summary>
-		public float X { get => this.Position.X + this.HorizontalOffset; set => this.Position.X = value - this.HorizontalOffset; }
+		public float X { get => this.Position.X + this.HorizontalOffset; }
 
 		/// <summary>
 		/// Gets or sets the top left Y value of the area.
 		/// </summary>
-		public float Y { get => this.Position.Y + this.VerticalOffset; set => this.Position.Y = value - this.VerticalOffset; }
+		public float Y { get => this.Position.Y + this.VerticalOffset; }
 
 		/// <summary>
 		/// Gets or sets the horizontal offset of the sub area.
@@ -42,28 +43,12 @@ namespace Engine.Physics.Areas
 		/// <summary>
 		/// Gets or sets the top right position of the area.
 		/// </summary>
-		public Vector2 TopLeft
-		{
-			get => new(this.X, this.Y);
-			set
-			{
-				this.X = value.X;
-				this.Y = value.Y;
-			}
-		}
+		public Vector2 TopLeft { get => new(this.X, this.Y); }
 
 		/// <summary>
 		/// Gets or sets the center position of the area.
 		/// </summary>
-		public Vector2 Center
-		{
-			get => new(this.TopLeft.X + this.Width / 2, this.TopLeft.Y + this.Height / 2);
-			set
-			{
-				this.X = value.X - this.Width / 2;
-				this.Y = value.Y - this.Height / 2;
-			}
-		}
+		public Vector2 Center { get => new(this.TopLeft.X + this.Width / 2, this.TopLeft.Y + this.Height / 2); }
 
 		/// <summary>
 		/// Gets or sets the bottom right position of the area.
@@ -73,7 +58,21 @@ namespace Engine.Physics.Areas
 		/// <summary>
 		/// Gets or sets the position.
 		/// </summary>
-		public Position Position { get; set; }
+		public Position Position { get; private set; }
+
+		/// <summary>
+		/// Initializes a new instance of the Offset Area class.
+		/// </summary>
+		/// <param name="position">The position.</param>
+		/// <param name="offsetAreaModel">The offset area model.</param>
+		public OffsetArea(Position position, OffsetAreaModel offsetAreaModel)
+		{
+			this.Position = position;
+			this.HorizontalOffset = offsetAreaModel.HorizontalOffset;
+			this.VerticalOffset = offsetAreaModel.VerticalOffset;
+			this.Width = offsetAreaModel.Width;
+			this.Height = offsetAreaModel.Height;
+		}
 
 		/// <summary>
 		/// Initializes a new instance of the ComplexSubArea class.
@@ -136,6 +135,21 @@ namespace Engine.Physics.Areas
 			}
 
 			return false;
+		}
+
+		/// <summary>
+		/// Gets a offset area model that corresponds to this offset area.
+		/// </summary>
+		/// <returns>The offset area model.</returns>
+		public OffsetAreaModel ToOffsetAreaModel()
+		{
+			return new OffsetAreaModel
+			{
+				HorizontalOffset = this.HorizontalOffset,
+				VerticalOffset = this.VerticalOffset,
+				Width = this.Width,
+				Height = this.Height
+			};
 		}
 
 		/// <summary>

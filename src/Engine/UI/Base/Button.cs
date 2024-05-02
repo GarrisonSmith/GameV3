@@ -1,6 +1,7 @@
 ﻿using Engine.Drawing.Base;
 using Engine.Physics.Areas;
 using Engine.Physics.Areas.interfaces;
+using Engine.Physics.Base;
 using Engine.UI.Base.enums;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -40,13 +41,14 @@ namespace Engine.UI.Base
 		/// <param name="drawingActivated">A value indicating whether the content is drawing.</param>
 		/// <param name="drawOrder">The draw order.</param>
 		/// <param name="drawData">The draw data.</param>
+		/// <param name="position">The position.</param>
 		/// <param name="area">The area.</param>
 		/// <param name="buttonBorderSize">The button border size.</param>
 		/// <param name="buttonText">The button text.</param>
 		/// <param name="buttonTextColor">The button text color.</param>
 		/// <param name="buttonFont">The button font.</param>
-		public Button(bool drawingActivated, ushort drawOrder, DrawData drawData, IAmAArea area, int buttonBorderSize, string buttonText, Color buttonTextColor, SpriteFont buttonFont)
-			: base(UiElementTypes.Button, drawingActivated, drawOrder, drawData, area)
+		public Button(bool drawingActivated, ushort drawOrder, DrawData drawData, Position position, IAmAArea area, int buttonBorderSize, string buttonText, Color buttonTextColor, SpriteFont buttonFont)
+			: base(UiElementTypes.Button, drawingActivated, drawOrder, drawData, position, area)
 		{
 			this.ButtonText = buttonText;
 			this.ButtonTextColor = buttonTextColor;

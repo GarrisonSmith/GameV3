@@ -30,7 +30,7 @@ namespace Engine.UI.Base
 		/// <summary>
 		/// Gets or sets the position.
 		/// </summary>
-		public Position Position { get => this.Area.Position; set => this.Area.Position = value; }
+		public Position Position { get; set; }
 
 		/// <summary>
 		/// Gets or sets the area.
@@ -49,11 +49,13 @@ namespace Engine.UI.Base
 		/// <param name="drawingActivated">A value indicating whether the content is drawing.</param>
 		/// <param name="drawOrder">The draw order.</param>
 		/// <param name="drawData">The draw data.</param>
+		/// <param name="position">The position.</param>
 		/// <param name="area">The area.</param>
 		/// <param name="drawData">The draw data.</param>
-		protected DrawableUiElement(UiElementTypes uiElementType, bool drawingActivated, ushort drawOrder, DrawData drawData, IAmAArea area)
+		protected DrawableUiElement(UiElementTypes uiElementType, bool drawingActivated, ushort drawOrder, DrawData drawData, Position position, IAmAArea area)
 			: base(uiElementType, drawingActivated, drawOrder)
 		{
+			this.Position = position;
 			this.Area = area;
 			this.DrawData = drawData;
 		}

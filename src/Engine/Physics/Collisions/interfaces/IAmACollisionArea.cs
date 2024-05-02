@@ -21,6 +21,21 @@ namespace Engine.Physics.Collisions.interfaces
 		float Height { get; }
 
 		/// <summary>
+		/// Gets the top left of the collision area.
+		/// </summary>
+		Vector2 TopLeft { get; }
+
+		/// <summary>
+		/// Gets the center position of the collision area.
+		/// </summary>
+		Vector2 Center { get; }
+
+		/// <summary>
+		/// Gets the bottom right position of the collision area.
+		/// </summary>
+		Vector2 BottomRight { get; }
+
+		/// <summary>l
 		/// Get a value indicating if the external collision area intersects this collision area. 
 		/// </summary>
 		/// <param name="external">The external collision area.</param>

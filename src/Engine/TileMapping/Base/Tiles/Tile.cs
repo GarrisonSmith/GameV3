@@ -1,6 +1,13 @@
-﻿using Engine.Core.Base;
+﻿using DiscModels.Engine.Physics.Areas;
+using DiscModels.Engine.Physics.Areas.interfaces;
+using DiscModels.Engine.Physics.Collisions;
+using DiscModels.Engine.TileMapping;
+using Engine.Core.Base;
 using Engine.Drawing.Base;
+using Engine.Physics.Areas;
 using Engine.Physics.Areas.interfaces;
+using Engine.Physics.Base;
+using Engine.Physics.Collisions;
 using Engine.Physics.Collisions.interfaces;
 using Engine.TileMapping.Base.interfaces;
 
@@ -26,11 +33,26 @@ namespace Engine.TileMapping.Base.Tiles
 		/// </summary>
 		/// <param name="drawingActivated">A value indicating whether the content is drawing.</param>
 		/// <param name="drawOrder">The draw order.</param>
+		/// <param name="position">The position.</param>
+		/// <param name="tileModel">The tile model.</param>
+		public Tile(bool drawingActivated, ushort drawOrder, Position position, TileModel<SimpleAreaModel, SimpleCollisionAreaModel> tileModel)
+            : base (drawingActivated, drawOrder, position, new SimpleArea(position, tileModel.Area), new DrawData(tileModel.DrawData))
+        {
+            this.CollisionArea = new SimpleCollisionArea(position, tileModel.CollisionArea);
+			Managers.TileManager.Tiles.Add(this.Guid, this);
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the Tile class.
+		/// </summary>
+		/// <param name="drawingActivated">A value indicating whether the content is drawing.</param>
+		/// <param name="drawOrder">The draw order.</param>
+        /// <param name="position">The position.</param>
 		/// <param name="area">The area.</param>
 		/// <param name="collisionArea">The collision area.</param>
 		/// <param name="drawData">The draw data.</param>
-		public Tile(bool drawingActivated, ushort drawOrder, IAmAArea area, IAmACollisionArea collisionArea, DrawData drawData)
-            : base(drawingActivated, drawOrder, area, drawData)
+		public Tile(bool drawingActivated, ushort drawOrder, Position position, IAmAArea area, IAmACollisionArea collisionArea, DrawData drawData)
+            : base(drawingActivated, drawOrder, position, area, drawData)
         {
 			this.CollisionArea = collisionArea;
 			Managers.TileManager.Tiles.Add(this.Guid, this);
@@ -45,5 +67,14 @@ namespace Engine.TileMapping.Base.Tiles
         {
             this.DrawingActivated = !deactivateTileDrawing;
         }
+
+		/// <summary>
+		/// Get a tile model that corresponds to this tile.
+		/// </summary>
+		/// <returns>The tile model.</returns>
+		//public TileModel<IAmAAreaModel, IAmACollisionArea> ToTileModel()
+		//{ 
+			
+		//}
 	}
 }

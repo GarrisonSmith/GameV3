@@ -75,8 +75,8 @@ namespace Engine.View.CameraTasks
 				this.Camera.Move(this.Theta, this.MoveSpeed.TotalMovementAmount, false);
 			}
 			else
-			{ 
-				this.Camera.Area.Center = this.Destination;
+			{
+				this.Camera.CenterCameraOnLocation(this.Destination);
 			}
 
 			return this.Camera.Area.Center == this.Destination;

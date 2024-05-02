@@ -22,7 +22,7 @@ namespace Engine.View
 		/// <returns>The camera.</returns>
 		public static Camera StartCamera(Game game, Vector2 startingLocation)
 		{
-			camera ??= new Camera(game);
+			camera ??= new Camera(new Position(0, 0), game);
 			camera.Position.Coordinates = startingLocation;
 			return camera;
 		}
@@ -66,7 +66,7 @@ namespace Engine.View
 					Vector2 originalCenter = this.Area.Center;
 					this.Area.Width = (int)(this.Game.GraphicsDevice.Viewport.Width / this.Stretch);
 					this.Area.Height = (int)(this.Game.GraphicsDevice.Viewport.Height / this.Stretch);
-					this.Area.Center = originalCenter;
+					this.CenterCameraOnLocation(originalCenter);
 				}
 			}
 		}
@@ -92,24 +92,9 @@ namespace Engine.View
 		public float Rotation { get; set; }
 
 		/// <summary>
-		/// Get or sets the top left X value of the position.
-		/// </summary>
-		public float X { get => this.Position.X; set => this.Position.X = value; }
-
-		/// <summary>
-		/// Gets or sets the top left Y value of the position.
-		/// </summary>
-		public float Y { get => this.Position.Y; set => this.Position.Y = value; }
-
-		/// <summary>
-		/// Gets or sets the top right position of the position.
-		/// </summary>
-		public Vector2 TopLeft { get => this.Position.Coordinates; set => this.Position.Coordinates = value; }
-
-		/// <summary>
 		/// Get or sets the position.
 		/// </summary>
-		public Position Position { get; set; }
+		public Position Position { get; private set; }
 
 		/// <summary>
 		/// Gets or sets the camera matrix. This is applied to the draw each frame.
@@ -151,11 +136,12 @@ namespace Engine.View
 		/// <summary>
 		/// Initializes a new instance of the Camera class.
 		/// </summary>
+		/// <param name="position">The position.</param>
 		/// <param name="game">The game.</param>
-		private Camera(Game game)
+		private Camera(Position position, Game game)
 		{ 
 			this.Game = game;
-			this.Position = new Position(0, 0);
+			this.Position = position;
 			this.Area = new SimpleArea(this.Position, this.Game.GraphicsDevice.Viewport.Width, this.Game.GraphicsDevice.Viewport.Height);
 			this.VerticalMovementLocked = false;
 			this.HorizontalMovementLocked = false;
@@ -255,35 +241,44 @@ namespace Engine.View
 
 			if (forced || (!this.VerticalMovementLocked && (this.CameraBounding == null || (this.CameraBounding.TopLeft.Y <= this.Area.Center.Y + verticalMovementAmount && this.CameraBounding.BottomRight.Y >= this.Area.Center.Y + verticalMovementAmount))))
 			{
-				this.Area.Y += verticalMovementAmount;
+				this.Position.Y += verticalMovementAmount;
 			}
 			else if (!this.VerticalMovementLocked)
 			{
 				if (verticalMovementAmount < 0)
 				{
-					this.Area.Y = this.CameraBounding.TopLeft.Y - (this.Area.Height / 2);
+					this.Position.Y = this.CameraBounding.TopLeft.Y - (this.Area.Height / 2);
 				}
 				else if (verticalMovementAmount > 0)
 				{
-					this.Area.Y = this.CameraBounding.BottomRight.Y - (this.Area.Height / 2);
+					this.Position.Y = this.CameraBounding.BottomRight.Y - (this.Area.Height / 2);
 				}
 			}
 
 			if (forced || (!this.HorizontalMovementLocked && (this.CameraBounding == null || (this.CameraBounding.TopLeft.X <= this.Area.Center.X + horizontalMovementAmount && this.CameraBounding.BottomRight.X >= this.Area.Center.X + horizontalMovementAmount))))
 			{
-				this.Area.X += horizontalMovementAmount;
+				this.Position.X += horizontalMovementAmount;
 			}
 			else if (!this.HorizontalMovementLocked)
 			{
 				if (horizontalMovementAmount < 0)
 				{
-					this.Area.X = this.CameraBounding.TopLeft.X - (this.Area.Width / 2);
+					this.Position.X = this.CameraBounding.TopLeft.X - (this.Area.Width / 2);
 				}
 				else if (horizontalMovementAmount > 0)
 				{
-					this.Area.X = this.CameraBounding.BottomRight.X - (this.Area.Width / 2);
+					this.Position.X = this.CameraBounding.BottomRight.X - (this.Area.Width / 2);
 				}
 			}
+		}
+
+		/// <summary>
+		/// Centers the camera on a location.
+		/// </summary>
+		/// <param name="location">The location.</param>
+		public void CenterCameraOnLocation(Vector2 location)
+		{
+			this.Position.Coordinates = new Vector2(location.X - (this.Area.Width / 2), location.Y - (this.Area.Height / 2));
 		}
 	}
 }

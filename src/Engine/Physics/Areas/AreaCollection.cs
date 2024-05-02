@@ -22,34 +22,24 @@ namespace Engine.Physics.Areas
 		public float Height { get;  private set; }
 
 		/// <summary>
-		/// Get or sets the top left X value of the position.
+		/// Gets top right of the area.
 		/// </summary>
-		public float X { get => this.Position.X; set => this.Position.X = value; }
+		public Vector2 TopLeft { get => this.Position.Coordinates; }
 
 		/// <summary>
-		/// Gets or sets the top left Y value of the position.
+		/// Gets the center of the area.
 		/// </summary>
-		public float Y { get => this.Position.Y; set => this.Position.Y = value; }
+		public Vector2 Center { get => new (this.TopLeft.X + this.Width / 2, this.TopLeft.Y + this.Height / 2); }
 
 		/// <summary>
-		/// Gets or sets the top right position of the position.
+		/// Gets the bottom right of the area.
 		/// </summary>
-		public Vector2 TopLeft { get => this.Position.Coordinates; set => this.Position.Coordinates = value; }
-
-		/// <summary>
-		/// Gets the center position of the area.
-		/// </summary>
-		public Vector2 Center { get => new (this.X + this.Width / 2, this.Y + this.Height / 2); }
-
-		/// <summary>
-		/// Gets the bottom right position of the area.
-		/// </summary>
-		public Vector2 BottomRight { get => new (this.X + this.Width, this.Y + this.Height); }
+		public Vector2 BottomRight { get => new (this.TopLeft.X + this.Width, this.TopLeft.Y + this.Height); }
 
 		/// <summary>
 		/// Gets or sets the position.
 		/// </summary>
-		public Position Position { get; set; }
+		public Position Position { get; private set; }
 
 		/// <summary>
 		/// Gets or sets the areas.
@@ -75,6 +65,7 @@ namespace Engine.Physics.Areas
 		{
 			this.Width = 0;
 			this.Height = 0;
+
 			foreach (var area in this.Areas)
 			{
 				if (area.Width > this.Width)

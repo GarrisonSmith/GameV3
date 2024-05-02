@@ -1,4 +1,5 @@
-﻿using Engine.Physics.Areas.interfaces;
+﻿using DiscModels.Engine.Physics.Areas;
+using Engine.Physics.Areas.interfaces;
 using Engine.Physics.Base;
 using Microsoft.Xna.Framework;
 
@@ -22,12 +23,12 @@ namespace Engine.Physics.Areas
 		/// <summary>
 		/// Get or sets the top left X value of the area.
 		/// </summary>
-		public float X { get => this.Position.X; set => this.Position.X = value; }
+		public float X { get => this.Position.X; }
 
 		/// <summary>
 		/// Gets or sets the top left Y value of the area.
 		/// </summary>
-		public float Y { get => this.Position.Y; set => this.Position.Y = value; }
+		public float Y { get => this.Position.Y; }
 
 		/// <summary>
 		/// Gets or sets the width of the area.
@@ -42,20 +43,12 @@ namespace Engine.Physics.Areas
 		/// <summary>
 		/// Gets or sets the top right position of the area.
 		/// </summary>
-		public Vector2 TopLeft { get => this.Position.Coordinates; set => this.Position.Coordinates = value; }
+		public Vector2 TopLeft { get => this.Position.Coordinates; }
 
 		/// <summary>
 		/// Gets or sets the center position of the area.
 		/// </summary>
-		public Vector2 Center
-		{
-			get => new(this.TopLeft.X + this.Width / 2, this.TopLeft.Y + this.Height / 2);
-			set
-			{
-				this.X = value.X - this.Width / 2;
-				this.Y = value.Y - this.Height / 2;
-			}
-		}
+		public Vector2 Center { get => new(this.TopLeft.X + this.Width / 2, this.TopLeft.Y + this.Height / 2); }
 
 		/// <summary>
 		/// Gets or sets the bottom right position of the area.
@@ -65,19 +58,18 @@ namespace Engine.Physics.Areas
 		/// <summary>
 		/// Gets or sets the position.
 		/// </summary>
-		public Position Position { get; set; }
+		public Position Position { get; private set; }
 
 		/// <summary>
 		/// Initializes a new instance of the Simple Area class.
 		/// </summary>
 		/// <param name="position">The position.</param>
-		/// <param name="width">The width value.</param>
-		/// <param name="height">The height value.</param>
-		public SimpleArea(Vector2 position, float width, float height)
+		/// <param name="simpleAreaModel">The simple area model.</param>
+		public SimpleArea(Position position, SimpleAreaModel simpleAreaModel)
 		{
-			this.Position = new Position(position);
-			this.Width = width;
-			this.Height = height;
+			this.Position = position;
+			this.Width = simpleAreaModel.Width;
+			this.Height = simpleAreaModel.Height;
 		}
 
 		/// <summary>
@@ -148,6 +140,19 @@ namespace Engine.Physics.Areas
 			}
 
 			return false;
+		}
+
+		/// <summary>
+		/// Gets a simple area model that corresponds to this simple area.
+		/// </summary>
+		/// <returns>The simple area model.</returns>
+		public SimpleAreaModel ToSimpleAreaModel()
+		{
+			return new SimpleAreaModel
+			{
+				Width = this.Width,
+				Height = this.Height
+			};
 		}
 
 		/// <summary>

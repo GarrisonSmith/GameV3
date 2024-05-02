@@ -173,7 +173,7 @@ namespace Engine.View.CameraTasks
 			}
 			else
 			{
-				this.Camera.Area.Center = this.Destination;
+				this.Camera.CenterCameraOnLocation(this.Destination);
 			}
 
 			return this.Camera.Area.Center == this.Destination;

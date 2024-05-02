@@ -1,6 +1,7 @@
 ﻿using Engine.Core.Base;
 using Engine.Drawing.Base;
 using Engine.Physics.Areas.interfaces;
+using Engine.Physics.Base;
 using Engine.Physics.Collisions.interfaces;
 using Engine.TileMapping.Base.interfaces;
 
@@ -24,10 +25,11 @@ namespace Engine.TileMapping.Base.Tiles
 		/// <param name="updateOrder">The update order.</param>
 		/// <param name="drawOrder">The draw order.</param>
 		/// <param name="area">The area.</param>
+		/// <param name="position">The position.</param>
 		/// <param name="collisionArea">The collision area.</param>
 		/// <param name="animation">The animation.</param>
-		public AnimatedTile(bool updatingActivated, bool drawingActivated, ushort updateOrder, ushort drawOrder, IAmAArea area, IAmACollisionArea collisionArea, Animation animation)
-            : base(updatingActivated, drawingActivated, updateOrder, drawOrder, area, animation)
+		public AnimatedTile(bool updatingActivated, bool drawingActivated, ushort updateOrder, ushort drawOrder, Position position, IAmAArea area, IAmACollisionArea collisionArea, Animation animation)
+            : base(updatingActivated, drawingActivated, updateOrder, drawOrder, position, area, animation)
         {
 			this.CollisionArea = collisionArea;
 			Managers.TileManager.Tiles.Add(this.Guid, this);

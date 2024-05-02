@@ -1,4 +1,5 @@
-﻿using Engine.Drawing.Base;
+﻿using DiscModels.Engine.Drawing;
+using Engine.Drawing.Base;
 using Engine.Entities.Base;
 using Engine.Loading.Configurations;
 using Engine.Physics.Areas;
@@ -15,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.WebSockets;
 using System.Xml;
 using static System.Net.WebRequestMethods;
 
@@ -104,24 +106,48 @@ namespace Engine.Loading
 		}
 
 		/// <summary>
-		/// Gets or loads the tile draw data from the tile name.
+		/// Gets or loads the tile draw data.
 		/// </summary>
 		/// <param name="spriteSheetName">The sprite sheet name</param>
 		/// <param name="col">The row.</param>
 		/// <param name="row">The col.</param>
-		private DrawData LoadTileDrawDataFromTileName(string spriteSheetName, int col, int row)
+		/// <returns>The draw data.</returns>
+		private DrawData LoadTileDrawData(string spriteSheetName, int col, int row)
+		{
+			var spritesheetCoordinate = new Point(col * Tile.TILE_DIMENSIONS, row * Tile.TILE_DIMENSIONS);
+			var spritesheetBox = new Rectangle(spritesheetCoordinate.X, spritesheetCoordinate.Y, Tile.TILE_DIMENSIONS, Tile.TILE_DIMENSIONS);
+
+			return this.LoadTileDrawData(spriteSheetName, spritesheetBox, spritesheetCoordinate);
+		}
+
+		/// <summary>
+		/// Gets or loads the tile draw data.
+		/// </summary>
+		/// <param name="drawDataModel">The draw data model.</param>
+		/// <returns>The draw data.</returns>
+		public DrawData LoadTileDrawData(DrawDataModel drawDataModel)
+		{
+			return this.LoadTileDrawData(drawDataModel.SpritesheetName, drawDataModel.SpritesheetBox, drawDataModel.SpritesheetBox.Location);
+		}
+
+		/// <summary>
+		/// Gets or loads the tile draw data.
+		/// </summary>
+		/// <param name="spriteSheetName">The spritesheet name.</param>
+		/// <param name="spritesheetBox">The spritesheet box.</param>
+		/// <param name="spritesheetCoordinate">The spritesheet coordinate.</param>
+		/// <returns>The draw data.</returns>
+		public DrawData LoadTileDrawData(string spriteSheetName, Rectangle spritesheetBox, Point spritesheetCoordinate)
 		{
 			if (Managers.DrawManager.TryGetSpriteSheet(spriteSheetName, out var spritesheet))
 			{
-				var spritesheetCoordinate = new Point(row * Tile.TILE_DIMENSIONS, col * Tile.TILE_DIMENSIONS);
 				var textureBox = new Rectangle(2, 2, Tile.TILE_DIMENSIONS, Tile.TILE_DIMENSIONS);
-				var spritesheetBox = new Rectangle(spritesheetCoordinate.X, spritesheetCoordinate.Y, Tile.TILE_DIMENSIONS, Tile.TILE_DIMENSIONS);
 				if (Managers.DrawManager.DrawDataInstanceByName.TryGetValue(spriteSheetName + spritesheetBox.ToString(), out var drawData))
 				{
 					return drawData.CloneDrawData();
 				}
 
-				var tileTextureData = this.GetTextureDataFromSpritesheetArea(spritesheet, new Rectangle(col * Tile.TILE_DIMENSIONS, row * Tile.TILE_DIMENSIONS, Tile.TILE_DIMENSIONS, Tile.TILE_DIMENSIONS));
+				var tileTextureData = this.GetTextureDataFromSpritesheetArea(spritesheet, new Rectangle(spritesheetCoordinate.X, spritesheetCoordinate.Y, Tile.TILE_DIMENSIONS, Tile.TILE_DIMENSIONS));
 				var leftTextureData = new Color[Tile.TILE_DIMENSIONS * 2];
 				var rightTextureData = new Color[Tile.TILE_DIMENSIONS * 2];
 				var topTextureData = new Color[Tile.TILE_DIMENSIONS * 2];
@@ -188,8 +214,96 @@ namespace Engine.Loading
 
 				drawData = new DrawData(spriteSheetName, spritesheetCoordinate, textureBox, tileTexture);
 				Managers.DrawManager.DrawDataInstanceByName.Add(spriteSheetName + spritesheetBox.ToString(), drawData.CloneDrawData());
-				
+
 				return drawData;
+			}
+
+			return null; //missing spritesheet.
+		}
+
+		/// <summary>
+		/// Gets the tile texture.
+		/// </summary>
+		/// <param name="spriteSheetName">The sprite sheet name.</param>
+		/// <param name="spritesheetBox">The spritesheet box.</param>
+		/// <param name="spritesheetCoordinate">The spritesheet coordinate.</param>
+		/// <returns>The texture/</returns>
+		public Texture2D GetTileTexture(string spriteSheetName, Rectangle spritesheetBox, Point spritesheetCoordinate)
+		{
+			if (Managers.DrawManager.TryGetSpriteSheet(spriteSheetName, out var spritesheet))
+			{
+				var textureBox = new Rectangle(2, 2, Tile.TILE_DIMENSIONS, Tile.TILE_DIMENSIONS);
+				if (Managers.DrawManager.DrawDataInstanceByName.TryGetValue(spriteSheetName + spritesheetBox.ToString(), out var drawData))
+				{
+					return drawData.CloneDrawData().Texture;
+				}
+
+				var tileTextureData = this.GetTextureDataFromSpritesheetArea(spritesheet, new Rectangle(spritesheetCoordinate.X, spritesheetCoordinate.Y, Tile.TILE_DIMENSIONS, Tile.TILE_DIMENSIONS));
+				var leftTextureData = new Color[Tile.TILE_DIMENSIONS * 2];
+				var rightTextureData = new Color[Tile.TILE_DIMENSIONS * 2];
+				var topTextureData = new Color[Tile.TILE_DIMENSIONS * 2];
+				var bottomTextureData = new Color[Tile.TILE_DIMENSIONS * 2];
+
+				for (int i = 0; i < Tile.TILE_DIMENSIONS; i++)
+				{
+					//left of texture
+					var leftIndex = i * Tile.TILE_DIMENSIONS;
+					leftTextureData[i * 2] = leftTextureData[i * 2 + 1] = tileTextureData[leftIndex];
+
+					//right of texture
+					var rightIndex = leftIndex + Tile.TILE_DIMENSIONS - 1;
+					rightTextureData[i * 2] = rightTextureData[i * 2 + 1] = tileTextureData[rightIndex];
+
+					//top of texture
+					var topIndex = i;
+					topTextureData[i] = topTextureData[i + Tile.TILE_DIMENSIONS] = tileTextureData[topIndex];
+
+					//bottom of texture
+					var bottomIndex = tileTextureData.Length - Tile.TILE_DIMENSIONS + i;
+					bottomTextureData[i] = bottomTextureData[i + Tile.TILE_DIMENSIONS] = tileTextureData[bottomIndex];
+				}
+
+				var leftTexture = new Texture2D(Managers.Graphics.GraphicsDevice, 2, Tile.TILE_DIMENSIONS);
+				leftTexture.SetData(leftTextureData);
+
+				var rightTexture = new Texture2D(Managers.Graphics.GraphicsDevice, 2, Tile.TILE_DIMENSIONS);
+				rightTexture.SetData(rightTextureData);
+
+				var topTexture = new Texture2D(Managers.Graphics.GraphicsDevice, Tile.TILE_DIMENSIONS, 2);
+				topTexture.SetData(topTextureData);
+
+				var bottomTexture = new Texture2D(Managers.Graphics.GraphicsDevice, Tile.TILE_DIMENSIONS, 2);
+				bottomTexture.SetData(bottomTextureData);
+
+				var topLeftPixel = tileTextureData[0];
+				var topLeftTexture = new Texture2D(Managers.Graphics.GraphicsDevice, 2, 2);
+				topLeftTexture.SetData(new Color[] { topLeftPixel, topLeftPixel, topLeftPixel, topLeftPixel });
+
+				var topRightPixel = tileTextureData[Tile.TILE_DIMENSIONS];
+				var topRightTexture = new Texture2D(Managers.Graphics.GraphicsDevice, 2, 2);
+				topRightTexture.SetData(new Color[] { topRightPixel, topRightPixel, topRightPixel, topRightPixel });
+
+				var bottomLeftPixel = tileTextureData[tileTextureData.Length - Tile.TILE_DIMENSIONS];
+				var bottomLeftTexture = new Texture2D(Managers.Graphics.GraphicsDevice, 2, 2);
+				bottomLeftTexture.SetData(new Color[] { bottomLeftPixel, bottomLeftPixel, bottomLeftPixel, bottomLeftPixel });
+
+				var bottomRightPixel = tileTextureData[tileTextureData.Length - 1];
+				var bottomRightTexture = new Texture2D(Managers.Graphics.GraphicsDevice, 2, 2);
+				bottomRightTexture.SetData(new Color[] { bottomRightPixel, bottomRightPixel, bottomRightPixel, bottomRightPixel });
+
+				var middleTexture = new Texture2D(Managers.Graphics.GraphicsDevice, Tile.TILE_DIMENSIONS, Tile.TILE_DIMENSIONS);
+				middleTexture.SetData(tileTextureData);
+
+				var textures = new Texture2D[][]
+				{
+					new Texture2D[] { topLeftTexture, topTexture, topRightTexture },
+					new Texture2D[] { leftTexture, middleTexture, rightTexture },
+					new Texture2D[] { bottomLeftTexture, bottomTexture, bottomRightTexture }
+				};
+
+				var tileTexture = this.CombineTexture(textures, Tile.TILE_DIMENSIONS + 4, Tile.TILE_DIMENSIONS + 4);
+
+				return tileTexture;
 			}
 
 			return null; //missing spritesheet.
@@ -340,7 +454,7 @@ namespace Engine.Loading
 									var frameSpriteSheet = frame.GetAttribute("spriteSheet");
 									var frameCol = int.Parse(frame.GetAttribute("col"));
 									var frameRow = int.Parse(frame.GetAttribute("row"));
-									frames[i] = this.LoadTileDrawDataFromTileName(frameSpriteSheet, frameCol, frameRow);
+									frames[i] = this.LoadTileDrawData(frameSpriteSheet, frameCol, frameRow);
 									i++;
 								}
 							}
@@ -449,7 +563,7 @@ namespace Engine.Loading
 
 				if (animation == null)
 				{
-					drawData = this.LoadTileDrawDataFromTileName(spriteSheetName, col.Value, row.Value);
+					drawData = this.LoadTileDrawData(spriteSheetName, col.Value, row.Value);
 				}
 
 				foreach (var layer in locations.Keys)
@@ -462,7 +576,8 @@ namespace Engine.Loading
 
 					foreach (var location in locations[layer])
 					{
-						var area = new SimpleArea(location, Tile.TILE_DIMENSIONS, Tile.TILE_DIMENSIONS);
+						var position = new Position(location);
+						var area = new SimpleArea(position, Tile.TILE_DIMENSIONS, Tile.TILE_DIMENSIONS);
 						IAmACollisionArea collision = null;
 						if (collisionWidth.HasValue && collisionHeight.HasValue && collisionHorizontalOffset.HasValue && collisionVerticalOffset.HasValue && movementTerrainTypes != null && movementTerrainTypes.Count > 0)
 						{
@@ -478,12 +593,12 @@ namespace Engine.Loading
 
 						if (animation == null)
 						{
-							var tile = new Tile(true, layer, area, collision, drawData);
+							var tile = new Tile(true, layer, position, area, collision, drawData);
 							tileMapLayer.AddTile((int)tile.Position.Y / Tile.TILE_DIMENSIONS, (int)tile.Position.X / Tile.TILE_DIMENSIONS, tile);
 						}
 						else
 						{
-							var animatedTile = new AnimatedTile(true, true, layer, layer, area, collision, animation.CloneAnimation());
+							var animatedTile = new AnimatedTile(true, true, layer, layer, position, area, collision, animation.CloneAnimation());
 							tileMapLayer.AddTile((int)animatedTile.Position.Y / Tile.TILE_DIMENSIONS, (int)animatedTile.Position.X / Tile.TILE_DIMENSIONS, animatedTile);
 						}
 					}
@@ -568,7 +683,7 @@ namespace Engine.Loading
 			var position = new Position(64, 64); //TODO entity starting location
 			var area = new SimpleArea(position, 64, 128);
 			var collision = new OffsetCollisionArea(new OffsetArea(position, 11, 117, 42, 11), new List<MovementTerrainTypes> { MovementTerrainTypes.Entity });
-			_ = new Entity(true, true, 1, 1, OrientationTypes.Downward, new MoveSpeed(25), area, collision, animations[0], animations, tileManager.ActiveTileMap.Layers[1]);
+			_ = new Entity(true, true, 1, 1, OrientationTypes.Downward, new MoveSpeed(25), position, area, collision, animations[0], animations, tileManager.ActiveTileMap.Layers[1]);
 		}
 
 		/// <summary>

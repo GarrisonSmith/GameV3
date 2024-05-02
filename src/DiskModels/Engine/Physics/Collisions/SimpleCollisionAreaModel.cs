@@ -1,9 +1,9 @@
-﻿using DiskModels.Engine.Physics.Areas;
-using DiskModels.Engine.Physics.Collisions.interfaces;
+﻿using DiscModels.Engine.Physics.Areas;
+using DiscModels.Engine.Physics.Collisions.interfaces;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
-namespace DiskModels.Engine.Physics.Collisions
+namespace DiscModels.Engine.Physics.Collisions
 {
 	[DataContract(Name = "simpleCollisionArea")]
 	public class SimpleCollisionAreaModel : IAmACollisionAreaModel

@@ -62,8 +62,8 @@ namespace Engine.Entities.Base
 		/// <param name="animation">The animation.</param>
 		/// <param name="animations">The animations.</param>
 		/// <param name="tileMapLayer">The tile map layer.</param>
-		public Entity(bool updatingActivated, bool drawingActivated, ushort updateOrder, ushort drawOrder, OrientationTypes orientation, MoveSpeed moveSpeed, IAmAArea area, IAmACollisionArea collisionArea, Animation animation, Animation[] animations, TileMapLayer tileMapLayer)
-			: base(updatingActivated, drawingActivated, updateOrder, drawOrder, area, animation)
+		public Entity(bool updatingActivated, bool drawingActivated, ushort updateOrder, ushort drawOrder, OrientationTypes orientation, MoveSpeed moveSpeed, Position position, IAmAArea area, IAmACollisionArea collisionArea, Animation animation, Animation[] animations, TileMapLayer tileMapLayer)
+			: base(updatingActivated, drawingActivated, updateOrder, drawOrder, position, area, animation)
 		{
 			this.Orientation = orientation;
 			this.MoveSpeed = moveSpeed;

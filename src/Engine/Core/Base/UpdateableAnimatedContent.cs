@@ -109,7 +109,7 @@ namespace Engine.Core.Base
 		/// <summary>
 		/// Gets or sets the position.
 		/// </summary>
-		public Position Position { get => this.Area.Position; set => this.Area.Position = value; }
+		public Position Position { get; set; }
 
 		/// <summary>
 		/// Gets or sets the area.
@@ -128,15 +128,17 @@ namespace Engine.Core.Base
 		/// <param name="drawingActivated">A value indicating whether the content is drawing.</param>
 		/// <param name="updateOrder">The update order.</param> 
 		/// <param name="drawOrder">The draw order.</param>
+        /// <param name="position">The position.</param>
 		/// <param name="area">The area.</param>
 		/// <param name="animation">The animation.</param>
-		protected UpdateableAnimatedContent(bool updatingActivated, bool drawingActivated, ushort updateOrder, ushort drawOrder, IAmAArea area, Animation animation)
+		protected UpdateableAnimatedContent(bool updatingActivated, bool drawingActivated, ushort updateOrder, ushort drawOrder, Position position, IAmAArea area, Animation animation)
         {
 			this.Guid = Guid.NewGuid();
             this.updatingActivated = updatingActivated;
             this.drawingActivated = drawingActivated;
             this.updateOrder = updateOrder;
             this.drawOrder = drawOrder;
+            this.Position = position;
 			this.Area = area;
 			this.Animation = animation;
 			Managers.ContentManager.AddUpdateable(this);

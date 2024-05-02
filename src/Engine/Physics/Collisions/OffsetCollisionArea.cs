@@ -26,24 +26,24 @@ namespace Engine.Physics.Collisions
 		public float Height { get => this.Area.Height; }
 
 		/// <summary>
-		/// Get or sets the top left X value of the position.
+		/// Gets the top left of the collision area.
 		/// </summary>
-		public float X { get => this.Area.X; set => this.Area.X = value; }
+		public Vector2 TopLeft { get => this.Area.TopLeft; }
 
 		/// <summary>
-		/// Gets or sets the top left Y value of the position.
+		/// Gets the center of the collision area.
 		/// </summary>
-		public float Y { get => this.Area.Y; set => this.Area.Y = value; }
+		public Vector2 Center { get => this.Area.Center; }
 
 		/// <summary>
-		/// Gets or sets the top right position of the position.
+		/// Gets the bottom right of the collision area.
 		/// </summary>
-		public Vector2 TopLeft { get => this.Area.TopLeft; set => this.Area.TopLeft = value; }
+		public Vector2 BottomRight { get => this.Area.BottomRight; }
 
 		/// <summary>
-		/// Gets or sets the position.
+		/// Gets the position.
 		/// </summary>
-		public Position Position { get => this.Area.Position; set => this.Area.Position = value; }
+		public Position Position { get => this.Area.Position; }
 
 		/// <summary>
 		/// Gets or sets the collision area.

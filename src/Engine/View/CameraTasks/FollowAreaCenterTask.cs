@@ -44,7 +44,7 @@ namespace Engine.View.CameraTasks
 		/// <returns>A value indicating whether the task is completed or not.</returns>
 		public bool ProgressTask(GameTime gameTime)
 		{
-			this.Camera.Area.Center = this.AreaToFollow.Area.Center;
+			this.Camera.CenterCameraOnLocation(this.AreaToFollow.Area.Center);
 			return false; //This task cannot finish.
 		}
 	}

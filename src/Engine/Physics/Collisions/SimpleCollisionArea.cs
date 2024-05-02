@@ -1,4 +1,5 @@
-﻿using Engine.Physics.Areas;
+﻿using DiscModels.Engine.Physics.Collisions;
+using Engine.Physics.Areas;
 using Engine.Physics.Areas.interfaces;
 using Engine.Physics.Base;
 using Engine.Physics.Collisions.enums;
@@ -26,24 +27,24 @@ namespace Engine.Physics.Collisions
 		public float Height { get => this.Area.Height; }
 
 		/// <summary>
-		/// Get or sets the top left X value of the position.
+		/// Gets the top left of the collision area.
 		/// </summary>
-		public float X { get => this.Position.X; set => this.Position.X = value; }
+		public Vector2 TopLeft { get => this.Area.TopLeft; }
 
 		/// <summary>
-		/// Gets or sets the top left Y value of the position.
+		/// Gets the center of the collision area.
 		/// </summary>
-		public float Y { get => this.Position.Y; set => this.Position.Y = value; }
+		public Vector2 Center { get => this.Area.Center; }
 
 		/// <summary>
-		/// Gets or sets the top right position of the position.
+		/// Gets the bottom right of the collision area.
 		/// </summary>
-		public Vector2 TopLeft { get => this.Position.Coordinates; set => this.Position.Coordinates = value; }
+		public Vector2 BottomRight { get => this.Area.BottomRight; }
 
 		/// <summary>
 		/// Gets or sets the position.
 		/// </summary>
-		public Position Position { get => this.Area.Position; set => this.Area.Position = value; }
+		public Position Position { get => this.Area.Position; }
 
 		/// <summary>
 		/// Gets or sets the collision area.
@@ -69,6 +70,17 @@ namespace Engine.Physics.Collisions
 		/// Gets the movement terrain types.
 		/// </summary>
 		IEnumerable IAmADefinedCollisionArea.MovementTerrainTypes { get => this.MovementTerrainTypes; }
+
+		/// <summary>
+		/// Initializes a new instance of the SimpleCollisionArea class.
+		/// </summary>
+		/// <param name="position">The position.</param>
+		/// <param name="simpleCollisionAreaModel">The simple collision area model.</param>
+		public SimpleCollisionArea(Position position, SimpleCollisionAreaModel simpleCollisionAreaModel)
+		{
+			this.Area = new SimpleArea(position, simpleCollisionAreaModel.Area);
+			this.MovementTerrainTypes = simpleCollisionAreaModel.MovementTerrainTypes.Select(x => (MovementTerrainTypes)x).ToList(); ;
+		}
 
 		/// <summary>
 		/// Initializes a new instance of the SimpleCollisionArea class.
@@ -106,6 +118,19 @@ namespace Engine.Physics.Collisions
 			intersectedMovementTerrainTypes = null;
 
 			return false;
+		}
+
+		/// <summary>
+		/// Gets a simple collision area model that corresponds to this simple collision area.
+		/// </summary>
+		/// <returns>The simple collision area model.</returns>
+		public SimpleCollisionAreaModel ToSimpleCollisionAreaModel()
+		{
+			return new SimpleCollisionAreaModel
+			{
+				Area = this.Area.ToSimpleAreaModel(),
+				MovementTerrainTypes = this.MovementTerrainTypes.Select(x => (int)x).ToList()
+			};
 		}
 
 		/// <summary>

@@ -9,14 +9,19 @@ namespace Engine.Physics.Areas.interfaces
 	public interface IAmAArea : IHavePosition
 	{
 		/// <summary>
-		/// Gets or sets the width.
+		/// Gets the width.
 		/// </summary>
 		float Width { get; }
 
 		/// <summary>
-		/// Gets or sets the height.
+		/// Gets the height.
 		/// </summary>
 		float Height { get; }
+
+		/// <summary>
+		/// Gets the top left of the area.
+		/// </summary>
+		Vector2 TopLeft { get; }
 
 		/// <summary>
 		/// Gets the center position of the area.

@@ -1,11 +1,15 @@
-﻿using System.Runtime.Serialization;
+﻿using Microsoft.Xna.Framework;
+using System.Runtime.Serialization;
 
-namespace DiskModels.Engine.Drawing
+namespace DiscModels.Engine.Drawing
 {
     [DataContract(Name = "drawData")]
     public class DrawDataModel
     {
-        [DataMember(Name = "drawDataName")]
-        public string DrawDataName { get; set; }
-    }
+        [DataMember(Name = "spritesheetName")]
+        public string SpritesheetName { get; set; }
+
+		[DataMember(Name = "spritesheetBox")]
+		public Rectangle SpritesheetBox { get; set; }
+	}
 }

@@ -16,10 +16,5 @@ namespace Engine.Physics.Areas.interfaces
 		/// Gets or sets the height.
 		/// </summary>
 		new float Height { get; set; }
-
-		/// <summary>
-		/// Gets the center position of the area.
-		/// </summary>
-		new Vector2 Center { get; set; }
 	}
 }
