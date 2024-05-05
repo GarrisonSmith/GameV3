@@ -50,17 +50,17 @@ namespace Engine.Core
         /// <param name="game">The game.</param>
         private ContentManager(Game game) : base(game)
         {
-
-        }
+			this.ActivatedUpdateables = new SortedDictionary<ushort, Dictionary<Guid, IUpdateableContent>>();
+			this.ActivatedDrawables = new SortedDictionary<ushort, Dictionary<Guid, IDrawableContent>>();
+			this.ActivatedOverlayDrawables = new SortedDictionary<ushort, Dictionary<Guid, IDrawableContent>>();
+		}
 
         /// <summary>
         /// Initializes the content.
         /// </summary>
         public override void Initialize()
         {
-			this.ActivatedUpdateables = new();
-			this.ActivatedDrawables = new();
-            this.ActivatedOverlayDrawables = new();
+
 		}
 
         /// <summary>

@@ -63,7 +63,7 @@ namespace Engine.Physics.Base
 		/// Gets a position model that corresponds to this position.
 		/// </summary>
 		/// <returns>The position model.</returns>
-		public PositionModel ToModel()
+		public PositionModel ToPositionModel()
 		{ 
 			return new PositionModel 
 			{ 

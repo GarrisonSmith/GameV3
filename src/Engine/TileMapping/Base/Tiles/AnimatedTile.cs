@@ -1,4 +1,8 @@
-﻿using Engine.Core.Base;
+﻿using DiscModels.Engine.Physics.Areas.interfaces;
+using DiscModels.Engine.Physics.Collisions.interfaces;
+using DiscModels.Engine.TileMapping;
+using DiscModels.Engine.TileMapping.interfaces;
+using Engine.Core.Base;
 using Engine.Drawing.Base;
 using Engine.Physics.Areas.interfaces;
 using Engine.Physics.Base;
@@ -24,8 +28,26 @@ namespace Engine.TileMapping.Base.Tiles
 		/// <param name="drawingActivated">A value indicating whether the content is drawing.</param>
 		/// <param name="updateOrder">The update order.</param>
 		/// <param name="drawOrder">The draw order.</param>
-		/// <param name="area">The area.</param>
 		/// <param name="position">The position.</param>
+		/// <param name="area">The area.</param>
+		/// <param name="collision">The collision.</param>
+		/// <param name="animatedTileModel">The animated tile model.</param>
+		public AnimatedTile(bool updatingActivated, bool drawingActivated, ushort updateOrder, ushort drawOrder, Position position, IAmAArea area, IAmACollisionArea collision, AnimatedTileModel<IAmAAreaModel, IAmACollisionAreaModel> animatedTileModel)
+			: base(updatingActivated, drawingActivated, updateOrder, drawOrder, position, area, new Animation(animatedTileModel.Animation))
+		{
+			this.CollisionArea = collision;
+			Managers.TileManager.Tiles.Add(this.Guid, this);
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the Tile class.
+		/// </summary>
+		/// <param name="updatingActivated">A value indicating whether the content is updating.</param>
+		/// <param name="drawingActivated">A value indicating whether the content is drawing.</param>
+		/// <param name="updateOrder">The update order.</param>
+		/// <param name="drawOrder">The draw order.</param>
+		/// <param name="position">The position.</param>
+		/// <param name="area">The area.</param>
 		/// <param name="collisionArea">The collision area.</param>
 		/// <param name="animation">The animation.</param>
 		public AnimatedTile(bool updatingActivated, bool drawingActivated, ushort updateOrder, ushort drawOrder, Position position, IAmAArea area, IAmACollisionArea collisionArea, Animation animation)
@@ -45,5 +67,20 @@ namespace Engine.TileMapping.Base.Tiles
             this.DrawingActivated = !deactivateTileDrawing;
             this.UpdatingActivated = !deactivateTileUpdating;
         }
-    }
+
+		/// <summary>
+		/// Gets a tile model that corresponds to this tile.
+		/// </summary>
+		/// <returns>The tile model.</returns>
+		public IAmATileModel<IAmAAreaModel, IAmACollisionAreaModel> ToTileModel()
+		{
+			return new AnimatedTileModel<IAmAAreaModel, IAmACollisionAreaModel>
+			{
+				Position = this.Position.ToPositionModel(),
+				Animation = this.Animation.ToAnimationModel(),
+				Area = Managers.PhysicsManager.GetAreaModel(this.Area),
+				CollisionArea = Managers.PhysicsManager.GetCollisionAreaModel(this.CollisionArea)
+			};
+		}
+	}
 }

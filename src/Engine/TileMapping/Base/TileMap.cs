@@ -1,7 +1,9 @@
-﻿using Engine.Loading.Base.interfaces;
+﻿using DiscModels.Engine.TileMapping;
+using Engine.Loading.Base.interfaces;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Engine.TileMapping.Base
 {
@@ -67,15 +69,34 @@ namespace Engine.TileMapping.Base
 		/// <summary>
 		/// Initializes a new instance of the TileMap class.
 		/// </summary>
+		/// <param name="tileMapModel">The tile map model.</param>
+		public TileMap(TileMapModel tileMapModel)
+        {
+			this.Guid = Guid.NewGuid();
+			this.IsLoaded = true;
+			this.IsActiveTileMap = tileMapModel.IsActiveTileMap;
+            this.Name = tileMapModel.Name;
+			this.Layers = new Dictionary<ushort, TileMapLayer>();
+
+            foreach (var mapLayer in tileMapModel.Layers)
+            {
+                this.Layers.Add(mapLayer.Layer, new TileMapLayer(mapLayer));
+            }
+
+			Managers.TileManager.TileMaps.Add(this.Guid, this);
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the TileMap class.
+		/// </summary>
         /// <param name="activatedTileMap">A value indicating whether this is the activated tile map.</param>
         /// <param name="name">The name of the tile map.</param>
-        /// <param name="tileManager">The tile manager.</param>
 		public TileMap(bool activatedTileMap, string name)
         {
 			this.Guid = Guid.NewGuid();
 			this.IsActiveTileMap = activatedTileMap;
 			this.Name = name;
-            this.Layers = new();
+            this.Layers = new Dictionary<ushort, TileMapLayer>();
 			Managers.TileManager.TileMaps.Add(this.Guid, this);
         }
 
@@ -126,6 +147,20 @@ namespace Engine.TileMapping.Base
 
             return new Rectangle(lowestX, lowestY, highestX - lowestX, highestY - lowestY);
         }
+
+		/// <summary>
+		/// Gets a tile map model that corresponds to this tile map.
+		/// </summary>
+		/// <returns>The tile map model.</returns>
+		public TileMapModel ToTileMapModel()
+		{
+			return new TileMapModel
+			{
+                IsActiveTileMap = this.IsActiveTileMap,
+                Name = this.Name,
+                Layers = this.Layers.Values.Select(x => x.ToTileMapLayerModel()).ToList(),
+			};
+		}
 
 		/// <summary>
 		/// Loads data.

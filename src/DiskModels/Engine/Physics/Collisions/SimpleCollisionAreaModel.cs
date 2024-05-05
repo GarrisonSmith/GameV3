@@ -8,10 +8,10 @@ namespace DiscModels.Engine.Physics.Collisions
 	[DataContract(Name = "simpleCollisionArea")]
 	public class SimpleCollisionAreaModel : IAmACollisionAreaModel
 	{
-		[DataMember(Name = "area")]
-		public SimpleAreaModel Area { get; set; }
-
-		[DataMember(Name = "movementTerrainTypes")]
+		[DataMember(Name = "movementTerrainTypes", Order = 1)]
 		public List<int> MovementTerrainTypes { get; set; }
+
+		[DataMember(Name = "area", Order = 2)]
+		public SimpleAreaModel Area { get; set; }
 	}
 }

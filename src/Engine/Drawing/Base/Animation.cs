@@ -1,5 +1,8 @@
-﻿using Microsoft.Xna.Framework;
+﻿using DiscModels.Engine.Drawing;
+using DiscModels.Engine.Physics.Areas;
+using Microsoft.Xna.Framework;
 using System;
+using System.Linq;
 
 namespace Engine.Drawing.Base
 {
@@ -75,6 +78,20 @@ namespace Engine.Drawing.Base
 		/// <summary>
 		/// Initializes a new instance of the Animation class.
 		/// </summary>
+		/// <param name="animationModel">The animation model.</param>
+		public Animation(AnimationModel animationModel)
+		{
+			this.isPlaying = animationModel.IsPlaying;
+			this.CurrentFrameIndex = animationModel.CurrentFrameIndex;
+			this.FrameMaxDuration = animationModel.FrameMaxDuration;
+			this.FrameMinDuration = animationModel.FrameMinDuration;
+			this.FrameDuration = animationModel.FrameConstantDuration.HasValue ? animationModel.FrameConstantDuration.Value : this.GetNextFrameDuration();
+			this.Frames = animationModel.Frames.Select(x => new DrawData(x)).ToArray();
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the Animation class.
+		/// </summary>
 		/// <param name="currentFrameIndex">The current frame index.</param>
 		/// <param name="frameDuration">The frame duration.</param>
 		/// <param name="frames">The frames.</param>
@@ -85,7 +102,6 @@ namespace Engine.Drawing.Base
 			this.FrameDuration = frameDuration;
 			this.Frames = frames;
 			this.Guid = Guid.NewGuid();
-			this.FrameDuration = frameDuration;
 			this.FrameStartTime = null;
 			Managers.DrawManager.Animations.Add(this.Guid, this);
 		}
@@ -104,7 +120,6 @@ namespace Engine.Drawing.Base
 			this.FrameDuration = frameDuration;
 			this.Frames = frames;
 			this.Guid = Guid.NewGuid();
-			this.FrameDuration = frameDuration;
 			this.FrameStartTime = null;
 			Managers.DrawManager.Animations.Add(this.Guid, this);
 		}
@@ -193,6 +208,23 @@ namespace Engine.Drawing.Base
 		{
 			this.FrameStartTime = null;
 			this.CurrentFrameIndex = frameIndex;
+		}
+
+		/// <summary>
+		/// Gets a animation model that corresponds to this animation.
+		/// </summary>
+		/// <returns>The animation model.</returns>
+		public AnimationModel ToAnimationModel()
+		{
+			return new AnimationModel
+			{
+				IsPlaying = this.IsPlaying,
+				CurrentFrameIndex = this.CurrentFrameIndex,
+				FrameConstantDuration = (this.FrameMinDuration.HasValue && this.FrameMaxDuration.HasValue) ? null : this.FrameDuration,
+				FrameMinDuration = this.FrameMinDuration,
+				FrameMaxDuration = this.FrameMaxDuration,
+				Frames = this.Frames.Select(x => x.ToDrawDataModel()).ToArray()
+			};
 		}
 	}
 }

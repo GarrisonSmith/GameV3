@@ -8,20 +8,20 @@ using System.Runtime.Serialization;
 namespace DiscModels.Engine.TileMapping
 {
 	[DataContract(Name = "tile")]
-    public class TileModel<AreaType, CollisionType> : IAmATileModel
+    public class TileModel<AreaType, CollisionType> : IAmATileModel<AreaType, CollisionType>
 		where AreaType : IAmAAreaModel
 		where CollisionType : IAmACollisionAreaModel
 	{
-        [DataMember(Name = "position")]
+        [DataMember(Name = "position", Order = 1)]
         public PositionModel Position { get; set; }
 
-        [DataMember(Name = "drawData")]
+        [DataMember(Name = "drawData", Order = 2)]
         public DrawDataModel DrawData { get; set; }
 
-        [DataMember(Name = "area")]
+        [DataMember(Name = "area", Order = 3)]
         public AreaType Area { get; set; }
 
-        [DataMember(Name = "collisionArea")]
+        [DataMember(Name = "collisionArea", Order = 4)]
         public CollisionType CollisionArea { get; set; }
-    }
+	}
 }

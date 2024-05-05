@@ -3,6 +3,7 @@ using Engine.View.CameraTasks;
 using Engine.View.CameraTasks.interfaces;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Engine.View
 {
@@ -139,7 +140,7 @@ namespace Engine.View
 		/// <param name="gameTime">The game time.</param>
 		public override void Update(GameTime gameTime)
 		{
-			if (Tasks.Peek().ProgressTask(gameTime))
+			if (true == Tasks?.Any() && Tasks.Peek().ProgressTask(gameTime))
 			{
 				Tasks.Pop();
 				Tasks.Peek().StartTask();

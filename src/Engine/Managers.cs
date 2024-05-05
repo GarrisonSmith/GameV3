@@ -145,14 +145,14 @@ namespace Engine
 			Managers.EntityManager.Load();
 			
 			// Setting the starting tile map.
-			TileMap map = new(true, TileMapsConfig.AnimatedTestMap);
-			map.Load();
+			//TileMap map = new(true, TileMapsConfig.AnimatedTestMap);
+			//map.Load();
 			
 			// Setting the playable character.
-			Managers.CameraManager.Camera.CameraBounding = new SimpleArea(Managers.TileManager.ActiveTileMap.GetTileMapBounds());
+			//Managers.CameraManager.Camera.CameraBounding = new SimpleArea(Managers.TileManager.ActiveTileMap.GetTileMapBounds());
 			Managers.LoadManager.LoadEntity("character3");
 			Managers.CameraManager.Pop();
-			Managers.CameraManager.Push(new FollowAreaCenterTask(Managers.EntityManager.ControlledEntity.Entity));
+			//Managers.CameraManager.Push(new FollowAreaCenterTask(Managers.EntityManager.ControlledEntity.Entity));
 		}
 	}
 }

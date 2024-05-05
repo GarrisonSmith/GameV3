@@ -53,6 +53,7 @@ namespace Engine.Drawing.Base
 		/// <param name="drawDataModel">The draw data model.</param>
 		public DrawData(DrawDataModel drawDataModel)
 		{
+			this.Guid = Guid.NewGuid();
 			this.SpritesheetName = drawDataModel.SpritesheetName;
 			this.SpritesheetCoordinate = drawDataModel.SpritesheetBox.Location;
 			this.TextureBox = new Rectangle(2, 2, Tile.TILE_DIMENSIONS, Tile.TILE_DIMENSIONS);

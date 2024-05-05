@@ -1,7 +1,19 @@
-﻿using Engine.Physics.Base;
+﻿using DiscModels.Engine.Physics.Areas;
+using DiscModels.Engine.Physics.Areas.interfaces;
+using DiscModels.Engine.Physics.Collisions;
+using DiscModels.Engine.Physics.Collisions.interfaces;
+using DiscModels.Engine.TileMapping;
+using Engine.Loading.Configurations;
+using Engine.Physics.Base;
+using Engine.Physics.Collisions;
 using Engine.View.CameraTasks;
+using Microsoft.VisualBasic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using System;
+using System.IO;
+using System.Runtime.Serialization.Json;
+using System.Text;
 
 namespace Engine
 {
@@ -57,7 +69,18 @@ namespace Engine
 				Managers.CameraManager.Push(new PanToWithZoomingTask(1, new Vector2(64, 64), new MoveSpeed(6)));
 			}
 
-			Managers.EntityManager.ControlledEntity.Entity.Move(Managers.ControlManager.ControlState.DirectionRadians);
+			if (Keyboard.GetState().IsKeyDown(Keys.G))
+			{
+				var tileMap = Managers.TileManager.ActiveTileMap;
+				Managers.LoadManager.SaveTileMap(tileMap);
+			}
+
+			if (Keyboard.GetState().IsKeyDown(Keys.H))
+			{
+				Managers.LoadManager.LoadTileMap(TileMapsConfig.AnimatedTestMap);
+			}
+
+			//Managers.EntityManager.ControlledEntity.Entity.Move(Managers.ControlManager.ControlState.DirectionRadians);
 
 			base.Update(gameTime);
 		}

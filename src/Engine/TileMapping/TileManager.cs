@@ -1,8 +1,16 @@
-﻿using Engine.Loading.Base.interfaces;
+﻿using DiscModels.Engine.Physics.Areas.interfaces;
+using DiscModels.Engine.Physics.Collisions.interfaces;
+using DiscModels.Engine.TileMapping;
+using DiscModels.Engine.TileMapping.interfaces;
+using Engine.Loading.Base.interfaces;
+using Engine.Physics.Base;
 using Engine.TileMapping.Base;
 using Engine.TileMapping.Base.interfaces;
+using Engine.TileMapping.Base.Tiles;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Security.AccessControl;
 
 namespace Engine.TileMapping
 {
@@ -50,9 +58,9 @@ namespace Engine.TileMapping
 		/// </summary>
 		private TileManager()
         {
-			this.TileMaps = new();
-			this.TileMapLayers = new();
-			this.Tiles = new();
+			this.TileMaps = new Dictionary<Guid, TileMap>();
+			this.TileMapLayers = new Dictionary<Guid, TileMapLayer>();
+			this.Tiles = new Dictionary<Guid, IAmATile>();
             this.IsLoaded = false;
         }
 
@@ -63,6 +71,43 @@ namespace Engine.TileMapping
 		{
 			Managers.LoadManager.LoadTileManager();
 			this.IsLoaded = true;
+		}
+
+		/// <summary>
+		/// Gets or sets a value indicating if a tile map is loaded.
+		/// </summary>
+		/// <returns></returns>
+		public bool TileMapIsLoad(string tileMapName)
+		{
+			return true == this.TileMaps?.Any(x => x.Value.Name == tileMapName);
+		}
+
+		/// <summary>
+		/// Gets the tile.
+		/// </summary>
+		/// <param name="layer">The layer.</param>
+		/// <param name="tileModel">The tile model.</param>
+		/// <returns>The tile.</returns>
+		public IAmATile GetTile(ushort layer, IAmATileModel<IAmAAreaModel, IAmACollisionAreaModel> tileModel)
+		{
+			if (tileModel == null)
+			{
+				return null;
+			}
+
+			var position = new Position(tileModel.Position);
+			var area = Managers.PhysicsManager.GetArea(position, tileModel.Area);
+			var collisionArea = Managers.PhysicsManager.GetCollisionArea(position, tileModel.CollisionArea);
+
+			switch (tileModel)
+			{
+				case TileModel<IAmAAreaModel, IAmACollisionAreaModel> model:
+					return new Tile(true, layer, position, area, collisionArea, model);
+				case AnimatedTileModel<IAmAAreaModel, IAmACollisionAreaModel> model:
+					return new AnimatedTile(true, true, layer, layer, position, area, collisionArea, model);
+			}
+
+			return null;
 		}
 	}
 }

@@ -1,4 +1,9 @@
 ﻿using DiscModels.Engine.Drawing;
+using DiscModels.Engine.Physics.Areas.interfaces;
+using DiscModels.Engine.Physics.Areas;
+using DiscModels.Engine.Physics.Collisions.interfaces;
+using DiscModels.Engine.Physics.Collisions;
+using DiscModels.Engine.TileMapping;
 using Engine.Drawing.Base;
 using Engine.Entities.Base;
 using Engine.Loading.Configurations;
@@ -17,8 +22,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.WebSockets;
+using System.Runtime.Serialization.Json;
 using System.Xml;
 using static System.Net.WebRequestMethods;
+using System.Text;
 
 namespace Engine.Loading
 {
@@ -232,7 +239,6 @@ namespace Engine.Loading
 		{
 			if (Managers.DrawManager.TryGetSpriteSheet(spriteSheetName, out var spritesheet))
 			{
-				var textureBox = new Rectangle(2, 2, Tile.TILE_DIMENSIONS, Tile.TILE_DIMENSIONS);
 				if (Managers.DrawManager.DrawDataInstanceByName.TryGetValue(spriteSheetName + spritesheetBox.ToString(), out var drawData))
 				{
 					return drawData.CloneDrawData().Texture;
@@ -372,6 +378,56 @@ namespace Engine.Loading
 			combinedTexture.SetData(data);
 
 			return combinedTexture;
+		}
+
+		public void SaveTileMap(TileMap tileMap)
+		{
+			var tileMapModel = tileMap.ToTileMapModel();
+			var tileMapJson = this.SerializeToJson(tileMapModel);
+
+			var tileMapPath = Path.Combine(Managers.Game.Content.RootDirectory, "TileMaps", tileMap.Name + ".json");
+            System.IO.File.WriteAllText(tileMapPath, tileMapJson);
+		}
+
+		private string SerializeToJson(TileMapModel tileMap)
+		{
+			using (var stream = new MemoryStream())
+			{
+				var serializer = new DataContractJsonSerializer(typeof(TileMapModel), GetKnownTypes());
+				serializer.WriteObject(stream, tileMap);
+				stream.Position = 0;
+				using (var reader = new StreamReader(stream))
+				{
+					return reader.ReadToEnd();
+				}
+			}
+		}
+
+		private Type[] GetKnownTypes()
+		{
+			return new Type[] { typeof(TileModel<IAmAAreaModel, IAmACollisionAreaModel>), typeof(AnimatedTileModel<IAmAAreaModel, IAmACollisionAreaModel>), typeof(SimpleAreaModel), typeof(SimpleCollisionAreaModel) };
+		}
+
+		public void LoadTileMap(string tileMapName)
+		{
+			if (Managers.TileManager.TileMapIsLoad(tileMapName))
+			{
+				return;
+			}
+
+			var tileMapPath = Path.Combine(Managers.Game.Content.RootDirectory, "TileMaps", tileMapName + ".json");
+			var tileMapJson = System.IO.File.ReadAllText(tileMapPath);
+			var tileMapModel = DeserializeFromJson(tileMapJson);
+			_ = new TileMap(tileMapModel);
+		}
+
+		private TileMapModel DeserializeFromJson(string json)
+		{
+			using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(json)))
+			{
+				var serializer = new DataContractJsonSerializer(typeof(TileMapModel), GetKnownTypes());
+				return (TileMapModel)serializer.ReadObject(stream);
+			}
 		}
 
 		/// <summary>
@@ -683,7 +739,7 @@ namespace Engine.Loading
 			var position = new Position(64, 64); //TODO entity starting location
 			var area = new SimpleArea(position, 64, 128);
 			var collision = new OffsetCollisionArea(new OffsetArea(position, 11, 117, 42, 11), new List<MovementTerrainTypes> { MovementTerrainTypes.Entity });
-			_ = new Entity(true, true, 1, 1, OrientationTypes.Downward, new MoveSpeed(25), position, area, collision, animations[0], animations, tileManager.ActiveTileMap.Layers[1]);
+			//_ = new Entity(true, true, 1, 1, OrientationTypes.Downward, new MoveSpeed(25), position, area, collision, animations[0], animations, tileManager.ActiveTileMap.Layers[1]);
 		}
 
 		/// <summary>

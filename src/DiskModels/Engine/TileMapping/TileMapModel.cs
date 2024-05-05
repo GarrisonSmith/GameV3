@@ -6,16 +6,13 @@ namespace DiscModels.Engine.TileMapping
 	[DataContract(Name = "tileMap")]
 	public class TileMapModel
 	{
-		[DataMember(Name = "isLoaded")]
-		public bool IsLoaded { get; set; }
-
-		[DataMember(Name = "isActiveTileMap")]
-		public bool IsActiveTileMap { get; set; }
-
-		[DataMember(Name = "name")]
+		[DataMember(Name = "name", Order = 1)]
 		public string Name { get; set; }
 
-		[DataMember(Name = "layers")]
+		[DataMember(Name = "isActiveTileMap", Order = 2)]
+		public bool IsActiveTileMap { get; set; }
+
+		[DataMember(Name = "layers", Order = 3)]
 		public List<TileMapLayerModel> Layers { get; set; }
 	}
 }

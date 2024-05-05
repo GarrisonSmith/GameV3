@@ -1,5 +1,13 @@
-﻿using Engine.Loading.Base.interfaces;
+﻿using DiscModels.Engine.Physics.Areas;
+using DiscModels.Engine.Physics.Areas.interfaces;
+using DiscModels.Engine.Physics.Collisions;
+using DiscModels.Engine.Physics.Collisions.interfaces;
+using Engine.Loading.Base.interfaces;
+using Engine.Physics.Areas;
+using Engine.Physics.Areas.interfaces;
 using Engine.Physics.Base;
+using Engine.Physics.Collisions;
+using Engine.Physics.Collisions.interfaces;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 
@@ -62,6 +70,82 @@ namespace Engine.Physics
 		public void Load()
 		{
 			this.IsLoaded = true;
+		}
+
+		/// <summary>
+		/// Gets the area.
+		/// </summary>
+		/// <param name="position">The position.</param>
+		/// <param name="areaModel">The area model.</param>
+		/// <returns>The area.</returns>
+		public IAmAArea GetArea(Position position, IAmAAreaModel areaModel)
+		{
+			switch (areaModel)
+			{
+				case SimpleAreaModel simpleAreaModel:
+					return new SimpleArea(position, simpleAreaModel);
+				case OffsetAreaModel offSetAreaModel:
+					return new OffsetArea(position, offSetAreaModel);
+			}
+
+			return null;
+		}
+
+		/// <summary>
+		/// Gets the collision area.
+		/// </summary>
+		/// <param name="position">The position.</param>
+		/// <param name="collisionAreaModel">The collision area model.</param>
+		/// <returns>The collision area.</returns>
+		public IAmACollisionArea GetCollisionArea(Position position, IAmACollisionAreaModel collisionAreaModel)
+		{
+			switch (collisionAreaModel)
+			{
+				case SimpleCollisionAreaModel simpleCollisionAreaModel:
+					return new SimpleCollisionArea(position, simpleCollisionAreaModel);
+			}
+
+			return null;
+		}
+
+		/// <summary>
+		/// Gets the area model.
+		/// </summary>
+		/// <param name="area">The area.</param>
+		/// <returns>The area model.</returns>
+		public IAmAAreaModel GetAreaModel(IAmAArea area)
+		{
+			switch (area)
+			{
+				case SimpleArea simpleArea:
+					return simpleArea.ToSimpleAreaModel();
+				case OffsetArea offSetArea:
+					return offSetArea.ToOffsetAreaModel();
+				case AreaCollection areaCollection:
+					return null;
+			}
+
+			return null;
+		}
+
+		/// <summary>
+		/// Gets the collision area model.
+		/// </summary>
+		/// <param name="collision">The collision.</param>
+		/// <returns>The collision area model.</returns>
+		public IAmACollisionAreaModel GetCollisionAreaModel(IAmACollisionArea collision)
+		{
+			switch (collision)
+			{
+				case SimpleCollisionArea simpleCollisionArea:
+					return simpleCollisionArea.ToSimpleCollisionAreaModel();
+				case OffsetCollisionArea offSetCollisionArea:
+					return null;
+				case CollisionAreaCollection collisionAreaCollection:
+					return null;
+			}
+
+			return null;
 		}
 	}
 }
