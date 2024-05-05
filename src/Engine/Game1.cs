@@ -1,19 +1,8 @@
-﻿using DiscModels.Engine.Physics.Areas;
-using DiscModels.Engine.Physics.Areas.interfaces;
-using DiscModels.Engine.Physics.Collisions;
-using DiscModels.Engine.Physics.Collisions.interfaces;
-using DiscModels.Engine.TileMapping;
-using Engine.Loading.Configurations;
+﻿using Engine.Loading.Configurations;
 using Engine.Physics.Base;
-using Engine.Physics.Collisions;
 using Engine.View.CameraTasks;
-using Microsoft.VisualBasic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-using System;
-using System.IO;
-using System.Runtime.Serialization.Json;
-using System.Text;
 
 namespace Engine
 {
@@ -78,6 +67,19 @@ namespace Engine
 			if (Keyboard.GetState().IsKeyDown(Keys.H))
 			{
 				Managers.LoadManager.LoadTileMap(TileMapsConfig.AnimatedTestMap);
+			}
+
+			if (Keyboard.GetState().IsKeyDown(Keys.J))
+			{
+				var tileMap = Managers.TileManager.ActiveTileMap;
+				tileMap?.Dispose();
+
+				foreach (var texture in Managers.DrawManager.TextureByName.Values)
+				{
+					texture.Dispose();
+				}
+
+				Managers.DrawManager.TextureByName = new();
 			}
 
 			//Managers.EntityManager.ControlledEntity.Entity.Move(Managers.ControlManager.ControlState.DirectionRadians);

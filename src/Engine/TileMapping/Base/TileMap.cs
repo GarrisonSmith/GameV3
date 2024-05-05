@@ -10,7 +10,7 @@ namespace Engine.TileMapping.Base
 	/// <summary>
 	/// Represents a tile map.
 	/// </summary>
-	public class TileMap : ICanBeLoaded
+	public class TileMap : ICanBeLoaded, IDisposable
     {
         private bool isActiveTileMap;
 
@@ -147,6 +147,28 @@ namespace Engine.TileMapping.Base
 
             return new Rectangle(lowestX, lowestY, highestX - lowestX, highestY - lowestY);
         }
+
+        /// <summary>
+        /// Disposes the tile map.
+        /// </summary>
+		public void Dispose()
+		{
+            if (true == this.isActiveTileMap)
+            { 
+                this.isActiveTileMap = false;
+                Managers.TileManager.ActiveTileMap = null;
+            }
+
+            var layers = this.Layers.Values;
+
+            foreach (var layer in layers)
+            { 
+                layer.Dispose();
+            }
+
+            this.Layers = null;
+            Managers.TileManager.TileMaps.Remove(this.Guid);
+		}
 
 		/// <summary>
 		/// Gets a tile map model that corresponds to this tile map.

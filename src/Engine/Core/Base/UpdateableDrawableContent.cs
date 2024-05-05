@@ -158,5 +158,18 @@ namespace Engine.Core.Base
         {
 			Managers.DrawManager.Draw(this.DrawData, this.Position);
         }
-    }
+
+        /// <summary>
+        /// Disposes of the updateable drawable content.
+        /// </summary>
+		public void Dispose()
+		{
+            this.UpdatingActivated = false;
+            this.DrawingActivated = false; 
+            this.Position = null;
+			this.Area = null;
+			this.DrawData = null;
+			this.DrawData.Dispose();
+		}
+	}
 }

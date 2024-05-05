@@ -1,5 +1,4 @@
 ﻿using DiscModels.Engine.Drawing;
-using DiscModels.Engine.Physics.Areas;
 using Engine.TileMapping.Base.Tiles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -10,7 +9,7 @@ namespace Engine.Drawing.Base
 	/// <summary>
 	/// Represents draw data.
 	/// </summary>
-	public class DrawData
+	public class DrawData : IDisposable
 	{
 		/// <summary>
 		/// Gets or sets the guid.
@@ -79,17 +78,13 @@ namespace Engine.Drawing.Base
 		}
 
 		/// <summary>
-		/// Creates a clone of the draw data.
+		/// Dispose of the draw data texture.
 		/// </summary>
-		/// <returns>A clone of the draw data.</returns>
-		public DrawData CloneDrawData()
-		{
-			var data = new Color[this.Texture.Width * this.Texture.Height];
-			var texture = new Texture2D(Managers.Graphics.GraphicsDevice, this.Texture.Width, this.Texture.Height);
-			this.Texture.GetData(data);
-			texture.SetData(data);
-
-			return new DrawData(this.SpritesheetName, this.SpritesheetCoordinate, this.TextureBox, texture);
+		public void Dispose()
+		{ 
+			this.Texture.Dispose();
+			this.Texture = null;
+			Managers.DrawManager.DrawData.Remove(this.Guid);
 		}
 
 		/// <summary>

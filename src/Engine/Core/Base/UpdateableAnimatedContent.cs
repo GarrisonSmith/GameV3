@@ -161,5 +161,18 @@ namespace Engine.Core.Base
         {
 			Managers.DrawManager.Draw(this.Animation, this.Position);
         }
-    }
+
+        /// <summary>
+        /// Disposes of the updateable animated content.
+        /// </summary>
+		public void Dispose()
+		{
+            this.UpdatingActivated = false;
+            this.DrawingActivated = false;
+			this.Animation.Dispose();
+			this.Position = null;
+			this.Area = null;
+			this.Animation = null;
+		}
+	}
 }

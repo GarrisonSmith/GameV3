@@ -69,6 +69,16 @@ namespace Engine.TileMapping.Base.Tiles
 		}
 
 		/// <summary>
+		/// Disposes the tile.
+		/// </summary>
+		public new void Dispose()
+		{
+			base.Dispose();
+			this.CollisionArea = null;
+			Managers.TileManager.Tiles.Remove(this.Guid);
+		}
+
+		/// <summary>
 		/// Gets a tile model that corresponds to this tile.
 		/// </summary>
 		/// <returns>The tile model.</returns>

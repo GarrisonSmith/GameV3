@@ -13,7 +13,7 @@ namespace Engine.TileMapping.Base
 	/// <summary>
 	/// Represents a tile map layer.
 	/// </summary>
-	public class TileMapLayer
+	public class TileMapLayer : IDisposable
     {
         /// <summary>
         /// Gets or sets the guid.
@@ -220,6 +220,24 @@ namespace Engine.TileMapping.Base
             return new Rectangle(lowestColumn * Tile.TILE_DIMENSIONS, lowestRow * Tile.TILE_DIMENSIONS, 
                 (highestColumn * Tile.TILE_DIMENSIONS) + Tile.TILE_DIMENSIONS - lowestColumn, 
                 (highestRow * Tile.TILE_DIMENSIONS) + Tile.TILE_DIMENSIONS - lowestRow);
+		}
+
+		/// <summary>
+		/// Disposes the tile.
+		/// </summary>
+		public void Dispose()
+		{
+			var tiles = this.Tiles.Values.SelectMany(x => x.Values);
+
+			foreach (var tile in tiles)
+			{
+				tile.Dispose();
+			}
+
+			this.Entities = null;
+			this.Tiles = null;
+			this.TilesWithCollision = null;
+			Managers.TileManager.TileMapLayers.Remove(this.Guid);
 		}
 
 		/// <summary>

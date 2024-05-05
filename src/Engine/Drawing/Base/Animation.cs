@@ -1,5 +1,4 @@
 ﻿using DiscModels.Engine.Drawing;
-using DiscModels.Engine.Physics.Areas;
 using Microsoft.Xna.Framework;
 using System;
 using System.Linq;
@@ -9,7 +8,7 @@ namespace Engine.Drawing.Base
 	/// <summary>
 	/// Represents an animation.
 	/// </summary>
-	public class Animation
+	public class Animation : IDisposable
 	{
 		private bool isPlaying;
 
@@ -81,12 +80,14 @@ namespace Engine.Drawing.Base
 		/// <param name="animationModel">The animation model.</param>
 		public Animation(AnimationModel animationModel)
 		{
+			this.Guid = Guid.NewGuid();
 			this.isPlaying = animationModel.IsPlaying;
 			this.CurrentFrameIndex = animationModel.CurrentFrameIndex;
 			this.FrameMaxDuration = animationModel.FrameMaxDuration;
 			this.FrameMinDuration = animationModel.FrameMinDuration;
 			this.FrameDuration = animationModel.FrameConstantDuration.HasValue ? animationModel.FrameConstantDuration.Value : this.GetNextFrameDuration();
 			this.Frames = animationModel.Frames.Select(x => new DrawData(x)).ToArray();
+			Managers.DrawManager.Animations.Add(this.Guid, this);
 		}
 
 		/// <summary>
@@ -97,11 +98,11 @@ namespace Engine.Drawing.Base
 		/// <param name="frames">The frames.</param>
 		public Animation(int currentFrameIndex, int frameDuration, DrawData[] frames)
 		{
+			this.Guid = Guid.NewGuid();
 			this.isPlaying = true;
 			this.CurrentFrameIndex = currentFrameIndex;
 			this.FrameDuration = frameDuration;
 			this.Frames = frames;
-			this.Guid = Guid.NewGuid();
 			this.FrameStartTime = null;
 			Managers.DrawManager.Animations.Add(this.Guid, this);
 		}
@@ -115,11 +116,11 @@ namespace Engine.Drawing.Base
 		/// <param name="frames">The frames.</param>
 		public Animation(bool isPlaying, int currentFrameIndex, int frameDuration, DrawData[] frames)
 		{
+			this.Guid = Guid.NewGuid();
 			this.isPlaying = isPlaying;
 			this.CurrentFrameIndex = currentFrameIndex;
 			this.FrameDuration = frameDuration;
 			this.Frames = frames;
-			this.Guid = Guid.NewGuid();
 			this.FrameStartTime = null;
 			Managers.DrawManager.Animations.Add(this.Guid, this);
 		}
@@ -133,12 +134,12 @@ namespace Engine.Drawing.Base
 		/// <param name="frames">The frames.</param>
 		public Animation(int currentFrameIndex, int frameMinDuration, int frameMaxDuration, DrawData[] frames)
 		{
+			this.Guid = Guid.NewGuid();
 			this.isPlaying = true;
 			this.CurrentFrameIndex = currentFrameIndex;
 			this.FrameMinDuration = frameMinDuration;
 			this.FrameMaxDuration = frameMaxDuration;
 			this.Frames = frames;
-			this.Guid = Guid.NewGuid();
 			this.FrameStartTime = null;
 			this.FrameDuration = this.GetNextFrameDuration();
 			Managers.DrawManager.Animations.Add(this.Guid, this);
@@ -208,6 +209,20 @@ namespace Engine.Drawing.Base
 		{
 			this.FrameStartTime = null;
 			this.CurrentFrameIndex = frameIndex;
+		}
+
+		/// <summary>
+		/// Disposes the animations.
+		/// </summary>
+		public void Dispose()
+		{
+			foreach (var frame in this.Frames)
+			{ 
+				frame.Dispose();
+			}
+
+			this.Frames = null;
+			Managers.DrawManager.Animations.Remove(this.Guid);
 		}
 
 		/// <summary>

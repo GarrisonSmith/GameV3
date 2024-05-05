@@ -111,5 +111,17 @@ namespace Engine.Core.Base
         {
 			Managers.DrawManager.Draw(this.DrawData, this.Position);
         }
-    }
+
+        /// <summary>
+        /// Disposes of the drawable content.
+        /// </summary>
+		public void Dispose()
+		{
+			this.DrawData.Dispose();
+			this.DrawingActivated = false;
+            this.Position = null;
+            this.Area = null;
+            this.DrawData = null;
+		}
+	}
 }

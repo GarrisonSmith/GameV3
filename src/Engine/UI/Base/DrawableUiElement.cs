@@ -59,5 +59,13 @@ namespace Engine.UI.Base
 			this.Area = area;
 			this.DrawData = drawData;
 		}
+
+		/// <summary>
+		/// Disposes of the drawable UI element.
+		/// </summary>
+		public void Dispose()
+		{
+			this.DrawData.Dispose();
+		}
 	}
 }

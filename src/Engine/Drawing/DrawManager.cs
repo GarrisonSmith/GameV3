@@ -49,9 +49,9 @@ namespace Engine.Drawing
 		public Dictionary<Guid, DrawData> DrawData { get; set; }
 
 		/// <summary>
-		/// Gets or sets a reference to the draw data by name.
+		/// Gets or sets a reference to the texture by name.
 		/// </summary>
-		public Dictionary<string, DrawData> DrawDataInstanceByName { get; set; }
+		public Dictionary<string, Texture2D> TextureByName { get; set; }
 
 		/// <summary>
 		/// Gets or sets the animations.
@@ -65,11 +65,11 @@ namespace Engine.Drawing
 		private DrawManager(GraphicsDevice graphicDevice)
 		{
 			this.SpriteBatch = new SpriteBatch(graphicDevice);
-			this.SpriteFonts = new();
-			this.SpriteSheets = new();
-			this.DrawData = new();
-			this.DrawDataInstanceByName = new();
-			this.Animations = new();
+			this.SpriteFonts = new Dictionary<string, SpriteFont>();
+			this.SpriteSheets = new Dictionary<string, Texture2D>();
+			this.DrawData = new Dictionary<Guid, DrawData>();
+			this.TextureByName = new Dictionary<string, Texture2D>();
+			this.Animations = new Dictionary<Guid, Animation>();
 			this.IsLoaded = false;
 		}
 
@@ -253,6 +253,21 @@ namespace Engine.Drawing
 		public void Write(SpriteFont spriteFont, string text, Vector2 coordinates, Color color)
 		{
 			this.SpriteBatch.DrawString(spriteFont, text, coordinates, color);
+		}
+
+		/// <summary>
+		/// Clones the texture.
+		/// </summary>
+		/// <param name="texture">The texture.</param>
+		/// <returns>The texture.</returns>
+		public Texture2D CloneTexture(Texture2D texture)
+		{
+			var clonedTexture = new Texture2D(Managers.Graphics.GraphicsDevice, texture.Width, texture.Height);
+			var data = new Color[texture.Width * texture.Height];
+			texture.GetData(data);
+			clonedTexture.SetData(data);
+
+			return clonedTexture;
 		}
 
 		/// <summary>

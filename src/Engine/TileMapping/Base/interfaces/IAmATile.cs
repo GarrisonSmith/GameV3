@@ -2,10 +2,11 @@
 using DiscModels.Engine.Physics.Collisions.interfaces;
 using DiscModels.Engine.TileMapping.interfaces;
 using Engine.Physics.Collisions.interfaces;
+using System;
 
 namespace Engine.TileMapping.Base.interfaces
 {
-	public interface IAmATile : IHaveCollision
+	public interface IAmATile : IHaveCollision, IDisposable
 	{
 		/// <summary>
 		/// Deactivates the tile.

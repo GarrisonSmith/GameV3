@@ -121,5 +121,10 @@ namespace Engine.UI.Base
 		{
 
 		}
+
+		public void Dispose()
+		{
+			this.DrawingActivated = false;
+		}
 	}
 }

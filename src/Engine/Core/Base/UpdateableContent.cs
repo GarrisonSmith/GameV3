@@ -69,5 +69,13 @@ namespace Engine.Core.Base
         /// </summary>
         /// <param name="gameTime">The game time.</param>
         public abstract void Update(GameTime gameTime);
+
+        /// <summary>
+        /// Disposes the updateable content.
+        /// </summary>
+        public void Dispose()
+        {
+            this.UpdatingActivated = false;
+		}
     }
 }
