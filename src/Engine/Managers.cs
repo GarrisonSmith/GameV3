@@ -5,6 +5,7 @@ using Engine.Drawing;
 using Engine.Entities;
 using Engine.Loading;
 using Engine.Physics;
+using Engine.Physics.Areas;
 using Engine.Saving;
 using Engine.TileMapping;
 using Engine.UI;
@@ -149,7 +150,7 @@ namespace Engine
 			//Managers.CameraManager.Camera.CameraBounding = new SimpleArea(Managers.TileManager.ActiveTileMap.GetTileMapBounds());
 			Managers.LoadManager.LoadEntity("character3");
 			Managers.CameraManager.Pop();
-			//Managers.CameraManager.Push(new FollowAreaCenterTask(Managers.EntityManager.ControlledEntity.Entity));
+			Managers.CameraManager.Push(new FollowAreaCenterTask(Managers.EntityManager.ControlledEntity.Entity));
 		}
 	}
 }

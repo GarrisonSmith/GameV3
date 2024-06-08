@@ -36,7 +36,7 @@ namespace Engine.Debugging
 		/// <summary>
 		/// Gets or sets the collision textures.
 		/// </summary>
-		protected Dictionary<IHaveCollision, Texture2D> CollisionTextures;
+		public Dictionary<IHaveCollision, Texture2D> CollisionTextures;
 
 		/// <summary>
 		/// Initializes a new instance of the DebuggingManager class.
@@ -70,11 +70,14 @@ namespace Engine.Debugging
 				{
 					this.GetCollisionTexture(controlledEntity.Entity);
 
-					foreach (var rowDictionary in controlledEntity.Entity.TileMapLayer.Tiles.Values)
+					if (controlledEntity.Entity.TileMapLayer != null)
 					{
-						foreach (var tile in rowDictionary.Values)
+						foreach (var rowDictionary in controlledEntity.Entity.TileMapLayer.Tiles.Values)
 						{
-							this.GetCollisionTexture(tile);
+							foreach (var tile in rowDictionary.Values)
+							{
+								this.GetCollisionTexture(tile);
+							}
 						}
 					}
 				}

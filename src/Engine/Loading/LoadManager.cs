@@ -9,6 +9,7 @@ using Engine.Entities.Base;
 using Engine.Loading.Configurations;
 using Engine.Physics.Areas;
 using Engine.Physics.Base;
+using Engine.Physics.Base.enums;
 using Engine.Physics.Collisions;
 using Engine.Physics.Collisions.enums;
 using Engine.Physics.Collisions.interfaces;
@@ -34,7 +35,6 @@ namespace Engine.Loading
 		/// <summary>
 		/// Starts the load manager.
 		/// </summary>
-		/// <param name="game">The game.</param>
 		/// <returns>The load manager.</returns>
 		public static LoadManager StartLoadManager()
 		{
@@ -338,7 +338,7 @@ namespace Engine.Loading
 		{
 			using (var stream = new MemoryStream())
 			{
-				var serializer = new DataContractJsonSerializer(typeof(TileMapModel), GetKnownTypes());
+				var serializer = new DataContractJsonSerializer(typeof(TileMapModel), this.GetKnownTypes());
 				serializer.WriteObject(stream, tileMap);
 				stream.Position = 0;
 				using (var reader = new StreamReader(stream))
@@ -684,7 +684,7 @@ namespace Engine.Loading
 			var position = new Position(64, 64); //TODO entity starting location
 			var area = new SimpleArea(position, 64, 128);
 			var collision = new OffsetCollisionArea(new OffsetArea(position, 11, 117, 42, 11), new List<MovementTerrainTypes> { MovementTerrainTypes.Entity });
-			//_ = new Entity(true, true, 1, 1, OrientationTypes.Downward, new MoveSpeed(25), position, area, collision, animations[0], animations, tileManager.ActiveTileMap.Layers[1]);
+			_ = new Entity(true, true, 2, 2, OrientationTypes.Downward, new MoveSpeed(25), position, area, collision, animations[0], animations, 1);
 		}
 
 		/// <summary>

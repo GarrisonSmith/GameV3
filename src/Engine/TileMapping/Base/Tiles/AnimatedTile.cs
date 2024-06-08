@@ -76,6 +76,7 @@ namespace Engine.TileMapping.Base.Tiles
 			base.Dispose();
 			this.CollisionArea = null;
 			Managers.TileManager.Tiles.Remove(this.Guid);
+			Managers.DebuggingManager.CollisionTextures.Remove(this);
 		}
 
 		/// <summary>

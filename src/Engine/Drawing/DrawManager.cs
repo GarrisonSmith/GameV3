@@ -49,7 +49,7 @@ namespace Engine.Drawing
 		public Dictionary<Guid, DrawData> DrawData { get; set; }
 
 		/// <summary>
-		/// Gets or sets a reference to the texture by name.
+		/// Gets or sets a instance to the texture by name.
 		/// </summary>
 		public Dictionary<string, Texture2D> TextureByName { get; set; }
 

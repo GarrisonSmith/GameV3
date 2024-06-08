@@ -17,9 +17,9 @@ namespace Engine.Entities.Base
 	public class Entity : UpdateableAnimatedContent, IAmAEntity
 	{
 		/// <summary>
-		/// Gets the layer.
+		/// Gets or sets the layer.
 		/// </summary>
-		public ushort Layer { get => this.TileMapLayer.Layer; }
+		public ushort Layer { get; set; }
 
 		/// <summary>
 		/// Gets or sets the move speed.
@@ -37,9 +37,9 @@ namespace Engine.Entities.Base
 		public IAmACollisionArea CollisionArea { get; set; }
 
 		/// <summary>
-		/// Gets or sets the tile map layer.
+		/// Gets the tile map layer.
 		/// </summary>
-		public TileMapLayer TileMapLayer { get; set; }
+		public TileMapLayer TileMapLayer { get => Managers.TileManager?.ActiveTileMap?.Layers[this.Layer]; }
 
 		/// <summary>
 		/// Gets or sets the animations.
@@ -61,16 +61,15 @@ namespace Engine.Entities.Base
 		/// <param name="collisionArea">The collision area.</param>
 		/// <param name="animation">The animation.</param>
 		/// <param name="animations">The animations.</param>
-		/// <param name="tileMapLayer">The tile map layer.</param>
-		public Entity(bool updatingActivated, bool drawingActivated, ushort updateOrder, ushort drawOrder, OrientationTypes orientation, MoveSpeed moveSpeed, Position position, IAmAArea area, IAmACollisionArea collisionArea, Animation animation, Animation[] animations, TileMapLayer tileMapLayer)
+		/// <param name="layer">The layer.</param>
+		public Entity(bool updatingActivated, bool drawingActivated, ushort updateOrder, ushort drawOrder, OrientationTypes orientation, MoveSpeed moveSpeed, Position position, IAmAArea area, IAmACollisionArea collisionArea, Animation animation, Animation[] animations, ushort layer)
 			: base(updatingActivated, drawingActivated, updateOrder, drawOrder, position, area, animation)
 		{
 			this.Orientation = orientation;
 			this.MoveSpeed = moveSpeed;
 			this.CollisionArea = collisionArea;
-			this.TileMapLayer = tileMapLayer;
-			this.TileMapLayer.Entities.Add(this);
 			this.Animations = animations;
+			this.Layer = layer;
 			Managers.EntityManager.Entities.Add(this.Guid, this);
 			Managers.EntityManager.ControlledEntity = new ControlledEntity(this);
 		}
@@ -109,7 +108,7 @@ namespace Engine.Entities.Base
 				this.Position.Y += verticalMovementAmount;
 				this.Position.X += horizontalMovementAmount;
 			}
-			else
+			else if (this.TileMapLayer != null)
 			{
 				var collisionInfo = new CollisionInformation(this.CollisionArea, this.TileMapLayer, this.Position.Coordinates, directionRadians.Value, horizontalMovementAmount, verticalMovementAmount);
 				realHorizontalMovementAmount = collisionInfo.FinalPosition.X - this.Position.Coordinates.X;

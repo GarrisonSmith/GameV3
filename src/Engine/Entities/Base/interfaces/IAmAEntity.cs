@@ -11,14 +11,14 @@ namespace Engine.Entities.Base.interfaces
 	public interface IAmAEntity : IHaveCollision, ICanMove, IHaveOrientation
 	{
 		/// <summary>
-		/// Gets the layer.
+		/// Gets or sets the layer.
 		/// </summary>
-		ushort Layer { get; }
+		ushort Layer { get; set; }
 
 		/// <summary>
-		/// Gets or sets the tile map layer.
+		/// Gets the tile map layer.
 		/// </summary>
-		TileMapLayer TileMapLayer { get; set; }
+		TileMapLayer TileMapLayer { get; }
 
 		/// <summary>
 		/// Gets or sets the animations.

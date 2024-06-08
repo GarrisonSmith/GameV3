@@ -71,18 +71,11 @@ namespace Engine
 
 			if (Keyboard.GetState().IsKeyDown(Keys.J))
 			{
-				var tileMap = Managers.TileManager.ActiveTileMap;
-				tileMap?.Dispose();
-
-				foreach (var texture in Managers.DrawManager.TextureByName.Values)
-				{
-					texture.Dispose();
-				}
-
+				Managers.TileManager.ActiveTileMap?.Dispose();
 				Managers.DrawManager.TextureByName = new();
 			}
 
-			//Managers.EntityManager.ControlledEntity.Entity.Move(Managers.ControlManager.ControlState.DirectionRadians);
+			Managers.EntityManager.ControlledEntity?.Entity.Move(Managers.ControlManager.ControlState.DirectionRadians);
 
 			base.Update(gameTime);
 		}
