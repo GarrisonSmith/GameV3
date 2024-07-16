@@ -43,7 +43,7 @@ namespace Engine.Saving
 			}
 
 			var tileMapModel = tileMap.ToModel();
-			var tileMapJson = SerializeToJson<TileMapModel>(tileMapModel);
+			var tileMapJson = this.SerializeToJson<TileMapModel>(tileMapModel);
 			var tileMapPath = Path.Combine(Managers.Game.Content.RootDirectory, "TileMaps", tileMap.Name + ".json");
 			File.WriteAllText(tileMapPath, tileMapJson);
 		}
@@ -60,7 +60,7 @@ namespace Engine.Saving
 			}
 
 			var entityModel = entity.ToModel();
-			var entityJson = SerializeToJson<EntityModel<IAmAAreaModel, IAmACollisionAreaModel>>(entityModel);
+			var entityJson = this.SerializeToJson<EntityModel<IAmAAreaModel, IAmACollisionAreaModel>>(entityModel);
 			var entityPath = Path.Combine(Managers.Game.Content.RootDirectory, "Entities", entity.Name + ".json");
 			File.WriteAllText(entityPath, entityJson);
 		}

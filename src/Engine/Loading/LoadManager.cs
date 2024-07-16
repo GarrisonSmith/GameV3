@@ -44,7 +44,7 @@ namespace Engine.Loading
 					return Managers.DrawManager.CloneTexture(texture);
 				}
 
-				var tileTextureData = GetColorDataFromTextureArea(spritesheet, new Rectangle(spritesheetCoordinate.X, spritesheetCoordinate.Y, spritesheetBox.Width, spritesheetBox.Height));
+				var tileTextureData = this.GetColorDataFromTextureArea(spritesheet, new Rectangle(spritesheetCoordinate.X, spritesheetCoordinate.Y, spritesheetBox.Width, spritesheetBox.Height));
 				var leftTextureData = new Color[spritesheetBox.Height * 2];
 				var rightTextureData = new Color[spritesheetBox.Height * 2];
 				var topTextureData = new Color[spritesheetBox.Width * 2];
@@ -110,7 +110,7 @@ namespace Engine.Loading
 					new Texture2D[] { bottomLeftTexture, bottomTexture, bottomRightTexture }
 				};
 
-				var tileTexture = CombineTexture(textures, spritesheetBox.Width + 4, spritesheetBox.Height + 4);
+				var tileTexture = this.CombineTexture(textures, spritesheetBox.Width + 4, spritesheetBox.Height + 4);
 
 				leftTexture.Dispose();
 				rightTexture.Dispose();
@@ -144,7 +144,7 @@ namespace Engine.Loading
 
 			var tileMapPath = Path.Combine(Managers.Game.Content.RootDirectory, "TileMaps", tileMapName + ".json");
 			var tileMapJson = File.ReadAllText(tileMapPath);
-			var tileMapModel = DeserializeFromJson<TileMapModel>(tileMapJson);
+			var tileMapModel = this.DeserializeFromJson<TileMapModel>(tileMapJson);
 			_ = new TileMap(tileMapModel);
 		}
 
@@ -156,7 +156,7 @@ namespace Engine.Loading
 		{
 			var entityPath = Path.Combine(Managers.Game.Content.RootDirectory, "Entities", entityName + ".json");
 			var entityJson = File.ReadAllText(entityPath);
-			var entityModel = DeserializeFromJson<EntityModel<IAmAAreaModel, IAmACollisionAreaModel>>(entityJson);
+			var entityModel = this.DeserializeFromJson<EntityModel<IAmAAreaModel, IAmACollisionAreaModel>>(entityJson);
 
 			var position = new Position(entityModel.Position); //TODO entity starting location
 			var area = Managers.PhysicsManager.GetArea(position, entityModel.Area);
