@@ -170,9 +170,6 @@ namespace Engine.Core.Base
             this.UpdatingActivated = false;
             this.DrawingActivated = false;
 			this.Animation.Dispose();
-			this.Position = null;
-			this.Area = null;
-			this.Animation = null;
 		}
 	}
 }

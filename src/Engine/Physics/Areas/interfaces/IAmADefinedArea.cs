@@ -1,7 +1,7 @@
-﻿using Microsoft.Xna.Framework;
+﻿using DiscModels.Engine.Physics.Areas.interfaces;
 
 namespace Engine.Physics.Areas.interfaces
-{   
+{
 	/// <summary>
 	/// Represents a defined area.
 	/// </summary>

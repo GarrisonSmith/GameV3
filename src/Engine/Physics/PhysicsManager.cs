@@ -86,6 +86,8 @@ namespace Engine.Physics
 					return new SimpleArea(position, simpleAreaModel);
 				case OffsetAreaModel offSetAreaModel:
 					return new OffsetArea(position, offSetAreaModel);
+				case AreaCollectionModel areaCollectionModel:
+					return new AreaCollection(position, areaCollectionModel);
 			}
 
 			return null;
@@ -103,6 +105,10 @@ namespace Engine.Physics
 			{
 				case SimpleCollisionAreaModel simpleCollisionAreaModel:
 					return new SimpleCollisionArea(position, simpleCollisionAreaModel);
+				case OffsetCollisionAreaModel offsetCollisionAreaModel:
+					return new OffsetCollisionArea(position, offsetCollisionAreaModel);
+				case CollisionAreaCollectionModel collisionAreaCollectionModel:
+					return new CollisionAreaCollection(position, collisionAreaCollectionModel);
 			}
 
 			return null;
@@ -118,11 +124,11 @@ namespace Engine.Physics
 			switch (area)
 			{
 				case SimpleArea simpleArea:
-					return simpleArea.ToSimpleAreaModel();
+					return simpleArea.ToModel();
 				case OffsetArea offSetArea:
-					return offSetArea.ToOffsetAreaModel();
+					return offSetArea.ToModel();
 				case AreaCollection areaCollection:
-					return null;
+					return areaCollection.ToModel();
 			}
 
 			return null;
@@ -138,11 +144,11 @@ namespace Engine.Physics
 			switch (collision)
 			{
 				case SimpleCollisionArea simpleCollisionArea:
-					return simpleCollisionArea.ToSimpleCollisionAreaModel();
+					return simpleCollisionArea.ToModel();
 				case OffsetCollisionArea offSetCollisionArea:
-					return null;
+					return offSetCollisionArea.ToModel();
 				case CollisionAreaCollection collisionAreaCollection:
-					return null;
+					return collisionAreaCollection.ToModel();
 			}
 
 			return null;

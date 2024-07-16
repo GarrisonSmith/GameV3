@@ -1,4 +1,5 @@
-﻿using Engine.Loading.Configurations;
+﻿using Engine.Entities.Base;
+using Engine.Loading.Configurations;
 using Engine.Physics.Base;
 using Engine.View.CameraTasks;
 using Microsoft.Xna.Framework;
@@ -61,7 +62,7 @@ namespace Engine
 			if (Keyboard.GetState().IsKeyDown(Keys.G))
 			{
 				var tileMap = Managers.TileManager.ActiveTileMap;
-				Managers.LoadManager.SaveTileMap(tileMap);
+				Managers.SavingManager.SaveTileMap(tileMap);
 			}
 
 			if (Keyboard.GetState().IsKeyDown(Keys.H))
@@ -73,6 +74,12 @@ namespace Engine
 			{
 				Managers.TileManager.ActiveTileMap?.Dispose();
 				Managers.DrawManager.TextureByName = new();
+			}
+
+			if (Keyboard.GetState().IsKeyDown(Keys.K))
+			{
+				var controlledEntity = Managers.EntityManager.ControlledEntity;
+				Managers.SavingManager.SaveEntity(controlledEntity.Entity as Entity);
 			}
 
 			Managers.EntityManager.ControlledEntity?.Entity.Move(Managers.ControlManager.ControlState.DirectionRadians);

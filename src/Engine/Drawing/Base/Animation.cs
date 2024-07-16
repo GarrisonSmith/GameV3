@@ -1,4 +1,5 @@
 ﻿using DiscModels.Engine.Drawing;
+using Engine.Saving.Base.interfaces;
 using Microsoft.Xna.Framework;
 using System;
 using System.Linq;
@@ -8,7 +9,7 @@ namespace Engine.Drawing.Base
 	/// <summary>
 	/// Represents an animation.
 	/// </summary>
-	public class Animation : IDisposable
+	public class Animation : IDisposable, ICanBeSaved<AnimationModel>
 	{
 		private bool isPlaying;
 
@@ -226,10 +227,10 @@ namespace Engine.Drawing.Base
 		}
 
 		/// <summary>
-		/// Gets a animation model that corresponds to this animation.
+		/// Creates the corresponding model.
 		/// </summary>
-		/// <returns>The animation model.</returns>
-		public AnimationModel ToAnimationModel()
+		/// <returns>The corresponding model.</returns>
+		public AnimationModel ToModel()
 		{
 			return new AnimationModel
 			{
@@ -238,7 +239,7 @@ namespace Engine.Drawing.Base
 				FrameConstantDuration = (this.FrameMinDuration.HasValue && this.FrameMaxDuration.HasValue) ? null : this.FrameDuration,
 				FrameMinDuration = this.FrameMinDuration,
 				FrameMaxDuration = this.FrameMaxDuration,
-				Frames = this.Frames.Select(x => x.ToDrawDataModel()).ToArray()
+				Frames = this.Frames.Select(x => x.ToModel()).ToArray()
 			};
 		}
 	}

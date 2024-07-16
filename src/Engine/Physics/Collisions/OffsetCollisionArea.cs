@@ -1,8 +1,10 @@
-﻿using Engine.Physics.Areas;
+﻿using DiscModels.Engine.Physics.Collisions;
+using Engine.Physics.Areas;
 using Engine.Physics.Areas.interfaces;
 using Engine.Physics.Base;
 using Engine.Physics.Collisions.enums;
 using Engine.Physics.Collisions.interfaces;
+using Engine.Saving.Base.interfaces;
 using Microsoft.Xna.Framework;
 using System.Collections;
 using System.Collections.Generic;
@@ -13,7 +15,7 @@ namespace Engine.Physics.Collisions
 	/// <summary>
 	/// Represents a offset collision area.
 	/// </summary>
-	public class OffsetCollisionArea : IAmADefinedCollisionArea
+	public class OffsetCollisionArea : IAmADefinedCollisionArea, ICanBeSaved<OffsetCollisionAreaModel>
 	{
 		/// <summary>
 		/// Gets the width.
@@ -73,6 +75,17 @@ namespace Engine.Physics.Collisions
 		/// <summary>
 		/// Initializes a new instance of the OffsetCollisionArea class.
 		/// </summary>
+		/// <param name="position">The position.</param>
+		/// <param name="offsetCollisionAreaModel">The offset collision area model..</param>
+		public OffsetCollisionArea(Position position, OffsetCollisionAreaModel offsetCollisionAreaModel)
+		{
+			this.Area = new OffsetArea(position, offsetCollisionAreaModel.Area);
+			this.MovementTerrainTypes = offsetCollisionAreaModel.MovementTerrainTypes.Select(x => (MovementTerrainTypes)x).ToList();
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the OffsetCollisionArea class.
+		/// </summary>
 		/// <param name="area">The area.</param>
 		/// <param name="movementTerrainTypes">The movement terrain types.</param>
 		public OffsetCollisionArea(OffsetArea area, List<MovementTerrainTypes> movementTerrainTypes)
@@ -106,6 +119,19 @@ namespace Engine.Physics.Collisions
 			intersectedMovementTerrainTypes = null;
 
 			return false;
+		}
+
+		/// <summary>
+		/// Creates the corresponding model.
+		/// </summary>
+		/// <returns>The corresponding model.</returns>
+		public OffsetCollisionAreaModel ToModel()
+		{
+			return new OffsetCollisionAreaModel
+			{
+				Area = this.Area.ToModel(),
+				MovementTerrainTypes = this.MovementTerrainTypes.Select(x => (int)x).ToList()
+			};
 		}
 
 		/// <summary>

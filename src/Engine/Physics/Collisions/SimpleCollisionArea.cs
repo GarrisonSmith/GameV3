@@ -4,6 +4,7 @@ using Engine.Physics.Areas.interfaces;
 using Engine.Physics.Base;
 using Engine.Physics.Collisions.enums;
 using Engine.Physics.Collisions.interfaces;
+using Engine.Saving.Base.interfaces;
 using Microsoft.Xna.Framework;
 using System.Collections;
 using System.Collections.Generic;
@@ -14,7 +15,7 @@ namespace Engine.Physics.Collisions
 	/// <summary>
 	/// Represents a simple collision area.
 	/// </summary>
-	public class SimpleCollisionArea : IAmADefinedCollisionArea
+	public class SimpleCollisionArea : IAmADefinedCollisionArea, ICanBeSaved<SimpleCollisionAreaModel>
 	{
 		/// <summary>
 		/// Gets the width.
@@ -79,7 +80,7 @@ namespace Engine.Physics.Collisions
 		public SimpleCollisionArea(Position position, SimpleCollisionAreaModel simpleCollisionAreaModel)
 		{
 			this.Area = new SimpleArea(position, simpleCollisionAreaModel.Area);
-			this.MovementTerrainTypes = simpleCollisionAreaModel.MovementTerrainTypes.Select(x => (MovementTerrainTypes)x).ToList(); ;
+			this.MovementTerrainTypes = simpleCollisionAreaModel.MovementTerrainTypes.Select(x => (MovementTerrainTypes)x).ToList();
 		}
 
 		/// <summary>
@@ -121,14 +122,14 @@ namespace Engine.Physics.Collisions
 		}
 
 		/// <summary>
-		/// Gets a simple collision area model that corresponds to this simple collision area.
+		/// Creates the corresponding model.
 		/// </summary>
-		/// <returns>The simple collision area model.</returns>
-		public SimpleCollisionAreaModel ToSimpleCollisionAreaModel()
+		/// <returns>The corresponding model.</returns>
+		public SimpleCollisionAreaModel ToModel()
 		{
 			return new SimpleCollisionAreaModel
 			{
-				Area = this.Area.ToSimpleAreaModel(),
+				Area = this.Area.ToModel(),
 				MovementTerrainTypes = this.MovementTerrainTypes.Select(x => (int)x).ToList()
 			};
 		}

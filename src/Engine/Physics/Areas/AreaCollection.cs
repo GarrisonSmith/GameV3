@@ -1,7 +1,9 @@
-﻿using Engine.Physics.Areas.interfaces;
+﻿using DiscModels.Engine.Physics.Areas;
+using DiscModels.Engine.Physics.Areas.interfaces;
+using Engine.Physics.Areas.interfaces;
 using Engine.Physics.Base;
+using Engine.Saving.Base.interfaces;
 using Microsoft.Xna.Framework;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace Engine.Physics.Areas
@@ -9,7 +11,7 @@ namespace Engine.Physics.Areas
 	/// <summary>
 	/// Represents a collection of areas.
 	/// </summary>
-	public class AreaCollection : IAmAArea
+	public class AreaCollection : IAmAArea, ICanBeSaved<AreaCollectionModel>
 	{
 		/// <summary>
 		/// Gets the width.
@@ -44,14 +46,26 @@ namespace Engine.Physics.Areas
 		/// <summary>
 		/// Gets or sets the areas.
 		/// </summary>
-		public List<IAmADefinedArea>Areas { get; private set; }
+		public IAmADefinedArea[] Areas { get; private set; }
+
+		/// <summary>
+		/// Initializes a new instance of the AreaCollection class.
+		/// </summary>
+		/// <param name="position">The position.</param>
+		/// <param name="areaCollectionModel">The area collection model.</param>
+		public AreaCollection(Position position, AreaCollectionModel areaCollectionModel)
+		{
+			this.Position = position;
+			this.Areas = areaCollectionModel.Areas.Select(x => Managers.PhysicsManager.GetArea(position, x) as IAmADefinedArea).ToArray();
+			this.CalculateDimensions();
+		}
 
 		/// <summary>
 		/// Initializes a new instance of the AreaCollection class.
 		/// </summary>
 		/// <param name="position">The position.</param>
 		/// <param name="areas">The areas.</param>
-		public AreaCollection(Position position, List<IAmADefinedArea> areas)
+		public AreaCollection(Position position, IAmADefinedArea[] areas)
 		{ 
 			this.Position = position;
 			this.Areas = areas;
@@ -109,6 +123,34 @@ namespace Engine.Physics.Areas
 		public bool Intersects(IAmAArea external, Vector2? candidatePosition = null)
 		{
 			return this.Areas.Any(x => x.Intersects(external, candidatePosition));
+		}
+
+		/// <summary>
+		/// Creates the corresponding model.
+		/// </summary>
+		/// <returns>The corresponding model.</returns>
+		public AreaCollectionModel ToModel()
+		{
+			IAmAAreaModel[] areaModels = new IAmAAreaModel[this.Areas.Length];
+			ushort index = 0;
+			foreach (var area in this.Areas)
+			{
+				if (area is SimpleArea simpleArea)
+				{
+					areaModels[index++] = simpleArea.ToModel();
+				}
+				else if (area is OffsetArea offsetArea)
+				{
+					areaModels[index++] = offsetArea.ToModel();
+				}
+			}
+
+			return new AreaCollectionModel
+			{
+				Width = this.Width,
+				Height = this.Height,
+				Areas = areaModels
+			};
 		}
 	}
 }

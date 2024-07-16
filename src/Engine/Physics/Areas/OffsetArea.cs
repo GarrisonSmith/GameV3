@@ -1,6 +1,7 @@
 ﻿using DiscModels.Engine.Physics.Areas;
 using Engine.Physics.Areas.interfaces;
 using Engine.Physics.Base;
+using Engine.Saving.Base.interfaces;
 using Microsoft.Xna.Framework;
 
 namespace Engine.Physics.Areas
@@ -8,7 +9,7 @@ namespace Engine.Physics.Areas
 	/// <summary>
 	/// Represents a offset area.
 	/// </summary>
-	public class OffsetArea : IAmADefinedArea
+	public class OffsetArea : IAmADefinedArea, ICanBeSaved<OffsetAreaModel>
 	{
 		/// <summary>
 		/// Get or sets the top left X value of the area.
@@ -138,10 +139,10 @@ namespace Engine.Physics.Areas
 		}
 
 		/// <summary>
-		/// Gets a offset area model that corresponds to this offset area.
+		/// Creates the corresponding model.
 		/// </summary>
-		/// <returns>The offset area model.</returns>
-		public OffsetAreaModel ToOffsetAreaModel()
+		/// <returns>The corresponding model.</returns>
+		public OffsetAreaModel ToModel()
 		{
 			return new OffsetAreaModel
 			{

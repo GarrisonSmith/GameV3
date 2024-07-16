@@ -1,6 +1,7 @@
 ﻿using DiscModels.Engine.TileMapping;
 using Engine.Entities.Base.interfaces;
 using Engine.Physics.Collisions.interfaces;
+using Engine.Saving.Base.interfaces;
 using Engine.TileMapping.Base.interfaces;
 using Engine.TileMapping.Base.Tiles;
 using Microsoft.Xna.Framework;
@@ -13,7 +14,7 @@ namespace Engine.TileMapping.Base
 	/// <summary>
 	/// Represents a tile map layer.
 	/// </summary>
-	public class TileMapLayer : IDisposable
+	public class TileMapLayer : IDisposable, ICanBeSaved<TileMapLayerModel>
     {
         /// <summary>
         /// Gets or sets the guid.
@@ -234,24 +235,21 @@ namespace Engine.TileMapping.Base
 				tile.Dispose();
 			}
 
-			this.Entities = null;
-			this.Tiles = null;
-			this.TilesWithCollision = null;
 			Managers.TileManager.TileMapLayers.Remove(this.Guid);
 		}
 
 		/// <summary>
-		/// Gets a tile map layer model that corresponds to this tile map layer.
+		/// Creates the corresponding model.
 		/// </summary>
-		/// <returns>The tile map layer model.</returns>
-		public TileMapLayerModel ToTileMapLayerModel()
+		/// <returns>The corresponding model.</returns>
+		public TileMapLayerModel ToModel()
 		{
 			var tiles = this.Tiles.Values.SelectMany(x => x.Values);
 
 			return new TileMapLayerModel
 			{
 				Layer = this.Layer,
-				Tiles = tiles.Select(x => x.ToTileModel()).ToList(),
+				Tiles = tiles.Select(x => x.ToModel()).ToList(),
 			};
 		}
 	}
