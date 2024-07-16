@@ -2,11 +2,12 @@
 using DiscModels.Engine.Physics.Collisions.interfaces;
 using DiscModels.Engine.TileMapping.interfaces;
 using Engine.Physics.Collisions.interfaces;
+using Engine.Saving.Base.interfaces;
 using System;
 
 namespace Engine.TileMapping.Base.interfaces
 {
-	public interface IAmATile : IHaveCollision, IDisposable
+	public interface IAmATile : IHaveCollision, IDisposable, ICanBeSaved<IAmATileModel<IAmAAreaModel, IAmACollisionAreaModel>>
 	{
 		/// <summary>
 		/// Deactivates the tile.
@@ -19,6 +20,6 @@ namespace Engine.TileMapping.Base.interfaces
 		/// Gets a tile model that corresponds to this tile.
 		/// </summary>
 		/// <returns>The tile model.</returns>
-		IAmATileModel<IAmAAreaModel, IAmACollisionAreaModel> ToTileModel();
+		new IAmATileModel<IAmAAreaModel, IAmACollisionAreaModel> ToModel();
 	}
 }

@@ -1,5 +1,5 @@
 ﻿using DiscModels.Engine.Physics;
-using Engine.Physics.Areas.interfaces;
+using Engine.Saving.Base.interfaces;
 using Microsoft.Xna.Framework;
 
 namespace Engine.Physics.Base
@@ -7,7 +7,7 @@ namespace Engine.Physics.Base
 	/// <summary>
 	/// Represents a position.
 	/// </summary>
-	public class Position
+	public class Position : ICanBeSaved<PositionModel>
 	{
 		private Vector2 coordinates;
 
@@ -60,10 +60,10 @@ namespace Engine.Physics.Base
 		}
 
 		/// <summary>
-		/// Gets a position model that corresponds to this position.
+		/// Creates the corresponding model.
 		/// </summary>
-		/// <returns>The position model.</returns>
-		public PositionModel ToPositionModel()
+		/// <returns>The corresponding model.</returns>
+		public PositionModel ToModel()
 		{ 
 			return new PositionModel 
 			{ 

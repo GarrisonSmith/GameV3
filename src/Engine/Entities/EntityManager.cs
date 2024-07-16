@@ -36,23 +36,11 @@ namespace Engine.Entities
 		public Dictionary<Guid, IAmAEntity> Entities { get; set; }
 
 		/// <summary>
-		/// Gets or sets the entity data.
-		/// </summary>
-		public Dictionary<Guid, EntityData> EntityData { get; set; }
-
-		/// <summary>
-		/// Gets or sets the entity data by entity name.
-		/// </summary>
-		public Dictionary<string, EntityData> EntityDataByEntityName { get; set; }
-
-		/// <summary>
 		/// Initializes a new instance of the EntityManager class.
 		/// </summary>
 		public EntityManager()
 		{
 			this.Entities = new();
-			this.EntityData = new();
-			this.EntityDataByEntityName = new();
 			this.IsLoaded = false;
 		}
 
@@ -61,7 +49,18 @@ namespace Engine.Entities
 		/// </summary>
 		public void Load()
 		{
-			Managers.LoadManager.LoadEntityManager();
+			if (this.IsLoaded)
+			{
+				return;
+			}
+
+			Managers.DrawManager.Load();
+
+			if (!Managers.DrawManager.TryGetSpriteSheet("debug_tileset", out _))
+			{
+				Console.WriteLine("Sprite sheet not found for: DEBUG");
+			}
+
 			this.IsLoaded = true;
 		}
 	}

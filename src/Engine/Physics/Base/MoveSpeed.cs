@@ -1,13 +1,15 @@
-﻿using Engine.TileMapping.Base.Tiles;
+﻿using DiscModels.Engine.Physics;
+using Engine.Saving.Base.interfaces;
+using Engine.TileMapping.Base.Tiles;
 using Microsoft.Xna.Framework;
 using System;
 
 namespace Engine.Physics.Base
 {
-    /// <summary>
-    /// Represents a move speed.
-    /// </summary>
-    public class MoveSpeed
+	/// <summary>
+	/// Represents a move speed.
+	/// </summary>
+	public class MoveSpeed : IDisposable, ICanBeSaved<MoveSpeedModel>
 	{
 		/// <summary>
 		/// Gets or sets the tiles per second.
@@ -18,6 +20,17 @@ namespace Engine.Physics.Base
 		/// Gets or sets the total movement amount.
 		/// </summary>
 		public float TotalMovementAmount { get; set; }
+
+		/// <summary>
+		/// Initializes a new instance of the MoveSpeed class.
+		/// </summary>
+		/// <param name="moveSpeedModel">The move speed model.</param>
+		public MoveSpeed(MoveSpeedModel moveSpeedModel)
+		{ 
+			this.TilesPerSecond = moveSpeedModel.TilesPerSecond;
+			this.TotalMovementAmount = 0f;
+			Managers.PhysicsManager.MoveSpeeds.Add(this);
+		}
 
 		/// <summary>
 		/// Initializes a new instance of the MoveSpeed class.
@@ -57,6 +70,26 @@ namespace Engine.Physics.Base
 		public void Update(GameTime gameTime)
 		{
 			this.TotalMovementAmount = Tile.TILE_DIMENSIONS * this.TilesPerSecond * (float)(gameTime.ElapsedGameTime.TotalMilliseconds / 1000);
+		}
+
+		/// <summary>
+		/// Disposes the MoveSpeed.
+		/// </summary>
+		public void Dispose()
+		{
+			Managers.PhysicsManager.MoveSpeeds.Remove(this);
+		}
+
+		/// <summary>
+		/// Creates the corresponding model.
+		/// </summary>
+		/// <returns>The corresponding model.</returns>
+		public MoveSpeedModel ToModel()
+		{
+			return new MoveSpeedModel
+			{
+				TilesPerSecond = this.TilesPerSecond
+			};
 		}
 	}
 }

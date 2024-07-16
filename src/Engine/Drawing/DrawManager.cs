@@ -1,5 +1,6 @@
 ﻿using Engine.Drawing.Base;
 using Engine.Loading.Base.interfaces;
+using Engine.Loading.Configurations;
 using Engine.Physics.Base;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -114,30 +115,10 @@ namespace Engine.Drawing
 		/// Draws the area of the texture at origin.
 		/// </summary>
 		/// <param name="texture">The texture.</param>
-		public void Draw(Texture2D texture)
-		{
-			this.SpriteBatch.Draw(texture, new Vector2(), Color.White);
-		}
-
-		/// <summary>
-		/// Draws the area of the texture at origin.
-		/// </summary>
-		/// <param name="texture">The texture.</param>
 		/// <param name="area">The area.</param>
 		public void Draw(Texture2D texture, Rectangle area)
 		{
 			this.SpriteBatch.Draw(texture, new Vector2(0, 0), area, Color.White);
-		}
-
-		/// <summary>
-		/// Draws the texture.
-		/// </summary>
-		/// <param name="texture">The texture.</param>
-		/// <param name="x">The x coordinate.</param>
-		/// <param name="y">The y coordinate.</param>
-		public void Draw(Texture2D texture, int x, int y)
-		{
-			this.SpriteBatch.Draw(texture, new Vector2(x, y), Color.White);
 		}
 
 		/// <summary>
@@ -151,17 +132,6 @@ namespace Engine.Drawing
 		}
 
 		/// <summary>
-		/// Draws the texture.
-		/// </summary>
-		/// <param name="texture">The texture.</param>
-		/// <param name="coordinates">The coordinates.</param>
-		/// <param name="color">The color.</param>
-		public void Draw(Texture2D texture, Vector2 coordinates, Color color)
-		{
-			this.SpriteBatch.Draw(texture, coordinates, color);
-		}
-
-		/// <summary>
 		/// Draws the draw data.
 		/// </summary>
 		/// <param name="drawData">The draw data.</param>
@@ -172,75 +142,13 @@ namespace Engine.Drawing
 		}
 
 		/// <summary>
-		/// Draws the draw data.
-		/// </summary>
-		/// <param name="drawData">The draw data.</param>
-		/// <param name="position">The position.</param>
-		/// <param name="color">The color.</param>
-		public void Draw(DrawData drawData, Position position, Color color)
-		{
-			this.SpriteBatch.Draw(drawData.Texture, position.Coordinates, drawData.TextureBox, color);
-		}
-
-		/// <summary>
 		/// Draws the animation.
 		/// </summary>
 		/// <param name="animation">The animation.</param>
 		/// <param name="position">The position.</param>
 		public void Draw(Animation animation, Position position)
 		{
-			this.Draw(animation.CurrentFrame, position, Color.White);
-		}
-
-		/// <summary>
-		/// Draws the animation.
-		/// </summary>
-		/// <param name="animation">The animation.</param>
-		/// <param name="position">The position.</param>
-		/// <param name="color">The color.</param>
-		public void Draw(Animation animation, Position position, Color color)
-		{
-			this.Draw(animation.CurrentFrame, position, color);
-		}
-
-		/// <summary>
-		/// Writes the text.
-		/// </summary>
-		/// <param name="fontName">The font name.</param>
-		/// <param name="text">The text.</param>
-		/// <param name="coordinates">The coordinates.</param>
-		public void Write(string fontName, string text, Vector2 coordinates)
-		{
-			if (this.SpriteFonts.TryGetValue(fontName, out var spriteFont))
-			{
-				this.SpriteBatch.DrawString(spriteFont, text, coordinates, Color.White);
-			}
-		}
-
-		/// <summary>
-		/// Writes the text.
-		/// </summary>
-		/// <param name="fontName">The font name.</param>
-		/// <param name="text">The text.</param>
-		/// <param name="coordinates">The coordinates.</param>
-		/// <param name="color">The color.</param>
-		public void Write(string fontName, string text, Vector2 coordinates, Color color)
-		{
-			if (this.SpriteFonts.TryGetValue(fontName, out var spriteFont))
-			{
-				this.SpriteBatch.DrawString(spriteFont, text, coordinates, color);
-			}
-		}
-
-		/// <summary>
-		/// Writes the text.
-		/// </summary>
-		/// <param name="spriteFont">The sprite font.</param>
-		/// <param name="text">The text.</param>
-		/// <param name="coordinates">The coordinates.</param>
-		public void Write(SpriteFont spriteFont, string text, Vector2 coordinates)
-		{
-			this.SpriteBatch.DrawString(spriteFont, text, coordinates, Color.White);
+			this.Draw(animation.CurrentFrame, position);
 		}
 
 		/// <summary>
@@ -286,7 +194,26 @@ namespace Engine.Drawing
 		/// </summary>
 		public void Load()
 		{
-			Managers.LoadManager.LoadDrawManager();
+			if (this.IsLoaded)
+			{
+				return;
+			}
+
+			foreach (var spriteSheetName in TileSetsConfig.TileSetFileNames)
+			{
+				Managers.DrawManager.SpriteSheets.TryAdd(spriteSheetName, Managers.Game.Content.Load<Texture2D>(@"TileSets\" + spriteSheetName));
+			}
+
+			foreach (var spriteSheetName in CharactersConfig.CharacterFileNames)
+			{
+				Managers.DrawManager.SpriteSheets.TryAdd(spriteSheetName, Managers.Game.Content.Load<Texture2D>(@"CharacterSets\" + spriteSheetName));
+			}
+
+			foreach (var fontName in FontsConfig.FontFileNames)
+			{
+				Managers.DrawManager.SpriteFonts.TryAdd(fontName, Managers.Game.Content.Load<SpriteFont>(@"Fonts\" + fontName));
+			}
+
 			this.IsLoaded = true;
 		}
 	}

@@ -1,4 +1,5 @@
 ﻿using DiscModels.Engine.Drawing;
+using Engine.Saving.Base.interfaces;
 using Engine.TileMapping.Base.Tiles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -9,7 +10,7 @@ namespace Engine.Drawing.Base
 	/// <summary>
 	/// Represents draw data.
 	/// </summary>
-	public class DrawData : IDisposable
+	public class DrawData : IDisposable, ICanBeSaved<DrawDataModel>
 	{
 		/// <summary>
 		/// Gets or sets the guid.
@@ -55,8 +56,8 @@ namespace Engine.Drawing.Base
 			this.Guid = Guid.NewGuid();
 			this.SpritesheetName = drawDataModel.SpritesheetName;
 			this.SpritesheetCoordinate = drawDataModel.SpritesheetBox.Location;
-			this.TextureBox = new Rectangle(2, 2, Tile.TILE_DIMENSIONS, Tile.TILE_DIMENSIONS);
-			this.Texture = Managers.LoadManager.GetTileTexture(this.SpritesheetName, this.SpritesheetBox, this.SpritesheetBox.Location);
+			this.TextureBox = new Rectangle(2, 2, drawDataModel.SpritesheetBox.Width, drawDataModel.SpritesheetBox.Height);
+			this.Texture = Managers.LoadManager.GetTexture(this.SpritesheetName, this.SpritesheetBox, this.SpritesheetBox.Location);
 			Managers.DrawManager.DrawData.Add(this.Guid, this);
 		}
 
@@ -88,10 +89,10 @@ namespace Engine.Drawing.Base
 		}
 
 		/// <summary>
-		/// Gets a draw data model that corresponds to this draw data.
+		/// Creates the corresponding model.
 		/// </summary>
-		/// <returns>The draw data model.</returns>
-		public DrawDataModel ToDrawDataModel()
+		/// <returns>The corresponding model.</returns>
+		public DrawDataModel ToModel()
 		{
 			return new DrawDataModel
 			{

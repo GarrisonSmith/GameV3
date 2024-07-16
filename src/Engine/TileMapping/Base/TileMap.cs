@@ -1,5 +1,6 @@
 ﻿using DiscModels.Engine.TileMapping;
 using Engine.Loading.Base.interfaces;
+using Engine.Saving.Base.interfaces;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ namespace Engine.TileMapping.Base
 	/// <summary>
 	/// Represents a tile map.
 	/// </summary>
-	public class TileMap : ICanBeLoaded, IDisposable
+	public class TileMap : ICanBeLoaded, IDisposable, ICanBeSaved<TileMapModel>
     {
         private bool isActiveTileMap;
 
@@ -166,21 +167,20 @@ namespace Engine.TileMapping.Base
                 layer.Dispose();
             }
 
-            this.Layers = null;
             Managers.TileManager.TileMaps.Remove(this.Guid);
 		}
 
 		/// <summary>
-		/// Gets a tile map model that corresponds to this tile map.
+		/// Creates the corresponding model.
 		/// </summary>
-		/// <returns>The tile map model.</returns>
-		public TileMapModel ToTileMapModel()
+		/// <returns>The corresponding model.</returns>
+		public TileMapModel ToModel()
 		{
 			return new TileMapModel
 			{
                 IsActiveTileMap = this.IsActiveTileMap,
                 Name = this.Name,
-                Layers = this.Layers.Values.Select(x => x.ToTileMapLayerModel()).ToList(),
+                Layers = this.Layers.Values.Select(x => x.ToModel()).ToList(),
 			};
 		}
 
@@ -189,7 +189,6 @@ namespace Engine.TileMapping.Base
 		/// </summary>
 		public void Load()
 		{
-			Managers.LoadManager.LoadTileMap(this);
 			this.IsLoaded = true;
 		}
 	}

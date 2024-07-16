@@ -166,9 +166,6 @@ namespace Engine.Core.Base
 		{
             this.UpdatingActivated = false;
             this.DrawingActivated = false; 
-            this.Position = null;
-			this.Area = null;
-			this.DrawData = null;
 			this.DrawData.Dispose();
 		}
 	}

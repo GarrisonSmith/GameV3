@@ -119,9 +119,6 @@ namespace Engine.Core.Base
 		{
 			this.DrawData.Dispose();
 			this.DrawingActivated = false;
-            this.Position = null;
-            this.Area = null;
-            this.DrawData = null;
 		}
 	}
 }

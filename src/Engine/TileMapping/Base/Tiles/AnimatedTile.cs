@@ -74,21 +74,20 @@ namespace Engine.TileMapping.Base.Tiles
 		public new void Dispose()
 		{
 			base.Dispose();
-			this.CollisionArea = null;
 			Managers.TileManager.Tiles.Remove(this.Guid);
 			Managers.DebuggingManager.CollisionTextures.Remove(this);
 		}
 
 		/// <summary>
-		/// Gets a tile model that corresponds to this tile.
+		/// Creates the corresponding model.
 		/// </summary>
-		/// <returns>The tile model.</returns>
-		public IAmATileModel<IAmAAreaModel, IAmACollisionAreaModel> ToTileModel()
+		/// <returns>The corresponding model.</returns>
+		public IAmATileModel<IAmAAreaModel, IAmACollisionAreaModel> ToModel()
 		{
 			return new AnimatedTileModel<IAmAAreaModel, IAmACollisionAreaModel>
 			{
-				Position = this.Position.ToPositionModel(),
-				Animation = this.Animation.ToAnimationModel(),
+				Position = this.Position.ToModel(),
+				Animation = this.Animation.ToModel(),
 				Area = Managers.PhysicsManager.GetAreaModel(this.Area),
 				CollisionArea = Managers.PhysicsManager.GetCollisionAreaModel(this.CollisionArea)
 			};

@@ -1,6 +1,7 @@
 ﻿using DiscModels.Engine.Physics.Areas;
 using Engine.Physics.Areas.interfaces;
 using Engine.Physics.Base;
+using Engine.Saving.Base.interfaces;
 using Microsoft.Xna.Framework;
 
 namespace Engine.Physics.Areas
@@ -8,7 +9,7 @@ namespace Engine.Physics.Areas
 	/// <summary>
 	/// Represents a simple area.
 	/// </summary>
-	public class SimpleArea : IAmADefinedArea
+	public class SimpleArea : IAmADefinedArea, ICanBeSaved<SimpleAreaModel>
 	{
 		/// <summary>
 		/// Gets the collision epsilon.
@@ -143,10 +144,10 @@ namespace Engine.Physics.Areas
 		}
 
 		/// <summary>
-		/// Gets a simple area model that corresponds to this simple area.
+		/// Creates the corresponding model.
 		/// </summary>
-		/// <returns>The simple area model.</returns>
-		public SimpleAreaModel ToSimpleAreaModel()
+		/// <returns>The corresponding model.</returns>
+		public SimpleAreaModel ToModel()
 		{
 			return new SimpleAreaModel
 			{
