@@ -209,7 +209,7 @@ namespace Engine.Loading
 		/// <param name="width">The width.</param>
 		/// <param name="height">The height.</param>
 		/// <returns>The combined texture.</returns>
-		private static Texture2D CombineTexture(Texture2D[][] textures, int width, int height)
+		private Texture2D CombineTexture(Texture2D[][] textures, int width, int height)
 		{
 			var renderTarget = new RenderTarget2D(Managers.Graphics.GraphicsDevice, width, height, false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
 			Managers.Graphics.GraphicsDevice.SetRenderTarget(renderTarget);
